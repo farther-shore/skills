@@ -3,8 +3,17 @@
 Skills in this repo follow the [Agent Skills](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview)
 format: one folder per skill, each containing a `SKILL.md`.
 
+Scaffold a new one with the same CLI that distributes them:
+
+```bash
+npx skills init my-skill        # writes my-skill/SKILL.md with starter frontmatter
+```
+
 ## Checklist
 
+- [ ] Skill folder lives at the **repo root** (or under `skills/`) so the
+      `skills` CLI auto-discovers it — verify with
+      `npx skills add farther-shore/skills --list`.
 - [ ] Folder is **kebab-case** and matches the `name` in frontmatter.
 - [ ] `SKILL.md` has both `name` and `description` frontmatter fields.
 - [ ] `description` is one line, starts with **"Use when …"**, and names a

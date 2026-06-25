@@ -36,29 +36,50 @@ skills/                              ← this repo
 
 ---
 
-## How an agent uses these
+## Installing
+
+These skills follow the open [Agent Skills](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview)
+spec, so the [`skills` CLI](https://github.com/vercel-labs/skills) installs them
+into any of its ~70 supported agents — Claude Code, Cursor, Codex, OpenCode,
+Gemini CLI, Copilot, Windsurf, and more — with **no FartherShore-specific
+tooling required**. It auto-detects which agents you have installed and writes
+to each one's correct skills directory.
+
+```bash
+# Install all FartherShore skills into every agent it detects
+npx skills add farther-shore/skills --all
+
+# Install globally (user-level), just for Claude Code
+npx skills add farther-shore/skills -g -a claude-code
+
+# Pick specific skills
+npx skills add farther-shore/skills -s farthershore-overview
+```
+
+Manage them with the same tool:
+
+```bash
+npx skills list                         # what's installed, and where
+npx skills update                       # pull the latest versions from upstream
+npx skills remove farthershore-overview
+```
 
 Skills are progressively disclosed: an agent reads only the `name` +
 `description` frontmatter up front, then loads a skill's full body **on demand**
 when the description matches the task.
 
-**Claude Code (plugin / marketplace):** install this repo as a plugin so its
-skills appear in the `Skill` tool.
+> **Why `npx skills` and not a `farthershore` CLI command?** The `skills` CLI
+> already targets ~70 agent harnesses and knows each one's install path
+> (`~/.claude/skills`, `~/.cursor/skills`, `~/.codex/skills`, …).
+> Re-implementing that per-harness matrix ourselves would buy nothing. (This is
+> the *skills-distribution* path — independent of MCP, where the older npx
+> server path is deprecated in favor of CLI-backed and remote MCP.)
 
-**Manual / SDK:** clone the repo somewhere the agent can read it, then point
-your skills directory at it:
+**Manual fallback** (no npx): clone the repo and point your agent's skills
+directory at a skill folder.
 
 ```bash
 git clone https://github.com/farther-shore/skills.git
-# e.g. symlink or copy individual skill folders into your agent's skills path
-```
-
-**Direct download of one skill:**
-
-```bash
-# Sparse-checkout a single skill folder
-git clone --no-checkout --depth 1 https://github.com/farther-shore/skills.git
-cd skills && git sparse-checkout set farthershore-overview && git checkout
 ```
 
 ---
