@@ -14,17 +14,23 @@ prompt.
 
 ## What's in here
 
-Each top-level directory is one skill. A skill is a folder containing a
-`SKILL.md` file plus any supporting `references/`, `scripts/`, or `assets/`.
+Every skill is a folder under `skills/` containing a `SKILL.md` file plus any
+supporting `references/`, `scripts/`, or `assets/`. The `.claude-plugin/`
+manifests make the very same repo installable as a Claude Code plugin.
 
 ```
-skills/                              ← this repo
-├── README.md
-├── farthershore-overview/           ← a skill
-│   └── SKILL.md
-└── <your-next-skill>/
-    ├── SKILL.md
-    └── references/
+.                                    ← repo root (farther-shore/skills)
+├── .claude-plugin/
+│   ├── marketplace.json             ← registers this repo as a Claude marketplace
+│   └── plugin.json                  ← the "farthershore" plugin (bundles skills/)
+├── skills/                          ← every skill lives here
+│   ├── farthershore-overview/
+│   │   └── SKILL.md
+│   └── farthershore-…/
+│       ├── SKILL.md
+│       └── references/
+├── CONTRIBUTING.md
+└── README.md
 ```
 
 Load **`farthershore-overview` first** — it establishes the mental model
@@ -33,18 +39,22 @@ posture) and routes you to the right domain skill.
 
 | Skill | Load when… |
 |-------|------------|
-| [`farthershore-overview`](farthershore-overview/SKILL.md) | **first** — mental model, contract/operate boundary, autonomy posture, router |
-| [`farthershore-onboarding`](farthershore-onboarding/SKILL.md) | authenticating, connecting GitHub/Stripe, creating/scaffolding a product, first deploy |
-| [`farthershore-product-as-code`](farthershore-product-as-code/SKILL.md) | defining/changing product structure — routes, features, meters, limits (contract; via the repo) |
-| [`farthershore-plans-and-billing`](farthershore-plans-and-billing/SKILL.md) | changing pricing, plans, grants, trials, meters; price experiments; subscriber migration |
-| [`farthershore-environments-and-releasing`](farthershore-environments-and-releasing/SKILL.md) | preview environments and the production release gate |
-| [`farthershore-frontend-hosting`](farthershore-frontend-hosting/SKILL.md) | deploy / status / rollback of the managed frontend (operate) |
-| [`farthershore-backends-and-tokens`](farthershore-backends-and-tokens/SKILL.md) | bring-your-own backends, runtime tokens (`fsrt_`), maker tokens (operate) |
-| [`farthershore-operating-and-escalation`](farthershore-operating-and-escalation/SKILL.md) | monitoring a live product; deciding what to fix vs escalate |
+| [`farthershore-overview`](skills/farthershore-overview/SKILL.md) | **first** — mental model, contract/operate boundary, autonomy posture, router |
+| [`farthershore-onboarding`](skills/farthershore-onboarding/SKILL.md) | authenticating, connecting GitHub/Stripe, creating/scaffolding a product, first deploy |
+| [`farthershore-product-as-code`](skills/farthershore-product-as-code/SKILL.md) | defining/changing product structure — routes, features, meters, limits (contract; via the repo) |
+| [`farthershore-plans-and-billing`](skills/farthershore-plans-and-billing/SKILL.md) | changing pricing, plans, grants, trials, meters; price experiments; subscriber migration |
+| [`farthershore-environments-and-releasing`](skills/farthershore-environments-and-releasing/SKILL.md) | preview environments and the production release gate |
+| [`farthershore-frontend-hosting`](skills/farthershore-frontend-hosting/SKILL.md) | deploy / status / rollback of the managed frontend (operate) |
+| [`farthershore-backends-and-tokens`](skills/farthershore-backends-and-tokens/SKILL.md) | bring-your-own backends, runtime tokens (`fsrt_`), maker tokens (operate) |
+| [`farthershore-operating-and-escalation`](skills/farthershore-operating-and-escalation/SKILL.md) | monitoring a live product; deciding what to fix vs escalate |
 
 ---
 
 ## Installing
+
+Three install paths, the same skills — pick what fits your agent.
+
+### 1. Any agent — `npx skills` (cross-harness)
 
 These skills follow the open [Agent Skills](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview)
 spec, so the [`skills` CLI](https://github.com/vercel-labs/skills) installs them
@@ -90,6 +100,33 @@ directory at a skill folder.
 git clone https://github.com/farther-shore/skills.git
 ```
 
+### 2. Claude Code — native plugin
+
+Claude Code can install the whole set as a **plugin**, no `npx` required:
+
+```text
+/plugin marketplace add farther-shore/skills
+/plugin install farthershore@farthershore
+```
+
+The first command registers this repo as a marketplace (read from
+`.claude-plugin/marketplace.json` on the default branch); the second installs
+the `farthershore` plugin, which bundles every skill in `skills/`. Refresh later
+with `/plugin marketplace update farthershore`.
+
+### 3. Codex
+
+Codex reads the same `SKILL.md` folders — it discovers skills in
+`~/.agents/skills` (your user dir) and `.agents/skills` (a repo). Install with
+the cross-agent CLI:
+
+```bash
+npx skills add farther-shore/skills -a codex
+```
+
+…or use Codex's own `$skill-installer` from inside Codex to pull skills from
+this repo.
+
 ---
 
 ## The `SKILL.md` format
@@ -123,7 +160,7 @@ Frontmatter rules:
 
 ## Authoring a new skill
 
-1. Create a folder named in kebab-case (this is the skill's `name`).
+1. Create a folder **under `skills/`** named in kebab-case (this is the skill's `name`).
 2. Add a `SKILL.md` with the frontmatter above.
 3. Put long reference material in `references/` and link to it from the body so
    the main file stays small.

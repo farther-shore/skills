@@ -6,14 +6,15 @@ format: one folder per skill, each containing a `SKILL.md`.
 Scaffold a new one with the same CLI that distributes them:
 
 ```bash
-npx skills init my-skill        # writes my-skill/SKILL.md with starter frontmatter
+npx skills init skills/my-skill   # writes skills/my-skill/SKILL.md with starter frontmatter
 ```
 
 ## Checklist
 
-- [ ] Skill folder lives at the **repo root** (or under `skills/`) so the
-      `skills` CLI auto-discovers it — verify with
-      `npx skills add farther-shore/skills --list`.
+- [ ] Skill folder lives **under `skills/`** so all three install paths find it
+      (the `skills` CLI, the Claude Code plugin, and Codex). Verify discovery
+      with `npx skills add farther-shore/skills --list` (expect every skill) and
+      the plugin with `claude plugin validate .`.
 - [ ] Folder is **kebab-case** and matches the `name` in frontmatter.
 - [ ] `SKILL.md` has both `name` and `description` frontmatter fields.
 - [ ] `description` is one line, starts with **"Use when …"**, and names a
@@ -44,11 +45,15 @@ description: Use when scaffolding or editing a Product-as-Code definition with
 ## Layout
 
 ```
-my-skill/
+skills/my-skill/
 ├── SKILL.md           ← required: frontmatter + instructions
 ├── references/        ← optional: deep-dive docs loaded on demand
 │   └── api-notes.md
 └── scripts/           ← optional: helper scripts a skill may run
 ```
+
+The Claude Code plugin (`.claude-plugin/plugin.json`) bundles everything under
+`skills/` automatically — no per-skill registration needed there. Just keep the
+README table in sync.
 
 Open a PR with the new folder and the README table updated.
