@@ -27,12 +27,20 @@ skills/                              ← this repo
     └── references/
 ```
 
-| Skill | What it does |
-|-------|--------------|
-| [`farthershore-overview`](farthershore-overview/SKILL.md) | Orients an agent to the platform's packages, surfaces, and where to look first. |
+Load **`farthershore-overview` first** — it establishes the mental model
+(Product-as-Code, the contract-vs-operate boundary, the confirm-gated autonomy
+posture) and routes you to the right domain skill.
 
-> More skills land here as the platform's builder surfaces stabilize
-> (Product-as-Code authoring, CLI workflows, runtime metering, dev portals).
+| Skill | Load when… |
+|-------|------------|
+| [`farthershore-overview`](farthershore-overview/SKILL.md) | **first** — mental model, contract/operate boundary, autonomy posture, router |
+| [`farthershore-onboarding`](farthershore-onboarding/SKILL.md) | authenticating, connecting GitHub/Stripe, creating/scaffolding a product, first deploy |
+| [`farthershore-product-as-code`](farthershore-product-as-code/SKILL.md) | defining/changing product structure — routes, features, meters, limits (contract; via the repo) |
+| [`farthershore-plans-and-billing`](farthershore-plans-and-billing/SKILL.md) | changing pricing, plans, grants, trials, meters; price experiments; subscriber migration |
+| [`farthershore-environments-and-releasing`](farthershore-environments-and-releasing/SKILL.md) | preview environments and the production release gate |
+| [`farthershore-frontend-hosting`](farthershore-frontend-hosting/SKILL.md) | deploy / status / rollback of the managed frontend (operate) |
+| [`farthershore-backends-and-tokens`](farthershore-backends-and-tokens/SKILL.md) | bring-your-own backends, runtime tokens (`fsrt_`), maker tokens (operate) |
+| [`farthershore-operating-and-escalation`](farthershore-operating-and-escalation/SKILL.md) | monitoring a live product; deciding what to fix vs escalate |
 
 ---
 

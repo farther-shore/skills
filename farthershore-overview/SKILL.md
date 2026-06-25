@@ -1,53 +1,84 @@
 ---
 name: farthershore-overview
-description: Use when starting any task on the FartherShore platform — orients an
-  agent to the packages, surfaces, and conventions, and points to where to look
-  before writing code. Load this first when the user mentions FartherShore,
-  Product-as-Code, or any @farthershore/* package.
+description: Use FIRST when starting any task on the FartherShore platform — establishes the Product-as-Code mental model, the contract-vs-operate boundary that determines HOW every change is made, the confirm-gated autonomy posture, and routes to the right FartherShore skill. Load whenever the user mentions FartherShore, a @farthershore/* package, a product repo, or the `farthershore` CLI/MCP.
+metadata:
+  version: 1.0.0
 ---
 
-# FartherShore Platform Overview
+# Operating on FartherShore
 
-FartherShore is a **Product-as-Code** platform: builders define a software
-product in code, and the platform provisions billing, an API gateway, runtime
-usage metering, and generated developer portals around it.
+FartherShore is a **Product-as-Code** platform. You define a software product in
+code in its GitHub repo; FartherShore provisions the API gateway, billing,
+usage metering, and a hosted developer portal around it. Your job as an agent is
+to build and operate that product through **two surfaces**: the **repo** and the
+**`farthershore` CLI / MCP tools**.
 
-Use this skill to orient before any platform task. It does **not** replace the
-repo's own docs — it tells you which surface owns what and where to read next.
+Read this skill first. It tells you the one rule that governs every change, how
+much autonomy to take, and which skill to load next.
 
-## The builder surfaces
+## The one rule: contract vs operate
 
-| Package | Role |
-|---------|------|
-| `@farthershore/product` | Product-as-Code SDK + Manifest IR builder. Where a product is defined and compiled to a manifest. |
-| `@farthershore/cli` | Public CLI (`@farthershore/cli`) for builder workflows. |
-| `@farthershore/backend` | Runtime backend SDK — usage metering, gateway verification, health, transport. |
-| `farthershore-js` | Browser/client JS package for product front-ends. |
+Every change is one of two kinds. Using the wrong surface fails every time.
 
-## Before writing code
+| Kind | What it covers | How you change it |
+| --- | --- | --- |
+| **contract** | Anything that defines the product: plans, pricing, meters, routes, features, limits, capabilities, policies | **Edit `product/product.config.ts` and push.** The CLI/MCP/API will **refuse** these writes once the product is live (you'll see `MANAGED_BY_CODE`). |
+| **operate** | Runtime actions with no code representation: frontend deploys/rollbacks, runtime tokens, test personas, environments, brand fields | **Imperative** via the `farthershore` CLI or the matching MCP tool. |
 
-1. **Read the platform conventions doc first** — it's the highest-leverage read
-   before editing anything.
-2. **Resolve domain terms against the glossary** — product, compiler, billing,
-   gateway, and lifecycle terms have precise meanings here; don't guess.
-3. **Check the nearest `AGENTS.md`** — the repo root and many apps/packages ship
-   one with branch, release, and CI rules.
-4. **Match existing test patterns** — the repo documents how tests are expected
-   to look; mirror them rather than inventing a style.
+> If you ever try to change a price, plan, route, or limit through the API/CLI
+> and get `MANAGED_BY_CODE`, that is the platform telling you: **edit the
+> manifest and push instead.** Do not retry the call.
 
-## Where things run
+A few things are **dual** (environments, publishing) — reconcilable from either
+side. When in doubt, treat product *definition* as contract and product
+*actions* as operate.
 
-- **Express API** (`apps/core`) — Prisma, Stripe, Polar, R2.
-- **Cloudflare Workers** — API gateway (auth, rate-limit, route), usage-event
-  queue consumer, DLQ replay, generated-site shell.
-- **Cloudflare Workflows** — product apply, Stripe sync, webhook dispatch, and
-  per-entity transitions.
-- **Next.js front-ends** — builder dashboard and internal admin console.
+## The two loops
 
-## How to use this skill
+- **Build / Change loop** (contract, via the repo): edit `product/` → run
+  `farthershore build` to validate locally → commit → push → watch the
+  `farthershore/build` and `farthershore/apply` GitHub checks → fix on failure.
+- **Operate loop** (operate, via CLI/MCP): inspect status/usage, deploy or roll
+  back the frontend, rotate tokens, manage environments and test personas.
 
-When a task touches a specific surface (defining a product, a CLI command, a
-runtime metering question), load the dedicated skill for that surface if one
-exists; otherwise read that package's own `README.md`/`AGENTS.md` in the
-monorepo. Treat this overview as the map, not the territory — verify specifics
-against the source before relying on them.
+## Autonomy posture (confirm-gated)
+
+Operate autonomously on safe, reversible work. Stop and get a human's sign-off
+before anything that touches money or production. Every skill tags its actions:
+
+- **auto** — just do it: reads/status, preview-environment deploys, frontend
+  rollback, token rotation, local builds, scaffolding.
+- **confirm** — present a short plan and wait for explicit human approval:
+  pricing/plan changes (they hit real subscribers), any destructive `--yes`
+  operation, and **production releases**.
+- **escalate** — report and stop: platform-side failures you cannot fix from the
+  public surface (see [farthershore-operating-and-escalation](../farthershore-operating-and-escalation/SKILL.md)).
+
+## Always read the product's own AGENTS.md
+
+Every FartherShore product repo ships an `AGENTS.md` with **per-product facts**
+this skill can't know: the live URL, which files are watched, and the product's
+specific compiler rules. Read it before changing that repo. These skills are the
+portable *how*; the repo's `AGENTS.md` is the local *what*.
+
+## Where to go next
+
+| If you're… | Load |
+| --- | --- |
+| setting up auth, connecting GitHub/Stripe, or creating a product | [farthershore-onboarding](../farthershore-onboarding/SKILL.md) |
+| defining or changing product structure (routes, features, limits) | [farthershore-product-as-code](../farthershore-product-as-code/SKILL.md) |
+| changing pricing, plans, grants, or running price experiments | [farthershore-plans-and-billing](../farthershore-plans-and-billing/SKILL.md) |
+| creating preview environments or releasing to production | [farthershore-environments-and-releasing](../farthershore-environments-and-releasing/SKILL.md) |
+| deploying, checking, or rolling back the hosted frontend | [farthershore-frontend-hosting](../farthershore-frontend-hosting/SKILL.md) |
+| wiring a backend or managing runtime/maker tokens | [farthershore-backends-and-tokens](../farthershore-backends-and-tokens/SKILL.md) |
+| monitoring a live product or deciding whether to escalate | [farthershore-operating-and-escalation](../farthershore-operating-and-escalation/SKILL.md) |
+
+## Conventions that hold everywhere
+
+- Pass `--format json` (or run in a non-TTY) for machine-readable output:
+  `{ ok, op, data }` on success, `{ ok:false, error:{ code, message, hint } }`
+  on failure. Branch on `error.code`; the `hint` is your next step.
+- Destructive operations require an explicit `--yes`. That is a deliberate gate
+  — treat it as a **confirm** action.
+- Run `farthershore <command> --help` to see the exact, current flags before
+  composing a call. The surface evolves; the `--help` output is authoritative.
