@@ -1,0 +1,56 @@
+name: Validate skills
+
+# Guards the repo across all three distribution channels:
+#   1. structure / frontmatter / manifests   (fast, self-contained)
+#   2. npx skills discovery parity            (the cross-agent CLI must find EVERY skill)
+#   3. claude plugin validate                 (authoritative Claude Code plugin check)
+# Catches the failure mode where a malformed SKILL.md is silently dropped from
+# discovery, or a manifest breaks — before it ships.
+
+on:
+  push:
+    paths:
+      - "skills/**"
+      - ".claude-plugin/**"
+      - "scripts/**"
+      - ".github/workflows/validate-skills.yml"
+  pull_request:
+    paths:
+      - "skills/**"
+      - ".claude-plugin/**"
+      - "scripts/**"
+      - ".github/workflows/validate-skills.yml"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Structure, frontmatter & manifests
+        run: node scripts/validate-skills.mjs
+
+      - name: Discovery parity (npx skills must find every skill)
+        run: |
+          expected=$(find skills -mindepth 2 -maxdepth 2 -name SKILL.md | wc -l | tr -d ' ')
+          out=$(npx -y skills add . --list -y 2>&1 || true)
+          echo "$out"
+          discovered=$(printf '%s' "$out" | grep -oiE 'found [0-9]+ skill' | grep -oE '[0-9]+' | head -1 || true)
+          echo "Folders with SKILL.md: $expected — discovered by npx skills: ${discovered:-0}"
+          if [ -z "$discovered" ]; then
+            echo "::error::npx skills did not report a skill count (the CLI may have failed)"
+            exit 1
+          fi
+          if [ "$expected" -ne "$discovered" ]; then
+            echo "::error::npx skills discovered $discovered of $expected skills — a SKILL.md is being dropped (likely invalid frontmatter)"
+            exit 1
+          fi
+
+      - name: Validate Claude plugin manifests
+        run: |
+          npm install -g @anthropic-ai/claude-code
+          claude plugin validate . --strict
