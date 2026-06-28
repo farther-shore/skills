@@ -5,14 +5,14 @@
     "name": "Farther Shore",
     "url": "https://github.com/farther-shore"
   },
-  "description": "Skills for building and operating products on the FartherShore platform.",
+  "description": "Skills for building and operating businesses on the FartherShore platform.",
   "plugins": [
     {
       "name": "farthershore",
       "source": "./",
-      "description": "Build and operate a product on FartherShore — Product-as-Code authoring, plans & billing, environments & releasing, frontend hosting, backends & tokens, and day-2 operations.",
+      "description": "Build and operate a business on FartherShore — Business-as-Code authoring, SDK-version-aware skills, plans & billing, environments & releasing, frontend hosting, backends & tokens, and day-2 operations.",
       "repository": "https://github.com/farther-shore/skills",
-      "keywords": ["farthershore", "product-as-code", "agent-skills"]
+      "keywords": ["farthershore", "business-as-code", "agent-skills"]
     }
   ]
 }

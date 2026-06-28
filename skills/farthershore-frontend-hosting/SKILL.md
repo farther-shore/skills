@@ -1,14 +1,14 @@
 ---
 name: farthershore-frontend-hosting
-description: Use when deploying, checking the status of, or rolling back a FartherShore product's managed (hosted) frontend. This is operate state — done imperatively via the farthershore CLI / MCP, not via the manifest.
+description: Use when deploying, checking the status of, or rolling back a FartherShore business's managed (hosted) frontend. This is operate state — done imperatively via the farthershore CLI / MCP, not via the manifest.
 metadata:
-  version: 1.0.0
+  version: 1.1.0
 ---
 
 # Frontend hosting
 
-The product's hosted frontend is **operate** state — you act on it directly with
-the CLI/MCP, not through `product/product.config.ts`. Read
+The business's hosted frontend is **operate** state — you act on it directly with
+the CLI/MCP, not through `business/business.config.ts`. Read
 [farthershore-overview](../farthershore-overview/SKILL.md) first.
 
 ## Commands

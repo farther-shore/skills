@@ -1,41 +1,52 @@
-# Product SDK decorators (reference)
+# Business SDK decorators (reference)
 
-`product/product.config.ts` exports a single default class decorated with
-`@Product`. Members are declared with decorators from `@farthershore/product`.
-Each decorator declares one part of the product; the `@Product` class decorator
+`business/business.config.ts` exports a single default class decorated with
+`@Business`. Members are declared with decorators from `@farthershore/business`.
+Each decorator declares one part of the product; the `@Business` class decorator
 finalizes them into the Manifest IR.
 
 > This is an orientation reference. Always check the installed
-> `@farthershore/product` version's own types/README for the authoritative,
+> `@farthershore/business` version's own types/README for the authoritative,
 > current decorator signatures and options before relying on a specific field.
 
 ## Shape
 
 ```ts
-import { Product, Surface, Meter, Requests, Feature, Plan } from "@farthershore/product";
+import {
+  Product,
+  Surface,
+  Meter,
+  Requests,
+  Feature,
+  Plan,
+} from "@farthershore/business";
 
-@Product({
-  name: "croncloud",                 // stable identifier (contract)
+@Business({
+  name: "croncloud", // stable identifier (contract)
   origin: "https://api.example.com", // your upstream business logic
-  displayName: "CronCloud",          // presentation
+  displayName: "CronCloud", // presentation
   description: "Managed cron jobs",
 })
 export default class CronCloud {
-  @Surface("api") api!: unknown;            // which surfaces the product exposes
+  @Surface("api") api!: unknown; // which surfaces the product exposes
   @Surface("frontend") frontend!: unknown;
 
-  @Requests() requests!: unknown;           // the platform request meter
-  @Meter("tokens_used", { unit: "token" }) tokensUsed!: unknown;  // a value meter
+  @Requests() requests!: unknown; // the platform request meter
+  @Meter("tokens_used", { unit: "token" }) tokensUsed!: unknown; // a value meter
 
-  @Feature("runs", {                        // a feature = grouped routes + metering
+  @Feature("runs", {
+    // a feature = grouped routes + metering
     routes: { "POST /v1/runs": { reports: "tokens_used" } },
   })
   runs!: unknown;
 
-  @Plan("starter", {                        // see farthershore-plans-and-billing
+  @Plan("starter", {
+    // see farthershore-plans-and-billing
     name: "Starter",
     price: { amount: 2900, currency: "usd", interval: "month" },
-    limits: { requests: { rate: 600, interval: "minute", enforcement: "enforce" } },
+    limits: {
+      requests: { rate: 600, interval: "minute", enforcement: "enforce" },
+    },
   })
   starter!: unknown;
 }
@@ -43,7 +54,7 @@ export default class CronCloud {
 
 ## Decorator families
 
-- **`@Product`** — identity + origin + presentation. `name`/`origin` are contract.
+- **`@Business`** — identity + origin + presentation. `name`/`origin` are contract.
 - **`@Surface`** — which surfaces exist (e.g. `api`, `frontend`, `docs`).
 - **`@Requests`** — the built-in request meter.
 - **`@Meter`** — a value meter (unit, optional estimate) for usage-based pricing.

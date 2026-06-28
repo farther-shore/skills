@@ -1,7 +1,7 @@
 # Plan spec (reference)
 
-A plan is declared with `@Plan` in `product/product.config.ts`. It combines a
-small set of knobs. Check the installed `@farthershore/product` version for the
+A plan is declared with `@Plan` in `business/business.config.ts`. It combines a
+small set of knobs. Check the installed `@farthershore/business` version for the
 exact, current field names and shapes before relying on a specific one.
 
 ## Knobs

@@ -1,8 +1,8 @@
 ---
 name: farthershore-onboarding
-description: Use when getting started on FartherShore from scratch — authenticating the CLI with a maker token, connecting GitHub and Stripe, creating or scaffolding a product, and reaching a first deploy. Covers the browser-only connect flows an agent cannot complete alone.
+description: Use when getting started on FartherShore from scratch — authenticating the CLI with a maker token, connecting GitHub and Stripe, creating or scaffolding a business, and reaching a first deploy. Covers the browser-only connect flows an agent cannot complete alone.
 metadata:
-  version: 1.0.0
+  version: 1.1.0
 ---
 
 # Onboarding: zero to first deploy
@@ -44,25 +44,27 @@ farthershore connect stripe <product> --format json
 
 Two paths:
 
-- **`farthershore product create`** — provisions a managed GitHub repo with the
-  `product/` scaffold, a generated `README.md` and `AGENTS.md`, and a DRAFT
+- **`farthershore business create`** — provisions a managed GitHub repo with the
+  `business/` and `frontend/` scaffold, a generated `README.md` and `AGENTS.md`, and a DRAFT
   product on the platform. This is the agent-first path. It's a confirm action
   (it creates real resources).
-- **`farthershore init`** — scaffolds a `product/` definition locally from a
+- **`farthershore init`** — scaffolds a `business/` definition locally from a
   template, for an existing repo. Safe/auto.
 
-Run `farthershore product create --help` / `farthershore init --help` for the
+Run `farthershore business create --help` / `farthershore init --help` for the
 current flags (name, origin, template, surfaces). Pick a template that matches
 the billing model (e.g. free vs paid vs metered).
 
 ## 4. First build and deploy
 
 1. Read the new repo's `AGENTS.md`.
-2. Edit `product/product.config.ts` as needed — see
+2. Run `farthershore skills recommend --format json` in the repo and install the
+   recommended SDK-compatible skill files.
+3. Edit `business/business.config.ts` as needed — see
    [farthershore-product-as-code](../farthershore-product-as-code/SKILL.md).
-3. `farthershore build` to validate locally.
-4. Commit and push. Watch the `farthershore/build` check.
-5. Test in a preview environment, then release to production — see
+4. `farthershore build` to validate locally.
+5. Commit and push. Watch the `farthershore/build` check.
+6. Test in a preview environment, then release to production — see
    [farthershore-environments-and-releasing](../farthershore-environments-and-releasing/SKILL.md).
 
 ## Common stalls

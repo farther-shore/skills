@@ -2,12 +2,18 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin.json",
   "name": "farthershore",
   "displayName": "FartherShore Skills",
-  "version": "1.0.0",
-  "description": "Build and operate a product on the FartherShore platform: Product-as-Code authoring, plans & billing, environments & releasing, frontend hosting, backends & tokens, and day-2 operations. Skills live in skills/.",
+  "version": "1.1.0",
+  "description": "Build and operate a business on the FartherShore platform: Business-as-Code authoring, SDK-version-aware skills, plans & billing, environments & releasing, frontend hosting, backends & tokens, and day-2 operations. Skills live in skills/.",
   "author": {
     "name": "Farther Shore",
     "url": "https://github.com/farther-shore"
   },
   "repository": "https://github.com/farther-shore/skills",
-  "keywords": ["farthershore", "product-as-code", "agent-skills", "billing", "api-gateway"]
+  "keywords": [
+    "farthershore",
+    "business-as-code",
+    "agent-skills",
+    "billing",
+    "api-gateway"
+  ]
 }

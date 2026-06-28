@@ -2,7 +2,7 @@
 name: farthershore-environments-and-releasing
 description: Use when creating preview environments, testing a change before production, or shipping to production on FartherShore. Covers the branch→environment mapping, the env/* preview workflow, and the production Release gate (main never auto-deploys). Production releases are confirm-gated.
 metadata:
-  version: 1.0.0
+  version: 1.1.0
 ---
 
 # Environments & releasing
@@ -14,7 +14,7 @@ How a change goes from a branch to live. Read
 ## Branch → environment
 
 - **`env/<name>` branches** map to **isolated preview environments**, each with
-  its own subdomain and its own plans. Pushing `product/` changes to an `env/*`
+  its own subdomain and its own plans. Pushing `business/` changes to an `env/*`
   branch compiles and publishes **immediately** to that preview environment —
   no release gate. This is where you test.
 - **`main`** is the **production source** branch. Pushing to `main` compiles and
@@ -36,7 +36,7 @@ environment and the branch reconcile to the same state. Run
 
 ## The preview → production flow
 
-1. Make the change in `product/` on an `env/<name>` branch; push.
+1. Make the change in `business/` on an `env/<name>` branch; push.
 2. It goes live in that preview environment. Test it there (use a test persona —
    see [farthershore-operating-and-escalation](../farthershore-operating-and-escalation/SKILL.md)
    and the personas commands).

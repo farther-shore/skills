@@ -1,6 +1,6 @@
 ---
 name: farthershore-backends-and-tokens
-description: Use when wiring a bring-your-own backend to a FartherShore product, minting/rotating/revoking runtime tokens (fsrt_) for that backend, or managing maker tokens (mk_). Operate state — done via the farthershore CLI / MCP. Covers transports, the rotation procedure, and one-time-secret handling.
+description: Use when wiring a bring-your-own backend to a FartherShore business, minting/rotating/revoking runtime tokens (fsrt_) for that backend, or managing maker tokens (mk_). Operate state — done via the farthershore CLI / MCP. Covers transports, the rotation procedure, and one-time-secret handling.
 metadata:
   version: 1.0.0
 ---
@@ -70,4 +70,4 @@ org-wide tokens. (Run `farthershore token create --help` for the scope list.)
 - **auto**: listing; minting and **rotating** runtime tokens (following the
   ordered procedure).
 - **confirm**: **revoking** a token that may be in active use, and **deleting** a
-  backend — both can break a live product.
+  backend — both can break a live business.

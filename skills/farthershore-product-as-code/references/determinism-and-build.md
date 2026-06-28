@@ -2,7 +2,7 @@
 
 ## Why determinism
 
-The platform compiles `product/product.config.ts` to a Manifest IR and computes
+The platform compiles `business/business.config.ts` to a Manifest IR and computes
 a hash. It builds **twice** and rejects the push if the hashes differ. This
 guarantees the same source always yields the same product. A non-deterministic
 module cannot be published.
@@ -16,7 +16,7 @@ module cannot be published.
 - Iteration over unordered structures whose order isn't fixed
 - Any value that changes between two runs of the same code
 
-If a value must vary per environment, express it through the product's
+If a value must vary per environment, express it through the business repo's
 environment configuration in the manifest — never by reading ambient state at
 build time.
 
@@ -34,14 +34,14 @@ build time.
 `farthershore/build` GitHub check posts the same reason as a comment. Map the
 message to the fix:
 
-| Symptom | Fix |
-| --- | --- |
-| hash mismatch / "non-deterministic" | remove the dynamic value (above) |
-| duplicate plan/meter key | rename so keys are unique |
-| capacity decreased / limit removed | not allowed — keep capacity ≥ current, or add a new plan instead |
-| plan has no revenue | add a price/meter/grant, or mark the plan `free` |
-| exceeds caps | consolidate — see the product's `AGENTS.md` for the limits |
-| schema/validation error | fix the field the validator names |
+| Symptom                             | Fix                                                              |
+| ----------------------------------- | ---------------------------------------------------------------- |
+| hash mismatch / "non-deterministic" | remove the dynamic value (above)                                 |
+| duplicate plan/meter key            | rename so keys are unique                                        |
+| capacity decreased / limit removed  | not allowed — keep capacity ≥ current, or add a new plan instead |
+| plan has no revenue                 | add a price/meter/grant, or mark the plan `free`                 |
+| exceeds caps                        | consolidate — see the business repo's `AGENTS.md` for the limits |
+| schema/validation error             | fix the field the validator names                                |
 
 Always fix locally and re-run `farthershore build` to green before pushing
 again.

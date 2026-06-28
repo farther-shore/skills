@@ -1,23 +1,23 @@
 # Escalation decision tree (reference)
 
-You operate a FartherShore product through the **public CLI/MCP and its repo**
+You operate a FartherShore business through the **public CLI/MCP and its repo**
 only. Many failures live in platform infrastructure or the billing pipeline,
 which you cannot see or touch from there. This tree keeps you from making things
 worse.
 
 ## Step 1 — classify the symptom
 
-| Symptom | Likely owner | Action |
-| --- | --- | --- |
-| Bad/broken frontend release | you | roll back (frontend skill) — **auto** |
-| Runtime token leaked/expired; backend auth failing because of it | you | rotate (backends skill) — **auto** |
-| A change you pushed is wrong / a plan is misconfigured | you | revert manifest + release, or correct plan in code + release — **confirm** |
-| Build/checks failing on your push | you | fix per the product-as-code skill — **auto** |
-| Subscribers not activating after paying; checkout completes but nothing happens | platform | **escalate** |
-| Valid API keys rejected across the board; auth failing platform-wide | platform | **escalate** |
-| Usage/metering not recording despite real traffic | platform | **escalate** |
-| Errors across *multiple* products at once | platform | **escalate** |
-| Stripe connection shows revoked/restricted | human (re-onboard) | **escalate** to the user |
+| Symptom                                                                         | Likely owner       | Action                                                                     |
+| ------------------------------------------------------------------------------- | ------------------ | -------------------------------------------------------------------------- |
+| Bad/broken frontend release                                                     | you                | roll back (frontend skill) — **auto**                                      |
+| Runtime token leaked/expired; backend auth failing because of it                | you                | rotate (backends skill) — **auto**                                         |
+| A change you pushed is wrong / a plan is misconfigured                          | you                | revert manifest + release, or correct plan in code + release — **confirm** |
+| Build/checks failing on your push                                               | you                | fix per the product-as-code skill — **auto**                               |
+| Subscribers not activating after paying; checkout completes but nothing happens | platform           | **escalate**                                                               |
+| Valid API keys rejected across the board; auth failing platform-wide            | platform           | **escalate**                                                               |
+| Usage/metering not recording despite real traffic                               | platform           | **escalate**                                                               |
+| Errors across _multiple_ products at once                                       | platform           | **escalate**                                                               |
+| Stripe connection shows revoked/restricted                                      | human (re-onboard) | **escalate** to the user                                                   |
 
 ## Step 2 — if it's yours
 
@@ -37,8 +37,8 @@ commands afterward.
 
 - Never attempt to operate FartherShore's internal infrastructure — you have no
   authorized surface for it, and there is none in the public CLI/MCP.
-- If you've auto-remediated the *same* issue twice and it recurs, stop and
+- If you've auto-remediated the _same_ issue twice and it recurs, stop and
   escalate — the root cause is deeper than your fix.
 - When unsure whether something is yours or the platform's: **escalate**. A
-  false escalation costs a message; a wrong fix on a live product costs
+  false escalation costs a message; a wrong fix on a live business costs
   subscribers.

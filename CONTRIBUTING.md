@@ -38,8 +38,8 @@ description means the skill never triggers. Be specific:
 description: Helps with products.
 
 # strong — fires on the right task
-description: Use when scaffolding or editing a Product-as-Code definition with
-  the @farthershore/product SDK, including running the manifest build.
+description: Use when scaffolding or editing a Business-as-Code definition with
+  the @farthershore/business SDK, including running the manifest build.
 ```
 
 ## Layout

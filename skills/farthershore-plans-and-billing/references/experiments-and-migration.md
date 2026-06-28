@@ -11,7 +11,7 @@ promote it (it becomes the new ACTIVE; the old one starts PHASING_OUT) or roll
 it back (it's archived; affected subscribers return to the parent).
 
 **Preferred path (code):** express/adjust the variant in
-`product/product.config.ts` and push. The platform schedules the transition.
+`business/business.config.ts` and push. The platform schedules the transition.
 Subscribers already on the variant's price feel no change on promotion.
 
 **Emergency path (API/CLI):** when a variant is actively hurting revenue and you
