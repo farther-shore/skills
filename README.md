@@ -75,7 +75,7 @@ return the compatible skill set:
 farthershore skills recommend --format json
 SKILLS_CMD=$(farthershore skills recommend --format json | jq -r '.data.recommendation.command')
 eval "$SKILLS_CMD"
-npx --yes skills update -g -y
+# The returned command uses npx skills and pins skill files to this repo's detected SDK versions.
 ```
 
 The recommendation is disjoint per SDK. A repo on
