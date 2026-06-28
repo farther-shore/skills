@@ -76,6 +76,9 @@ farthershore skills recommend --format json
 SKILLS_CMD=$(farthershore skills recommend --format json | jq -r '.data.recommendation.command')
 eval "$SKILLS_CMD"
 # The returned command uses npx skills and pins skill files to this repo's detected SDK versions.
+
+# When only one SDK changed, use that SDK's track command:
+farthershore skills recommend --format json | jq -r '.data.recommendation.tracks[] | "\(.packageName) -> \(.command)"'
 ```
 
 The recommendation is disjoint per SDK. A repo on
