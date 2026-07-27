@@ -22,7 +22,7 @@ Every change is one of two kinds. Using the wrong surface fails every time.
 
 | Kind         | What it covers                                                                                                                     | How you change it                                                                                                                                       |
 | ------------ | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **contract** | Anything that defines the business: plans, pricing, meters, routes, features, limits, capabilities, policies                       | **Edit `business/business.config.ts` and push.** The CLI/MCP/API will **refuse** these writes once the business is live (you'll see `MANAGED_BY_CODE`). |
+| **contract** | Anything that defines the business: plans, pricing, meters, routes, features, limits, capabilities, policies                       | **Edit the `business/` program and push.** The CLI/MCP/API will **refuse** these writes once the business is live (you'll see `MANAGED_BY_CODE`). |
 | **operate**  | Runtime actions with no code representation: frontend deploys/rollbacks, runtime tokens, test personas, environments, brand fields | **Imperative** via the `farthershore` CLI or the matching MCP tool.                                                                                     |
 
 > If you ever try to change a price, plan, route, or limit through the API/CLI
@@ -63,17 +63,19 @@ skills are the portable _how_; the repo's `AGENTS.md` is the local _what_.
 
 ## Where to go next
 
-| If you're…                                                         | Load                                                                                           |
-| ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
-| setting up auth, connecting GitHub/Stripe, or creating a business  | [farthershore-onboarding](../farthershore-onboarding/SKILL.md)                                 |
-| deciding which SDK-specific skills match this repo                 | run `farthershore skills recommend --format json`, then load the recommended skill files       |
-| coordinating Business, Frontend, and Backend SDK work              | [farthershore-sdk-operating-model](../farthershore-sdk-operating-model/SKILL.md)               |
-| defining or changing business structure (routes, features, limits) | [farthershore-product-as-code](../farthershore-product-as-code/SKILL.md)                       |
-| changing pricing, plans, grants, or running price experiments      | [farthershore-plans-and-billing](../farthershore-plans-and-billing/SKILL.md)                   |
-| creating preview environments or releasing to production           | [farthershore-environments-and-releasing](../farthershore-environments-and-releasing/SKILL.md) |
-| deploying, checking, or rolling back the hosted frontend           | [farthershore-frontend-hosting](../farthershore-frontend-hosting/SKILL.md)                     |
-| wiring a backend or managing runtime/maker tokens                  | [farthershore-backends-and-tokens](../farthershore-backends-and-tokens/SKILL.md)               |
-| monitoring a live business or deciding whether to escalate         | [farthershore-operating-and-escalation](../farthershore-operating-and-escalation/SKILL.md)     |
+| If you're…                                                          | Load                                                                                           |
+| ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| **taking a business from nothing to a live, callable URL**          | [farthershore-quickstart](../farthershore-quickstart/SKILL.md) — **start here**                |
+| writing or editing the `business/` program (routes, groups, verbs)  | [farthershore-business-sdk](../farthershore-business-sdk/SKILL.md)                             |
+| designing pricing, plans, limits, or usage-based metering           | [farthershore-plans-and-metering](../farthershore-plans-and-metering/SKILL.md)                 |
+| creating preview environments or releasing to production            | [farthershore-environments-and-releasing](../farthershore-environments-and-releasing/SKILL.md) |
+| wiring the upstream API, or managing runtime / maker tokens         | [farthershore-backends-and-tokens](../farthershore-backends-and-tokens/SKILL.md)               |
+| deploying, checking, or rolling back the hosted frontend            | [farthershore-frontend-hosting](../farthershore-frontend-hosting/SKILL.md)                     |
+| monitoring a live business or deciding whether to escalate          | [farthershore-operating-and-escalation](../farthershore-operating-and-escalation/SKILL.md)     |
+
+Check the SDK versions the repo actually pins (`business/package.json`) before
+trusting any example — `farthershore skills recommend --format json` reports
+compatibility.
 
 ## Conventions that hold everywhere
 

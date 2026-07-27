@@ -39,18 +39,14 @@ posture) and routes you to the right domain skill.
 
 | Skill                                                                                                | Load when…                                                                                      |
 | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| [`farthershore-overview`](skills/farthershore-overview/SKILL.md)                                     | **first** — mental model, contract/operate boundary, autonomy posture, router                   |
-| [`farthershore-onboarding`](skills/farthershore-onboarding/SKILL.md)                                 | authenticating, connecting GitHub/Stripe, creating/scaffolding a business, first deploy         |
-| [`farthershore-sdk-operating-model`](skills/farthershore-sdk-operating-model/SKILL.md)               | deciding how the Business, Frontend, and Backend SDKs work together                             |
-| [`farthershore-business-sdk-0-1`](skills/farthershore-business-sdk-0-1/SKILL.md)                     | editing a repo on `@farthershore/business` `0.1.x`                                              |
-| [`farthershore-frontend-sdk-0-8`](skills/farthershore-frontend-sdk-0-8/SKILL.md)                     | editing a repo on `@farthershore/farthershore-js` `0.8.x`                                       |
-| [`farthershore-backend-sdk-0-8`](skills/farthershore-backend-sdk-0-8/SKILL.md)                       | editing a backend on `@farthershore/backend` `0.8.x`                                            |
-| [`farthershore-product-as-code`](skills/farthershore-product-as-code/SKILL.md)                       | defining/changing product structure — routes, features, meters, limits (contract; via the repo) |
-| [`farthershore-plans-and-billing`](skills/farthershore-plans-and-billing/SKILL.md)                   | changing pricing, plans, grants, trials, meters; price experiments; subscriber migration        |
-| [`farthershore-environments-and-releasing`](skills/farthershore-environments-and-releasing/SKILL.md) | preview environments and the production release gate                                            |
-| [`farthershore-frontend-hosting`](skills/farthershore-frontend-hosting/SKILL.md)                     | deploy / status / rollback of the managed frontend (operate)                                    |
-| [`farthershore-backends-and-tokens`](skills/farthershore-backends-and-tokens/SKILL.md)               | bring-your-own backends, runtime tokens (`fsrt_`), maker tokens (operate)                       |
-| [`farthershore-operating-and-escalation`](skills/farthershore-operating-and-escalation/SKILL.md)     | monitoring a live business; deciding what to fix vs escalate                                    |
+| [`farthershore-overview`](skills/farthershore-overview/SKILL.md)                                     | **first** — mental model, contract/operate boundary, autonomy posture, router                  |
+| [`farthershore-quickstart`](skills/farthershore-quickstart/SKILL.md)                                 | **zero to a live, callable business** with only the CLI and a token — the ordered path + traps |
+| [`farthershore-business-sdk`](skills/farthershore-business-sdk/SKILL.md)                             | writing the `business/` program — the 15 verbs, branded refs, folder discovery, sealing        |
+| [`farthershore-plans-and-metering`](skills/farthershore-plans-and-metering/SKILL.md)                  | plan shapes, rate limits vs meters, per-unit and tiered pricing, making a meter actually bill  |
+| [`farthershore-environments-and-releasing`](skills/farthershore-environments-and-releasing/SKILL.md) | preview environments, the DRAFT→live release gate, reading the apply timeline                  |
+| [`farthershore-backends-and-tokens`](skills/farthershore-backends-and-tokens/SKILL.md)               | the upstream API, environment-scoped backends, runtime tokens (`fsrt_`), maker tokens          |
+| [`farthershore-frontend-hosting`](skills/farthershore-frontend-hosting/SKILL.md)                     | deploy / status / rollback of the managed frontend (operate)                                   |
+| [`farthershore-operating-and-escalation`](skills/farthershore-operating-and-escalation/SKILL.md)     | monitoring a live business; deciding what to fix vs escalate                                   |
 
 ---
 
@@ -82,7 +78,7 @@ farthershore skills recommend --format json | jq -r '.data.recommendation.tracks
 ```
 
 The recommendation is disjoint per SDK. A repo on
-`@farthershore/business@0.1.x` and `@farthershore/farthershore-js@0.8.x` gets the
+the pinned SDK versions get the
 matching Business SDK and Frontend SDK skills independently; one SDK can move
 without forcing the other.
 
