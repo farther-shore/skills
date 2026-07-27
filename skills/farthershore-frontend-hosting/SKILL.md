@@ -8,7 +8,7 @@ metadata:
 # Frontend hosting
 
 The business's hosted frontend is **operate** state — you act on it directly with
-the CLI/MCP, not through `business/business.config.ts`. Read
+the CLI/MCP, not through the `business/` program. Read
 [farthershore-overview](../farthershore-overview/SKILL.md) first.
 
 ## Commands
