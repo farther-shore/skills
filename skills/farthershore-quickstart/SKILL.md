@@ -121,11 +121,17 @@ farthershore apply-timeline list <businessId> --format json
 ### 5. Cut a GitHub Release on the business repo
 
 ```bash
-gh release create v0.1.0 --repo <owner>/<repo> --target main \
+gh release create v0.1.0 --repo <owner>/<repo> --target "$(git rev-parse HEAD)" \
   --title "v0.1.0" --notes "First contractual release."
 ```
 
 A **tag alone is not enough** — it must be a published Release.
+
+> **`--target` must be a COMMIT SHA, not a branch name.** GitHub records whatever
+> you pass, so `--target main` stores the literal string `"main"`. The platform
+> compares the release's commit against the one it is publishing, and a branch
+> name can never equal a SHA — the next `business publish` then fails with
+> *"already exists at commit \"main\", which differs from the requested …"*.
 
 **Success signal:** `farthershore plan list <businessId>` now returns
 `count > 0`. Plans only exist after a release is accepted — this step is
