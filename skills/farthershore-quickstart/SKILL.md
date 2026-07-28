@@ -72,10 +72,18 @@ for pricing.
 
 ### 3. Validate locally, before pushing
 
+Install the folder's dependencies FIRST — `validate` shells out to
+`business/node_modules/.bin/farthershore-manifest-build`:
+
 ```bash
+(cd business && npm install)
 farthershore validate --format json     # runs exactly what the PR check runs
 farthershore build --format json        # compiles business/ → Manifest IR
 ```
+
+Skipping the install fails with `spawn … farthershore-manifest-build ENOENT`.
+Older CLIs answered that with "Fix your business/ program" — misleading, the
+program is fine. Current CLIs name the real cause.
 
 **Success signal:** `ok: true`.
 
@@ -114,7 +122,16 @@ gh release create v0.1.0 --repo <owner>/<repo> --target main \
 A **tag alone is not enough** — it must be a published Release.
 
 **Success signal:** `farthershore plan list <businessId>` now returns
-`count > 0`. Plans only exist after a release is accepted.
+`count > 0`. Plans only exist after a release is accepted — this step is
+genuinely required, not optional: a business pushed to `main` with no release
+sits at zero plans indefinitely, and `publish` refuses without one.
+
+**Versions:** repo provisioning cuts `v0.0.0`, an ignored bootstrap — never a
+real release. The `v0.1.0` you cut here is the one that goes live: `publish`
+ADOPTS it on a first publish rather than bumping past it, so a product's first
+live version is `v0.1.0`. Every later publish bumps normally. (On core older
+than 2026-07-28 the first publish bumped to `v0.1.1`, which read like a bugfix
+release for software that had never run.)
 
 ### 6. Attach a backend
 
@@ -188,8 +205,11 @@ farthershore persona bootstrap <businessId> --env test --plan <planKey> --format
 > there is no apply and `persona bootstrap` fails with a 500. Push again after
 > creating the env.
 
-> **Trap 6 — backends are environment-scoped.** A backend created without
-> `--env` serves production only. Calling an env host without an env-scoped
+> **Trap 6 — BACKENDS are environment-scoped (runtime TOKENS need not be).**
+> A backend created without `--env` serves production only. The runtime token is
+> a separate question: a business-scoped token serves every environment from one
+> deployment (backend SDK ≥ 0.19.0) — see
+> [farthershore-backends-and-tokens](../farthershore-backends-and-tokens/SKILL.md). Calling an env host without an env-scoped
 > backend returns **503 `origin_unavailable`** even though auth and grants
 > passed. `backend bind` will not help: it looks for a backend already *in* that
 > environment and 404s.

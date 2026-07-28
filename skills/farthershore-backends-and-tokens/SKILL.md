@@ -98,8 +98,23 @@ token **before** hunting for a metering bug.
 
 **Corollary:** one upstream can sign for only **one** backend scope at a time,
 because `FS_RUNTIME_TOKEN` is a single value. Sharing one deployment across two
-businesses — or across production and an environment — means only the currently
-set token verifies. Give each scope its own deployment.
+**businesses** means only the currently set token verifies — give each business
+its own deployment.
+
+**Environments are no longer part of that corollary** (needs `@farthershore/backend`
+**≥ 0.19.0**). A BUSINESS-scoped token — what `backend tokens create <biz>` mints
+when you pass no `--env` — serves **every** environment from one deployment.
+Bootstrap returns `backendIds` and the SDK checks the gateway's signed backend id
+for MEMBERSHIP of that set. Both scopes remain available on purpose:
+
+| Command | Serves |
+| --- | --- |
+| `backend tokens create <biz>` | **every environment** (one deployment) |
+| `backend tokens create <biz> --env test` | **that environment only** |
+
+Pin with `--env` when you want the guarantee that a CI or preview token cannot
+touch production. Otherwise take the default — on an older SDK it silently
+degrades to production-only, which surfaces as `401 route_mismatch` on env hosts.
 
 ## Maker tokens (`mk_`)
 
@@ -124,6 +139,8 @@ Each row is a different layer — work down it.
 | `401` + `x-fs-decision-id` | Gateway serving the business; no/invalid key | Use a valid `fsk_` key |
 | `403 route_not_enabled` | Key fine; plan does not grant that route | Grant it in `business/`, release |
 | `503 origin_unavailable` | Auth + grants passed; **no origin for this scope** | Create a backend for **this environment** |
+| `522` (Cloudflare HTML) | Origin is on the platform's OWN Cloudflare zone, so the gateway's forward loops | Point the backend at the origin's direct host (e.g. its `*.up.railway.app` URL), not a `*.farthershore*.com` one |
+| `401 route_mismatch` | Signed business/backend/route id is not one this deployment serves | Usually a token scoped to a DIFFERENT environment — see cross-environment tokens above |
 | `404` from your app | Gateway forwarded; upstream lacks the path | Route declared but not implemented |
 | Requests metered, custom dims missing | Signed report not verifying | Wrong/missing `FS_RUNTIME_TOKEN` |
 | No `x-fs-decision-id` at all | You are not hitting the gateway | Check the host |

@@ -102,12 +102,33 @@ declare inside a lazily-evaluated callback.
 | `fs.plan(id, opts)` | `PlanRef` | `{ name, price, grants, limits, meters, description }`. |
 | `fs.money.usd(n).monthly()` | price | Also `.yearly()`. `n` is **major units** (dollars). |
 | `fs.free()` | price | A free plan still needs a hard limit. |
-| `fs.resource(id, opts?)` | `ResourceRef` | Counted resources (seats, projects). |
+| `fs.resource(id, opts?)` | `ResourceRef` | Counted resources. Cap it with `ref.max(n)` **inside `limits[]`** — see below. |
 | `fs.backend(id, opts?)` | `BackendRef` | Declare a logical upstream. |
 | `fs.frontendIntegration(id, opts)` | ref | Edge-injected third-party credentials. |
 | `fs.rbac(enabled?)` | `void` | Turn on Managed RBAC. |
 | `fs.surfaces` / `fs.scope` | — | Route audience + scoping. |
 | `fs.business(opts?)` | sealed | **Last statement. Default-export it.** |
+
+## Counted resources are a LIMIT, not a plan field
+
+`fs.resource()` returns a ref whose `.max(n)` builds a limit. It goes in
+`limits[]` alongside rate limits — there is no `resourceLimits` plan option, and
+passing one fails the build with `unsupported option "resourceLimits"`.
+
+```ts
+const seats = fs.resource("seats", { display: "Seats" });
+
+fs.plan("team", {
+  name: "Team",
+  price: fs.money.usd(99).monthly(),
+  grants: [everything],
+  limits: [requests.perMinute(1_200), seats.max(10)],   // ← both are limits
+});
+```
+
+The primitive is a GENERIC counted resource — there is nothing seat-specific in
+the SDK. "Seats" is just an id. A flat price plus a cap gives seat-style
+packaging without per-seat pricing; the price does not scale with the count.
 
 ## The mistake that costs a release cycle
 
