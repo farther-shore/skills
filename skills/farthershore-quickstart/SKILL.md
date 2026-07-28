@@ -66,6 +66,12 @@ See [farthershore-business-sdk](../farthershore-business-sdk/SKILL.md) for the
 verbs and [farthershore-plans-and-metering](../farthershore-plans-and-metering/SKILL.md)
 for pricing.
 
+The repo also scaffolds a `frontend/`. That starter portal exists so the business
+is usable on day one — it is NOT the application you must ship. See
+[farthershore-building-uis](../farthershore-building-uis/SKILL.md): you compose
+managed components into whatever product the user asked for, and you own the
+layout entirely.
+
 > **Trap 2 — declare only routes your upstream actually serves.** A route
 > declared here that the backend does not implement is a 404 the gateway will
 > happily authorize and meter. Check the upstream first.

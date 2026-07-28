@@ -86,3 +86,11 @@ compatibility.
   — treat it as a **confirm** action.
 - Run `farthershore <command> --help` to see the exact, current flags before
   composing a call. The surface evolves; the `--help` output is authoritative.
+
+## Building the application
+
+The platform's goal is **any SaaS that needs plans and metering** — not API
+products. The scaffolded portal is ONE example, never the shape your application
+must take. Read
+[farthershore-building-uis](../farthershore-building-uis/SKILL.md) before you
+build any customer-facing surface.
