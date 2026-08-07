@@ -10,12 +10,16 @@ name: Validate skills
 on:
   push:
     paths:
+      - "README.md"
+      - "CONTRIBUTING.md"
       - "skills/**"
       - ".claude-plugin/**"
       - "scripts/**"
       - ".github/workflows/validate-skills.yml"
   pull_request:
     paths:
+      - "README.md"
+      - "CONTRIBUTING.md"
       - "skills/**"
       - ".claude-plugin/**"
       - "scripts/**"

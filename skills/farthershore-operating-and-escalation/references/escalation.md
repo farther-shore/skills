@@ -17,7 +17,6 @@ worse.
 | Valid API keys rejected across the board; auth failing platform-wide            | platform           | **escalate**                                                               |
 | Usage/metering not recording despite real traffic                               | platform           | **escalate**                                                               |
 | Errors across _multiple_ products at once                                       | platform           | **escalate**                                                               |
-| Stripe connection shows revoked/restricted                                      | human (re-onboard) | **escalate** to the user                                                   |
 
 ## Step 2 — if it's yours
 

@@ -1,8 +1,6 @@
 ---
 name: farthershore-operating-and-escalation
-description: Use when monitoring a live FartherShore business, checking its health, investigating a problem, or deciding whether something is yours to fix versus a platform-side issue to escalate. Defines the recurring operate loop, the builder-observable health signals, and the hard line on what an agent must NOT try to fix.
-metadata:
-  version: 1.1.0
+description: Use when monitoring a FartherShore business, investigating degraded health, or deciding whether to escalate a platform-side issue.
 ---
 
 # Operating a live business & knowing when to escalate
@@ -53,7 +51,7 @@ the full decision tree. The short version:
 
 - A bad frontend release → roll back (auto).
 - A compromised/expired runtime token → rotate (auto; see backends skill).
-- A bad product/contract change you pushed → revert the manifest + release
+- A bad business-structure change you pushed → revert `business/` + release
   (confirm).
 - A misconfigured plan you authored → correct in code + release (confirm).
 

@@ -1,15 +1,14 @@
 ---
 name: farthershore-backends-and-tokens
-description: Use when connecting a business to the API it fronts — creating backends (production vs environment-scoped), minting and rotating runtime tokens (fsrt_) and maker tokens (mk_), wiring FS_RUNTIME_TOKEN so signed usage reports verify, and diagnosing a call that authorizes but never reaches your API. Load when the task mentions upstream, origin, backend, runtime token, signed metering, or 503 origin_unavailable.
-metadata:
-  version: 2.0.0
+description: Use when operating backends or runtime tokens, wiring signed metering, or diagnosing `origin_unavailable`.
 ---
 
 # Backends and tokens
 
-A **backend** is the upstream the gateway forwards to. A **runtime token**
-(`fsrt_`) is how that upstream proves its usage reports are genuine. Both are
-**operate** state — imperative, via the CLI. Read
+A logical backend and its route relationships are repository-owned business
+structure. Environment-specific origin bindings and runtime secrets have no
+code representation and are operated through the CLI. A **runtime token**
+(`fsrt_`) is how an upstream proves its usage reports are genuine. Read
 [farthershore-overview](../farthershore-overview/SKILL.md) first.
 
 ## Backends are environment-scoped
@@ -115,20 +114,6 @@ for MEMBERSHIP of that set. Both scopes remain available on purpose:
 Pin with `--env` when you want the guarantee that a CI or preview token cannot
 touch production. Otherwise take the default — on an older SDK it silently
 degrades to production-only, which surfaces as `401 route_mismatch` on env hosts.
-
-## Maker tokens (`mk_`)
-
-Your own credential for the CLI.
-
-```bash
-farthershore token list   --format json
-farthershore token create --name <label> --scope <scopes...> [--business <id>]
-farthershore token revoke <tokenId> --yes
-```
-
-Also one-time secrets. Prefer least privilege: business-scoped with only the
-scopes the task needs, over broad org-wide tokens. Pass via
-`FARTHERSHORE_TOKEN`, never `--token` (argv is world-readable).
 
 ## Diagnosing a call that never reaches your API
 

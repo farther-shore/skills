@@ -1,39 +1,25 @@
-# Price experiments & subscriber migration (reference)
+# Plan change safety reference
 
-All of this has direct revenue impact. Treat every step as **confirm** — get
-human sign-off first.
+Plan changes can affect revenue and subscribers. Treat them as **confirm**
+actions.
 
-## A/B price experiments (variants)
+## Ownership
 
-A variant is an `EXPERIMENTAL` alternative to an `ACTIVE` plan, rolled out to a
-fraction of new subscribers (sticky assignment). You evaluate it, then either
-promote it (it becomes the new ACTIVE; the old one starts PHASING_OUT) or roll
-it back (it's archived; affected subscribers return to the parent).
+Plans, variants, prices, grants, limits, and meters are repository-owned. Make
+the complete change in `business/`, run `farthershore build`, push it, and
+inspect the GitHub checks. Never use a CLI or API write as a second contract
+editing surface.
 
-**Preferred path (code):** express/adjust the variant in
-the `business/` program and push. The platform schedules the transition.
-Subscribers already on the variant's price feel no change on promotion.
+## Before releasing
 
-**Emergency path (API/CLI):** when a variant is actively hurting revenue and you
-need it gone immediately, use the imperative experimental promote/rollback
-operation, then run the follow-up subscriber migration if the response says one
-is required. Run the relevant `farthershore plan ... --help` to see the exact
-command and flags. After a transition there is a brief window (≈ a couple of
-seconds) where cached entitlements may be stale.
+1. Identify which subscribers and environments the change can affect.
+2. Compare current and proposed pricing, grants, limits, and meters.
+3. Decide how to reverse the repository change.
+4. Test on the repository's preview path when available.
+5. Present the exact pushed commit and impact to the human.
+6. Release only after explicit approval and passing GitHub checks.
 
-## Migrating subscribers between plans
-
-Some plan changes leave subscribers pinned to an old plan/version that won't
-migrate on its own (e.g. a frozen legacy plan). Moving them is an explicit
-operation — `farthershore plan migrate …` (check `--help` for the current
-signature: source/target version, migration policy). This is **confirm**:
-state which subscribers move, from what to what, and when they're billed.
-
-## Decision checklist before any of this
-
-1. How many subscribers are affected, and what do they pay now vs after?
-2. Is the change reversible, and how?
-3. Does it require Stripe to be connected/verified?
-4. Have you presented this to the human and gotten an explicit yes?
-
-If you can't answer all four, stop and ask.
+If subscriber movement requires an operation with no code representation, read
+the current CLI help, describe the affected population and billing timing, and
+request confirmation before running it. Do not use that operation to redefine
+the plan itself.

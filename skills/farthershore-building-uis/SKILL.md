@@ -1,8 +1,6 @@
 ---
 name: farthershore-building-uis
-description: Use when building the customer-facing application for a FartherShore business — the managed React components (auth, plans, checkout, API keys, usage, billing, docs), what each one guarantees so you never rebuild it, and the rule that matters most — the scaffolded template is ONE example, not the product. Load whenever the task is "build the UI", "make a SaaS app", "design the dashboard/portal", or you are about to accept the starter layout as the answer.
-metadata:
-  version: 1.0.0
+description: Use when building customer-facing application surfaces for a FartherShore business.
 ---
 
 # Building the application
@@ -35,20 +33,12 @@ Concretely, all of these are the same primitives with different applications:
 
 None of them should look like a developer portal.
 
-## The rule that matters most
+## Start from the requested product
 
-> **The scaffolded template is ONE example, not the product.**
-
-A new business scaffolds with a working portal. That exists so a business is
-callable on day one, not because it is the shape your application should take.
-You are **free to delete all of it** and build whatever the user actually asked
-for.
-
-This matters because it is the single most common failure: an agent scaffolds,
-sees a Dashboard/Usage/API-Keys/Billing sidebar, and treats that as the answer.
-It then ships the same app every other builder shipped. **Every API product
-looking identical is the problem this platform exists to solve** — do not
-reintroduce it.
+Design the application from the user's goals and primary objects. Do not infer a
+default information architecture from the platform. A Dashboard/Usage/API
+Keys/Billing sidebar is not a product brief, and repeated generic layouts are
+not a substitute for product design.
 
 So:
 
@@ -124,7 +114,7 @@ no-op the user can only discover by clicking.
 
 ## Do not
 
-- Treat the starter layout as a requirement, or ship it barely modified.
+- Infer the product's layout from generic platform controls.
 - Rebuild auth, key minting, usage math, or billing — you will get them subtly
   wrong, and they are the parts that cost real money.
 - Hand-type a price. It will drift from the compiled plan that is actually

@@ -1,26 +1,20 @@
 ---
 name: farthershore-business-sdk
-description: Use when writing or editing the `business/` program — the 15 functional verbs of @farthershore/business, the branded-ref model that makes cross-references compile-time checked, folder discovery and registry sealing, and the authoring mistakes that only fail at build time. Load whenever you open a file under business/, see `import * as fs from "@farthershore/business"`, or need to add a route, plan, meter, group, or backend.
-metadata:
-  version: 2.0.0
+description: Use when writing or editing a `business/` program with `@farthershore/business`.
 ---
 
 # The Business-as-Code authoring surface
 
 `@farthershore/business` compiles a TypeScript program into a deterministic
-**Manifest IR**. The platform consumes the IR — never your source. What you
-write here IS the contract: plans, prices, routes, limits.
+contract artifact. What you write here is the business structure: routes,
+features, plans, pricing, meters, limits, policies, and surfaces.
 
 **Current: 1.2.0.** Check the repo's `business/package.json` pin; behaviour
 differs across majors and the pin is what the build actually uses.
 
-## There are no decorators
+## Functional authoring surface
 
-Decorators and the `define*` helpers were **deleted in 1.0.0**. There is no
-`@Business` class and no `experimentalDecorators` anywhere. If you find a
-snippet using them, it predates 1.0.0 — discard it.
-
-The surface is **15 functional verbs**:
+Use the current functional surface of **15 verbs**:
 
 `business` · `route` · `plan` · `meter` · `requests` · `meterRoutes` ·
 `resource` · `backend` · `frontendIntegration` · `group` · `rbac` ·
@@ -59,9 +53,9 @@ export default fs.business({
 });
 ```
 
-Note what is NOT here: no display name, no description, no icon. **Presentation
-is platform-owned** — set it with `farthershore business update`. It does not
-belong in the repo.
+Only put fields accepted by the pinned SDK in `business/`. For a platform
+operation with no code representation, confirm the current CLI surface with
+`farthershore <command> --help`.
 
 ## Refs, not strings
 
@@ -176,9 +170,8 @@ filesystem order in the program. Same source must produce identical bytes.
 ## Before you push
 
 ```bash
-farthershore validate --format json   # exactly what the PR check runs
 farthershore build --format json
 ```
 
-`fs.business()` constructing successfully is a weaker guarantee than `validate`
-— build-completeness rules live in the build worker, not in the constructor.
+`fs.business()` constructing successfully is a weaker guarantee than the build;
+build-completeness rules do not all live in the constructor.

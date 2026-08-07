@@ -1,8 +1,6 @@
 ---
 name: farthershore-plans-and-metering
-description: Use when designing or changing what a business sells — plan shapes (free, flat, pay-as-you-go, hybrid), rate limits vs meters as the two controls on consumption, per-unit and tiered pricing, and the wiring a metered dimension needs before it will ever bill. Load when the task mentions pricing, plans, tiers, limits, quotas, usage-based billing, tokens, or "charge per".
-metadata:
-  version: 2.0.0
+description: Use when designing or changing plans, pricing, limits, quotas, or usage-based metering for a FartherShore business.
 ---
 
 # Plans, limits, and metering
@@ -157,3 +155,5 @@ farthershore plan diff <businessId> --format json
 
 Read [farthershore-environments-and-releasing](../farthershore-environments-and-releasing/SKILL.md)
 for how a change reaches existing customers.
+Before a subscriber-impacting plan release, read the
+[plan change safety reference](references/experiments-and-migration.md).

@@ -1,8 +1,6 @@
 ---
 name: farthershore-environments-and-releasing
-description: Use when creating preview environments, testing a change before production, or shipping to production on FartherShore — the branch→environment mapping, the ordering that makes an environment actually apply, the DRAFT-vs-live release gate, and how the apply-timeline phases tell you where a change stalled. Production releases are confirm-gated.
-metadata:
-  version: 2.0.0
+description: Use when testing a FartherShore change in an environment or releasing it to production.
 ---
 
 # Environments and releasing
@@ -17,8 +15,8 @@ How a change goes from a branch to live. Read
   its own subdomain, its own plans, and its **own backend**. Pushing `business/`
   changes there compiles and publishes to that environment — no release gate.
   This is where you test.
-- **`main`** is the production source. Pushing to `main` compiles and validates
-  but does **not** publish to production on its own.
+- **`main`** is the production source. Follow the repository's release rules;
+  do not assume that a push alone publishes to production.
 
 Confirm the business's exact branch prefix in its `AGENTS.md` — it can be
 customised.
@@ -49,23 +47,12 @@ farthershore backend create <biz> --env test --name "… (test)" --slug …-test
 **Success signal:** `apply-timeline list <biz>` shows an entry with
 `branch: env/test` at `status: applied`.
 
-## DRAFT vs live: the release gate
+## Production release gate
 
-A **DRAFT** business defers every apply. You will see `status: "deferred"` with
-`accept` and `edgePublish` **skipped**. That is correct behaviour, not a
-failure — do not debug it.
-
-To take a DRAFT business live, in this order:
-
-1. **Cut a GitHub Release** on the business repo (`gh release create v0.1.0`).
-   A bare tag is **not** enough; it must be a published Release. Plans only
-   exist after a release is accepted — check `plan list` returns `count > 0`.
-2. **Attach a backend** (publish refuses without one).
-3. `farthershore business publish <biz>` → `status: ACTIVE`.
-4. Poll `business status` until `"live": true`.
-
-After that, `main` still never auto-deploys: each production change is another
-Release.
+Production release is confirm-gated. Read `AGENTS.md`, present the exact commit
+and business changes, and get approval before following the repository's release
+procedure. A local build is not release evidence: inspect the GitHub checks for
+the pushed commit and require them to pass.
 
 ## Reading the apply timeline
 
@@ -85,25 +72,21 @@ tells you where to look:
 | `compile` | the platform turning IR into edge config |
 | `accept` / `edgePublish` | the release/publish path, not your code |
 
-`deferred` with everything skipped is not a failure — it is a DRAFT business
-waiting for a release.
-
 ## The preview → production flow
 
 1. Change `business/` on an `env/<name>` branch; push.
 2. It applies to that environment. Test with a persona key —
    [farthershore-operating-and-escalation](../farthershore-operating-and-escalation/SKILL.md).
 3. Merge to `main`.
-4. **Cut a production Release** to publish it.
+4. Inspect the GitHub checks and follow the approved production release procedure
+   from `AGENTS.md`.
 
 ## Rollback
 
 - **Frontend** — roll back to a prior release:
   [farthershore-frontend-hosting](../farthershore-frontend-hosting/SKILL.md).
-- **Contract** — revert the change in the repo and release again. The forward
-  path in reverse. There is no out-of-band API to rewrite contract state, by
-  design: subscribers are pinned to compiled plans and the platform owns how
-  they move.
+- **Business structure** — revert the change in the repo and release again. There
+  is no out-of-band contract-write path.
 
 Before shipping a plan change, preview who moves:
 
