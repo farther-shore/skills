@@ -19,7 +19,37 @@ editing surface.
 5. Present the exact pushed commit and impact to the human.
 6. Release only after explicit approval and passing GitHub checks.
 
-If subscriber movement requires an operation with no code representation, read
-the current CLI help, describe the affected population and billing timing, and
-request confirmation before running it. Do not use that operation to redefine
-the plan itself.
+## Migrate subscribers between released versions
+
+Subscriber migration changes live subscription state; it does not redefine a
+plan. Use this operate workflow only after both source and target versions were
+created from repository changes and released.
+
+1. Inspect the current signature and policies:
+
+   ```bash
+   farthershore plan migrate --help
+   ```
+
+2. Identify the business, plan key, source and target versions, affected
+   subscribers, timing policy, and any proration impact. Supported policies are
+   `next_renewal`, `immediate`, `by_date`, and `opt_in`; `by_date` also requires
+   `--complete-by <iso8601>`, while `--proration none|prorate|credit` is
+   optional where relevant.
+3. Present that exact impact and command to the human and obtain explicit
+   approval. The command has no interactive confirmation or `--yes` flag, so
+   human approval is the confirmation gate.
+4. Run the approved command:
+
+   ```bash
+   farthershore plan migrate <business> <plan-key> --from <version> --to <version|head> --policy <policy> --format json
+   ```
+
+5. Require `ok: true`, then record `data.migration.status`. A created batch also
+   returns `batchId` and `transitionsScheduled`; status is `PENDING`, `RUNNING`,
+   or `COMPLETED`. `SKIPPED` means no migration batch was created and includes a
+   reason. The CLI currently exposes scheduling status in this response, not a
+   separate migration-status command; do not invent a polling command.
+
+This verb is only for moving subscribers between released plan versions. Plan
+shape, pricing, grants, limits, and meters remain repository-owned.

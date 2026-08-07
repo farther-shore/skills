@@ -94,7 +94,7 @@ const forbiddenGuidance = [
   [/\bmaker[- ]tokens?\b|\bmk_[A-Za-z0-9_]*|FARTHERSHORE_TOKEN/i, "maker-token setup"],
   [/(?:GitHub|Stripe)\s+connect|connect(?:ing)?\s+(?:GitHub|Stripe)/i, "GitHub or Stripe connection setup"],
   [/farthershore\s+business\s+create\s+--/i, "obsolete flag-based business creation"],
-  [/farthershore\s+business\s+update|farthershore\s+plan\s+(?:create|update|delete|migrate|promote|rollback)/i, "CLI contract mutation"],
+  [/farthershore\s+business\s+update|farthershore\s+plan\s+(?:create|update|delete|promote|rollback)/i, "CLI contract mutation"],
 ];
 
 for (const file of guidanceFiles) {
@@ -117,6 +117,35 @@ if (!readme.includes(bundleInstall)) errors.push(`README.md: missing bundle inst
 const installCommands = [...readme.matchAll(/^\s*npx skills add\s+(.+)$/gm)].map((match) => match[0].trim());
 if (installCommands.some((command) => command !== bundleInstall)) {
   errors.push("README.md: all npx skills install guidance must use the tag-pinned whole-bundle command");
+}
+
+const businessSdk = readFileSync(join(skillsDir, "farthershore-business-sdk", "SKILL.md"), "utf8");
+const plansAndMetering = readFileSync(
+  join(skillsDir, "farthershore-plans-and-metering", "SKILL.md"),
+  "utf8",
+);
+const migrationReference = readFileSync(
+  join(skillsDir, "farthershore-plans-and-metering", "references", "experiments-and-migration.md"),
+  "utf8",
+);
+
+if (!businessSdk.includes("**Current: 2.0.0.**")) {
+  errors.push("farthershore-business-sdk: must identify SDK 2.0.0 as current");
+}
+if (/auto[- ]?attach/i.test(businessSdk) || /auto[- ]?attach/i.test(plansAndMetering)) {
+  errors.push("business SDK guidance: SDK 2.0 meters must never be described as auto-attached");
+}
+if (!/fs\.meterRoutes\(everything,\s*\{\s*costs:\s*\[requests\.fixed\(1\)\]\s*\}\);/s.test(businessSdk)) {
+  errors.push("farthershore-business-sdk: primary example must attach requests.fixed(1) as a route cost");
+}
+if (!/fs\.meterRoutes\(publicRoutes,\s*\{\s*costs:\s*\[requests\.fixed\(1\)\]\s*\}\);/s.test(plansAndMetering)) {
+  errors.push("farthershore-plans-and-metering: free-plan example must attach requests.fixed(1) as a route cost");
+}
+if (!migrationReference.includes("farthershore plan migrate <business> <plan-key> --from <version> --to <version|head> --policy <policy> --format json")) {
+  errors.push("plan change reference: missing exact subscriber migration command");
+}
+if (!migrationReference.includes("data.migration.status")) {
+  errors.push("plan change reference: missing migration response status guidance");
 }
 
 // 3. marketplace.json

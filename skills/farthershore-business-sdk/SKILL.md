@@ -9,7 +9,7 @@ description: Use when writing or editing a `business/` program with `@farthersho
 contract artifact. What you write here is the business structure: routes,
 features, plans, pricing, meters, limits, policies, and surfaces.
 
-**Current: 1.2.0.** Check the repo's `business/package.json` pin; behaviour
+**Current: 2.0.0.** Check the repo's `business/package.json` pin; behaviour
 differs across majors and the pin is what the build actually uses.
 
 ## Functional authoring surface
@@ -30,6 +30,8 @@ const requests = fs.requests();
 const echo = fs.route("/v1/echo", { get: {}, post: {} });
 const cost = fs.route("/v1/cost", { get: {} });
 const everything = fs.group("everything", [echo, cost]);
+
+fs.meterRoutes(everything, { costs: [requests.fixed(1)] });
 
 fs.plan("free", {
   name: "Free",
@@ -88,8 +90,8 @@ declare inside a lazily-evaluated callback.
 
 | Verb | Returns | Notes |
 | --- | --- | --- |
-| `fs.requests(opts?)` | `MeterRef` | The built-in request meter. **Auto-attaches to every route.** |
-| `fs.meter(id, opts)` | `MeterRef` | A custom dimension (`{ display, unit }`). **Does NOT auto-attach — see below.** |
+| `fs.requests(opts?)` | `MeterRef` | Declares the request meter. For per-call counting, explicitly attach `requests.fixed(1)` as a route cost. |
+| `fs.meter(id, opts)` | `MeterRef` | Declares a custom dimension (`{ display, unit }`). Attach it explicitly. |
 | `fs.meterRoutes(target, opts)` | `void` | Declares which meters a route **reports**. |
 | `fs.route(path, ops)` | `RouteRef` | `ops` is `{ get: {}, post: {}, … }` — exact method/path pairs, never a cross-product. |
 | `fs.group(id, members)` | `GroupRef` | Bundle routes/groups so a plan grants one thing. |
@@ -111,6 +113,7 @@ passing one fails the build with `unsupported option "resourceLimits"`.
 
 ```ts
 const seats = fs.resource("seats", { display: "Seats" });
+fs.meterRoutes(everything, { costs: [requests.fixed(1)] });
 
 fs.plan("team", {
   name: "Team",
@@ -124,20 +127,24 @@ The primitive is a GENERIC counted resource — there is nothing seat-specific i
 the SDK. "Seats" is just an id. A flat price plus a cap gives seat-style
 packaging without per-seat pricing; the price does not scale with the count.
 
-## The mistake that costs a release cycle
+## Declaring a meter does not attach it
 
-**`fs.requests()` auto-attaches to routes. `fs.meter()` does not.**
+In SDK 2.0, every meter is explicit. Calling `fs.requests()` or `fs.meter()`
+only declares a ref; it does not attach that meter to any route.
 
-Pricing a custom meter in a plan is *not* enough to bill it. Without
-`fs.meterRoutes`, the route compiles with **no metering block at all**, the
-gateway discards the dimension your upstream reported, and the priced meter
-**silently never bills** — requests get counted, your meter does not.
+Pricing a meter or using its limit helper in a plan is not enough to count it.
+Without a route-local `reports`/`costs` binding or `fs.meterRoutes`, the route
+compiles with no metering block for that dimension.
 
 ```ts
+const requests = fs.requests();
 const tokens = fs.meter("tokens", { display: "Tokens", unit: "token" });
 const generate = fs.route("/v1/generate", { post: {} });
 
-fs.meterRoutes(generate, { reports: [tokens] });   // ← REQUIRED
+fs.meterRoutes(generate, {
+  costs: [requests.fixed(1)],
+  reports: [tokens],
+});
 
 fs.plan("payg", {
   price: fs.money.usd(0).monthly(),
@@ -156,8 +163,8 @@ the meter is not wired.
 | --- | --- |
 | `plan "x" meter 0 must be an SDK-created meter ref` | You passed a string where a `MeterRef` belongs. |
 | `Free plans must include at least one hard enforced limit` | `fs.free()` with no `limits`. An unlimited free plan is unbounded liability. |
-| `PLAN_RATE_LIMIT_REQUIRED` | No `limits[]` **and** no priced meter. Since 1.2.0 a priced meter satisfies this; an unpriced one or a bare `included_units` pool does not. |
-| `ROUTE_METER_NOT_ALLOWED_BY_BACKEND` | A backend's `meters` allowlist must include every meter its routes report — including the inherited `requests`. |
+| `PLAN_RATE_LIMIT_REQUIRED` | No `limits[]` **and** no priced meter. In SDK 2.0.0 a priced meter satisfies this; an unpriced one or a bare `included_units` pool does not. |
+| `ROUTE_METER_NOT_ALLOWED_BY_BACKEND` | A backend's `meters` allowlist must include every meter explicitly attached to its routes, including `requests` when used. |
 | `… is from registry generation N, not M` | Two copies of `@farthershore/business` loaded. Usually a module outside `business/` with its own `node_modules`. |
 | `cannot declare after business() sealed the registry` | A declaration ran after `fs.business()`. |
 

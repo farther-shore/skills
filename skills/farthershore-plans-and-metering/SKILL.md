@@ -25,14 +25,16 @@ An **unpriced** meter does **not** satisfy this. A meter with no rate, or a bare
 billing: past the pool, consumption is both unbounded and unbilled. That still
 needs a limit.
 
-> Requires business SDK **≥ 1.2.0**. On earlier versions every plan needed a
-> literal `limits[]`, so pay-as-you-go was not expressible.
+> These examples use business SDK **2.0.0** semantics. Meter declarations and
+> plan limits never attach meters to routes; attachment is explicit.
 
 ## The four shapes
 
 ### Free — rationed
 
 ```ts
+fs.meterRoutes(publicRoutes, { costs: [requests.fixed(1)] });
+
 fs.plan("free", {
   name: "Free",
   price: fs.free(),
@@ -44,6 +46,8 @@ fs.plan("free", {
 ### Flat subscription — rationed
 
 ```ts
+fs.meterRoutes(everything, { costs: [requests.fixed(1)] });
+
 fs.plan("pro", {
   name: "Pro",
   price: fs.money.usd(29).monthly(),   // major units — 29 = $29.00
@@ -117,8 +121,9 @@ A dimension bills **only** when all three are true. Miss one and it silently
 does nothing.
 
 1. **The meter is declared** — `fs.meter("tokens", …)`, or `fs.requests()`.
-2. **The route reports it** — `fs.meterRoutes(route, { reports: [tokens] })`.
-   `fs.requests()` auto-attaches; **custom meters do not**.
+2. **Every relevant operation attaches it** — for example,
+   `fs.meterRoutes(route, { costs: [requests.fixed(1)], reports: [tokens] })`.
+   SDK 2.0 does not infer attachment for any meter.
 3. **The upstream reports units** — a **signed** metering report, using the
    backend's runtime token. See
    [farthershore-backends-and-tokens](../farthershore-backends-and-tokens/SKILL.md).
@@ -126,11 +131,14 @@ does nothing.
 If units never appear in `farthershore usage summary`, walk those three in
 order. The most common miss is (2), and the second is (3) with the wrong
 runtime token — the gateway rejects the unverifiable report and silently falls
-back to route defaults, so requests still count and your dimension does not.
+back to route defaults. An explicitly attached `requests.fixed(1)` cost still
+counts, while the unverifiable reported dimension does not.
 
 ## Limits
 
 ```ts
+fs.meterRoutes(apiRoutes, { costs: [requests.fixed(1)] });
+
 requests.perMinute(600)
 requests.perHour(10_000)
 requests.perDay(100_000)
@@ -156,4 +164,6 @@ farthershore plan diff <businessId> --format json
 Read [farthershore-environments-and-releasing](../farthershore-environments-and-releasing/SKILL.md)
 for how a change reaches existing customers.
 Before a subscriber-impacting plan release, read the
-[plan change safety reference](references/experiments-and-migration.md).
+[plan change safety reference](references/experiments-and-migration.md). Moving
+subscribers between already-released versions is an operate action; it does not
+edit the repository-owned plan definition.
