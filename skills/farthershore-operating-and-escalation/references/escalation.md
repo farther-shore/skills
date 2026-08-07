@@ -11,7 +11,7 @@ worse.
 | ------------------------------------------------------------------------------- | ------------------ | -------------------------------------------------------------------------- |
 | Bad/broken frontend release                                                     | you                | roll back (frontend skill) — **auto**                                      |
 | Runtime token leaked/expired; backend auth failing because of it                | you                | rotate (backends skill) — **auto**                                         |
-| A change you pushed is wrong / a plan is misconfigured                          | you                | revert manifest + release, or correct plan in code + release — **confirm** |
+| A change you pushed is wrong / a plan is misconfigured                          | you                | revert the repository `business/` program and release, or correct it in code and release — **confirm** |
 | Build/checks failing on your push                                               | you                | fix per the business-sdk skill — **auto**                               |
 | Subscribers not activating after paying; checkout completes but nothing happens | platform           | **escalate**                                                               |
 | Valid API keys rejected across the board; auth failing platform-wide            | platform           | **escalate**                                                               |

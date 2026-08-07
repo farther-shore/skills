@@ -45,11 +45,15 @@ created from repository changes and released.
    farthershore plan migrate <business> <plan-key> --from <version> --to <version|head> --policy <policy> --format json
    ```
 
-5. Require `ok: true`, then record `data.migration.status`. A created batch also
-   returns `batchId` and `transitionsScheduled`; status is `PENDING`, `RUNNING`,
-   or `COMPLETED`. `SKIPPED` means no migration batch was created and includes a
-   reason. The CLI currently exposes scheduling status in this response, not a
-   separate migration-status command; do not invent a polling command.
+5. Require `ok: true`, then record `data.migration.status`. The only success
+   statuses are `PENDING`, `RUNNING`, and `COMPLETED`; the response also returns
+   `batchId` and `transitionsScheduled`.
+6. An inapplicable migration returns HTTP 409 with `ok: false` and error code
+   `MIGRATION_SKIPPED`. No batch was created. Report the error message and stop;
+   do not describe this as a successful migration status.
+
+The CLI currently exposes scheduling status in the create response, not a
+separate migration-status command; do not invent a polling command.
 
 This verb is only for moving subscribers between released plan versions. Plan
 shape, pricing, grants, limits, and meters remain repository-owned.

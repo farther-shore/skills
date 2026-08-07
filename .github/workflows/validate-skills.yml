@@ -36,7 +36,9 @@ jobs:
           node-version: "22"
 
       - name: Structure, frontmatter & manifests
-        run: node scripts/validate-skills.mjs
+        run: |
+          node --test scripts/*.test.mjs
+          node scripts/validate-skills.mjs
 
       - name: Discovery parity (npx skills must find every skill)
         env:

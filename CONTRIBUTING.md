@@ -17,7 +17,8 @@ cross-linked skill.
 - Put necessary long-form material in a linked `references/` file.
 - Update the skills table in [README.md](README.md).
 - Run `node scripts/validate-skills.mjs`.
-- Confirm `npx skills add . --list -y` discovers every skill.
+- Confirm install guidance uses the complete tagged bundle:
+  `npx skills add https://github.com/farther-shore/skills/tree/<tag> --skill '*' -g -y`.
 
 Install and update guidance must always point to the whole, tag-pinned bundle;
 never recommend installing one skill independently.

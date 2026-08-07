@@ -92,7 +92,7 @@ declare inside a lazily-evaluated callback.
 | --- | --- | --- |
 | `fs.requests(opts?)` | `MeterRef` | Declares the request meter. For per-call counting, explicitly attach `requests.fixed(1)` as a route cost. |
 | `fs.meter(id, opts)` | `MeterRef` | Declares a custom dimension (`{ display, unit }`). Attach it explicitly. |
-| `fs.meterRoutes(target, opts)` | `void` | Declares which meters a route **reports**. |
+| `fs.meterRoutes(target, opts)` | `void` | Attaches fixed `costs`, dynamic `reports`, response `onStatusCodes`, and `postStreamBilling` behavior. |
 | `fs.route(path, ops)` | `RouteRef` | `ops` is `{ get: {}, post: {}, … }` — exact method/path pairs, never a cross-product. |
 | `fs.group(id, members)` | `GroupRef` | Bundle routes/groups so a plan grants one thing. |
 | `fs.plan(id, opts)` | `PlanRef` | `{ name, price, grants, limits, meters, description }`. |
@@ -136,6 +136,15 @@ Pricing a meter or using its limit helper in a plan is not enough to count it.
 Without a route-local `reports`/`costs` binding or `fs.meterRoutes`, the route
 compiles with no metering block for that dimension.
 
+- `costs` are gateway-known fixed units such as `requests.fixed(1)`. These
+  gateway-known fixed costs do not require a signed upstream report.
+- `reports` names dynamic dimensions whose actual units come from a signed
+  upstream report.
+- `onStatusCodes` overrides which HTTP response statuses are billable.
+- `postStreamBilling: true` declares that reported units normally arrive after
+  the response stream; fixed costs are admitted before the call and dynamic
+  reports settle later.
+
 ```ts
 const requests = fs.requests();
 const tokens = fs.meter("tokens", { display: "Tokens", unit: "token" });
@@ -153,9 +162,9 @@ fs.plan("payg", {
 });
 ```
 
-Verify it landed: build the IR and confirm the route carries
-`metering.reports: ["tokens"]`. If the route object is just `{ match: {...} }`,
-the meter is not wired.
+Verify it landed: build the IR and confirm the route carries both
+`metering.defaults.requests: 1` and `metering.reports: ["tokens"]`. If the route
+object is just `{ match: {...} }`, neither meter is wired.
 
 ## Failures you will actually hit
 

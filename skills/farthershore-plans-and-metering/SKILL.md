@@ -115,18 +115,22 @@ They differ a lot at scale. `tiered` and a non-zero `price_per_unit_micros` are
 mutually exclusive. Model a free pool as a zero-priced first tier rather than
 combining `tiered` with `included_units`.
 
-## Metering only works if three things line up
+## Fixed costs and dynamic reports are different
 
-A dimension bills **only** when all three are true. Miss one and it silently
-does nothing.
+A declared meter bills only where a route explicitly attaches it:
 
-1. **The meter is declared** — `fs.meter("tokens", …)`, or `fs.requests()`.
-2. **Every relevant operation attaches it** — for example,
-   `fs.meterRoutes(route, { costs: [requests.fixed(1)], reports: [tokens] })`.
-   SDK 2.0 does not infer attachment for any meter.
-3. **The upstream reports units** — a **signed** metering report, using the
-   backend's runtime token. See
+1. Declare the refs: `fs.requests()` and/or `fs.meter("tokens", …)`.
+2. Attach gateway-known fixed units under `costs`, for example
+   `requests.fixed(1)`. Fixed costs need no upstream report.
+3. Attach upstream-computed dimensions under `reports`. Their units count only
+   when the upstream sends a valid signed metering report using its runtime
+   token. See
    [farthershore-backends-and-tokens](../farthershore-backends-and-tokens/SKILL.md).
+
+`onStatusCodes` controls which response statuses are billable.
+`postStreamBilling: true` marks dynamic units that normally arrive after the
+response stream; fixed costs are admitted before the call and reports settle
+later.
 
 If units never appear in `farthershore usage summary`, walk those three in
 order. The most common miss is (2), and the second is (3) with the wrong

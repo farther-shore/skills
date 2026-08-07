@@ -16,6 +16,11 @@
 
 import { readdirSync, readFileSync, statSync, existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
+import {
+  BUNDLE_INSTALL,
+  findObsoleteGuidance,
+  findSkillsAddCommands,
+} from "./guidance-validation.mjs";
 
 const root = process.cwd();
 const errors = [];
@@ -85,22 +90,10 @@ const guidanceFiles = [
   join(root, "CONTRIBUTING.md"),
   ...(existsSync(skillsDir) ? markdownFiles(skillsDir) : []),
 ];
-const forbiddenGuidance = [
-  [/@(?:Business|Plan|Feature|Meter)\b|\bdecorators?\b|experimentalDecorators/i, "obsolete decorator guidance"],
-  [/\btemplates?\b|\bpresets?\b/i, "template or preset guidance"],
-  [/\bprovision(?:s|ed|ing)?\b|\bfarthershore\s+init\b/i, "local provisioning or init guidance"],
-  [/farthershore\s+skills\s+recommend/i, "FartherShore skills recommendation guidance"],
-  [/\bproposal\b|\bdraft\b/i, "proposal or draft contract workflow"],
-  [/\bmaker[- ]tokens?\b|\bmk_[A-Za-z0-9_]*|FARTHERSHORE_TOKEN/i, "maker-token setup"],
-  [/(?:GitHub|Stripe)\s+connect|connect(?:ing)?\s+(?:GitHub|Stripe)/i, "GitHub or Stripe connection setup"],
-  [/farthershore\s+business\s+create\s+--/i, "obsolete flag-based business creation"],
-  [/farthershore\s+business\s+update|farthershore\s+plan\s+(?:create|update|delete|promote|rollback)/i, "CLI contract mutation"],
-];
-
 for (const file of guidanceFiles) {
   const text = readFileSync(file, "utf8");
-  for (const [pattern, label] of forbiddenGuidance) {
-    if (pattern.test(text)) errors.push(`${file.slice(root.length + 1)}: contains ${label}`);
+  for (const label of findObsoleteGuidance(text)) {
+    errors.push(`${file.slice(root.length + 1)}: contains ${label}`);
   }
 
   for (const match of text.matchAll(/\[[^\]]+\]\(([^)]+)\)/g)) {
@@ -111,13 +104,16 @@ for (const file of guidanceFiles) {
   }
 }
 
-const readme = readFileSync(join(root, "README.md"), "utf8");
-const bundleInstall = "npx skills add https://github.com/farther-shore/skills/tree/<tag> --skill '*' -g -y";
-if (!readme.includes(bundleInstall)) errors.push(`README.md: missing bundle install command '${bundleInstall}'`);
-const installCommands = [...readme.matchAll(/^\s*npx skills add\s+(.+)$/gm)].map((match) => match[0].trim());
-if (installCommands.some((command) => command !== bundleInstall)) {
-  errors.push("README.md: all npx skills install guidance must use the tag-pinned whole-bundle command");
+let bundleInstallCount = 0;
+for (const file of guidanceFiles) {
+  const text = readFileSync(file, "utf8");
+  const installCommands = findSkillsAddCommands(text);
+  for (const command of installCommands) {
+    if (command === BUNDLE_INSTALL) bundleInstallCount++;
+    else errors.push(`${file.slice(root.length + 1)}: npx skills installation must use '${BUNDLE_INSTALL}'`);
+  }
 }
+if (bundleInstallCount === 0) errors.push(`active guidance: missing bundle install command '${BUNDLE_INSTALL}'`);
 
 const businessSdk = readFileSync(join(skillsDir, "farthershore-business-sdk", "SKILL.md"), "utf8");
 const plansAndMetering = readFileSync(
@@ -146,6 +142,23 @@ if (!migrationReference.includes("farthershore plan migrate <business> <plan-key
 }
 if (!migrationReference.includes("data.migration.status")) {
   errors.push("plan change reference: missing migration response status guidance");
+}
+if (!migrationReference.includes("MIGRATION_SKIPPED")) {
+  errors.push("plan change reference: must document MIGRATION_SKIPPED as an error response");
+}
+if (!businessSdk.includes("onStatusCodes") || !businessSdk.includes("postStreamBilling")) {
+  errors.push("farthershore-business-sdk: meterRoutes guidance must cover status policy and post-stream billing");
+}
+if (!businessSdk.includes("gateway-known fixed costs do not require a signed upstream report")) {
+  errors.push("farthershore-business-sdk: must distinguish fixed costs from signed dynamic reports");
+}
+
+const escalationReference = readFileSync(
+  join(skillsDir, "farthershore-operating-and-escalation", "references", "escalation.md"),
+  "utf8",
+);
+if (/revert manifest/i.test(escalationReference)) {
+  errors.push("escalation reference: repository fixes must say to revert the business/ program");
 }
 
 // 3. marketplace.json

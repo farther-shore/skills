@@ -79,12 +79,13 @@ Revoking before step 2 breaks the backend. Do step 4 last.
 
 ## What the runtime token is actually for
 
-**Signed usage reports.** The upstream signs
+**Dynamic signed usage reports.** The upstream signs
 `{ method, path, rawDimsUnits }` with HMAC-SHA256 using the runtime token and
 sends `x-fs-metering`, `x-fs-metering-sig`, `x-fs-metering-token`.
 `@farthershore/backend`'s `withUsage` / `createUsage` do this for you.
 
-The gateway settles usage **exclusively** from that signed report — which
+Gateway-known fixed route costs such as `requests.fixed(1)` require no upstream
+report. Dynamic dimensions under `reports` settle from the signed report, which
 creates a failure mode worth internalising:
 
 > **A wrong or missing runtime token does not error. It silently degrades.**
