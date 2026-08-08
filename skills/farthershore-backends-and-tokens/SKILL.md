@@ -1,15 +1,14 @@
 ---
 name: farthershore-backends-and-tokens
-description: Use when connecting a business to the API it fronts — creating backends (production vs environment-scoped), minting and rotating runtime tokens (fsrt_) and maker tokens (mk_), wiring FS_RUNTIME_TOKEN so signed usage reports verify, and diagnosing a call that authorizes but never reaches your API. Load when the task mentions upstream, origin, backend, runtime token, signed metering, or 503 origin_unavailable.
-metadata:
-  version: 2.0.0
+description: Use when operating backends or runtime tokens, wiring signed metering, or diagnosing `origin_unavailable`.
 ---
 
 # Backends and tokens
 
-A **backend** is the upstream the gateway forwards to. A **runtime token**
-(`fsrt_`) is how that upstream proves its usage reports are genuine. Both are
-**operate** state — imperative, via the CLI. Read
+A logical backend and its route relationships are repository-owned business
+structure. Environment-specific origin bindings and runtime secrets have no
+code representation and are operated through the CLI. A **runtime token**
+(`fsrt_`) is how an upstream proves its usage reports are genuine. Read
 [farthershore-overview](../farthershore-overview/SKILL.md) first.
 
 ## Backends are environment-scoped
@@ -80,12 +79,13 @@ Revoking before step 2 breaks the backend. Do step 4 last.
 
 ## What the runtime token is actually for
 
-**Signed usage reports.** The upstream signs
+**Dynamic signed usage reports.** The upstream signs
 `{ method, path, rawDimsUnits }` with HMAC-SHA256 using the runtime token and
 sends `x-fs-metering`, `x-fs-metering-sig`, `x-fs-metering-token`.
 `@farthershore/backend`'s `withUsage` / `createUsage` do this for you.
 
-The gateway settles usage **exclusively** from that signed report — which
+Gateway-known fixed route costs such as `requests.fixed(1)` require no upstream
+report. Dynamic dimensions under `reports` settle from the signed report, which
 creates a failure mode worth internalising:
 
 > **A wrong or missing runtime token does not error. It silently degrades.**
@@ -98,22 +98,23 @@ token **before** hunting for a metering bug.
 
 **Corollary:** one upstream can sign for only **one** backend scope at a time,
 because `FS_RUNTIME_TOKEN` is a single value. Sharing one deployment across two
-businesses — or across production and an environment — means only the currently
-set token verifies. Give each scope its own deployment.
+**businesses** means only the currently set token verifies — give each business
+its own deployment.
 
-## Maker tokens (`mk_`)
+**Environments are no longer part of that corollary** (needs `@farthershore/backend`
+**≥ 0.19.0**). A BUSINESS-scoped token — what `backend tokens create <biz>` mints
+when you pass no `--env` — serves **every** environment from one deployment.
+Bootstrap returns `backendIds` and the SDK checks the gateway's signed backend id
+for MEMBERSHIP of that set. Both scopes remain available on purpose:
 
-Your own credential for the CLI.
+| Command | Serves |
+| --- | --- |
+| `backend tokens create <biz>` | **every environment** (one deployment) |
+| `backend tokens create <biz> --env test` | **that environment only** |
 
-```bash
-farthershore token list   --format json
-farthershore token create --name <label> --scope <scopes...> [--business <id>]
-farthershore token revoke <tokenId> --yes
-```
-
-Also one-time secrets. Prefer least privilege: business-scoped with only the
-scopes the task needs, over broad org-wide tokens. Pass via
-`FARTHERSHORE_TOKEN`, never `--token` (argv is world-readable).
+Pin with `--env` when you want the guarantee that a CI or preview token cannot
+touch production. Otherwise take the default — on an older SDK it silently
+degrades to production-only, which surfaces as `401 route_mismatch` on env hosts.
 
 ## Diagnosing a call that never reaches your API
 
@@ -124,6 +125,8 @@ Each row is a different layer — work down it.
 | `401` + `x-fs-decision-id` | Gateway serving the business; no/invalid key | Use a valid `fsk_` key |
 | `403 route_not_enabled` | Key fine; plan does not grant that route | Grant it in `business/`, release |
 | `503 origin_unavailable` | Auth + grants passed; **no origin for this scope** | Create a backend for **this environment** |
+| `522` (Cloudflare HTML) | Origin is on the platform's OWN Cloudflare zone, so the gateway's forward loops | Point the backend at the origin's direct host (e.g. its `*.up.railway.app` URL), not a `*.farthershore*.com` one |
+| `401 route_mismatch` | Signed business/backend/route id is not one this deployment serves | Usually a token scoped to a DIFFERENT environment — see cross-environment tokens above |
 | `404` from your app | Gateway forwarded; upstream lacks the path | Route declared but not implemented |
 | Requests metered, custom dims missing | Signed report not verifying | Wrong/missing `FS_RUNTIME_TOKEN` |
 | No `x-fs-decision-id` at all | You are not hitting the gateway | Check the host |

@@ -1,8 +1,6 @@
 ---
 name: farthershore-plans-and-metering
-description: Use when designing or changing what a business sells — plan shapes (free, flat, pay-as-you-go, hybrid), rate limits vs meters as the two controls on consumption, per-unit and tiered pricing, and the wiring a metered dimension needs before it will ever bill. Load when the task mentions pricing, plans, tiers, limits, quotas, usage-based billing, tokens, or "charge per".
-metadata:
-  version: 2.0.0
+description: Use when designing or changing plans, pricing, limits, quotas, or usage-based metering for a FartherShore business.
 ---
 
 # Plans, limits, and metering
@@ -27,14 +25,16 @@ An **unpriced** meter does **not** satisfy this. A meter with no rate, or a bare
 billing: past the pool, consumption is both unbounded and unbilled. That still
 needs a limit.
 
-> Requires business SDK **≥ 1.2.0**. On earlier versions every plan needed a
-> literal `limits[]`, so pay-as-you-go was not expressible.
+> These examples use business SDK **2.0.0** semantics. Meter declarations and
+> plan limits never attach meters to routes; attachment is explicit.
 
 ## The four shapes
 
 ### Free — rationed
 
 ```ts
+fs.meterRoutes(publicRoutes, { costs: [requests.fixed(1)] });
+
 fs.plan("free", {
   name: "Free",
   price: fs.free(),
@@ -46,6 +46,8 @@ fs.plan("free", {
 ### Flat subscription — rationed
 
 ```ts
+fs.meterRoutes(everything, { costs: [requests.fixed(1)] });
+
 fs.plan("pro", {
   name: "Pro",
   price: fs.money.usd(29).monthly(),   // major units — 29 = $29.00
@@ -113,26 +115,34 @@ They differ a lot at scale. `tiered` and a non-zero `price_per_unit_micros` are
 mutually exclusive. Model a free pool as a zero-priced first tier rather than
 combining `tiered` with `included_units`.
 
-## Metering only works if three things line up
+## Fixed costs and dynamic reports are different
 
-A dimension bills **only** when all three are true. Miss one and it silently
-does nothing.
+A declared meter bills only where a route explicitly attaches it:
 
-1. **The meter is declared** — `fs.meter("tokens", …)`, or `fs.requests()`.
-2. **The route reports it** — `fs.meterRoutes(route, { reports: [tokens] })`.
-   `fs.requests()` auto-attaches; **custom meters do not**.
-3. **The upstream reports units** — a **signed** metering report, using the
-   backend's runtime token. See
+1. Declare the refs: `fs.requests()` and/or `fs.meter("tokens", …)`.
+2. Attach gateway-known fixed units under `costs`, for example
+   `requests.fixed(1)`. Fixed costs need no upstream report.
+3. Attach upstream-computed dimensions under `reports`. Their units count only
+   when the upstream sends a valid signed metering report using its runtime
+   token. See
    [farthershore-backends-and-tokens](../farthershore-backends-and-tokens/SKILL.md).
+
+`onStatusCodes` controls which response statuses are billable.
+`postStreamBilling: true` marks dynamic units that normally arrive after the
+response stream; fixed costs are admitted before the call and reports settle
+later.
 
 If units never appear in `farthershore usage summary`, walk those three in
 order. The most common miss is (2), and the second is (3) with the wrong
 runtime token — the gateway rejects the unverifiable report and silently falls
-back to route defaults, so requests still count and your dimension does not.
+back to route defaults. An explicitly attached `requests.fixed(1)` cost still
+counts, while the unverifiable reported dimension does not.
 
 ## Limits
 
 ```ts
+fs.meterRoutes(apiRoutes, { costs: [requests.fixed(1)] });
+
 requests.perMinute(600)
 requests.perHour(10_000)
 requests.perDay(100_000)
@@ -157,3 +167,7 @@ farthershore plan diff <businessId> --format json
 
 Read [farthershore-environments-and-releasing](../farthershore-environments-and-releasing/SKILL.md)
 for how a change reaches existing customers.
+Before a subscriber-impacting plan release, read the
+[plan change safety reference](references/experiments-and-migration.md). Moving
+subscribers between already-released versions is an operate action; it does not
+edit the repository-owned plan definition.
