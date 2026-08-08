@@ -45,7 +45,8 @@ first and loads a body only when its trigger matches.
 The only setup sequence taught by this bundle is:
 
 ```text
-farthershore business create <slug>
+farthershore auth login → human reviews exact permissions and business scope
+→ farthershore business create <slug>
 → clone the returned managed repository URL
 → read AGENTS.md
 → author business/ from scratch
@@ -54,6 +55,12 @@ farthershore business create <slug>
 → inspect the GitHub checks
 → operate through the CLI
 ```
+
+Device login may open a browser. On a headless machine, run
+`farthershore auth login --headless` and give the verification URL and user code
+to the human approver. Request hints are not grants. For a pre-issued
+credential, use `farthershore auth login --token-stdin`; never put the raw
+credential in argv, environment variables, stdout, or stderr.
 
 Do not write contract state through the CLI or API. Change the repository and
 push it.

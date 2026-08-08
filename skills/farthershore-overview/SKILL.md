@@ -25,6 +25,33 @@ For a new business, load
 handoff: `farthershore business create <slug>` returns the managed repository
 URL. Clone that repository, read `AGENTS.md`, and continue in code.
 
+## Authenticate the CLI
+
+On a new machine, run `farthershore auth login`. The CLI prints a verification
+URL and user code, may open the browser, and waits while a human signs in and
+reviews the request. A human approves the exact permissions and business scope;
+request hints do not grant authority and the human may change them.
+
+On a machine without a browser, use `farthershore auth login --headless`. Add
+the known narrow boundary rather than omitting it:
+
+```bash
+farthershore operations list --format json # find the operation's exact permission
+farthershore auth login --headless \
+  --access read-only \
+  --business <business-hint> \
+  --permission <exact-permission> \
+  --name <credential-name>
+```
+
+Repeat `--business` and `--permission` as needed; never invent a permission.
+The URL and user code may be shown, but the issued credential must not be.
+
+If a human provides a pre-issued credential, pipe it directly from the secret
+provider to `farthershore auth login --token-stdin`. Never place a raw
+credential in argv, environment variables, stdout, or stderr. Do not invent a
+`--token` flag.
+
 ## Working loop
 
 1. Read the business repository's `AGENTS.md`.
