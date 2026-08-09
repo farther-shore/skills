@@ -31,22 +31,28 @@ Follow the managed repository's `AGENTS.md` when it is stricter.
 
 ## Preview in an environment
 
-An `env/<name>` branch maps to that isolated environment only after the
-environment exists. Each environment has its own accepted contract, frontend
-release, customers, variables, and concrete backend binding.
+With the default `branch-prefix` policy, the first push of an `env/<name>`
+branch creates that isolated environment. Each environment has its own accepted
+contract, frontend release, customers, variables, and concrete backend binding.
 
 ```bash
-git push origin env/test
-farthershore env create <business> --name test --branch env/test --format json
-git commit --allow-empty -m "trigger test environment apply"
-git push origin env/test
+git switch -c env/test
+farthershore build --format json
+git push -u origin env/test
+farthershore env list <business> --format json
 farthershore apply-timeline list <business> --env test --format json
 ```
 
-A push before `env create` has no target, so push again afterward. Production's
-backend origin does not serve the preview; create or bind an origin for the
-environment before end-to-end testing. Pass the explicit environment to every
-status and test command to avoid comparing preview with production.
+If branch-prefix creation is disabled, create the environment explicitly first:
+
+```bash
+farthershore env create <business> --name test --branch env/test --format json
+```
+
+Inspect `branchCreated`, and push the exact branch if Core could not create it.
+Production's backend origin does not serve the preview; create or bind an origin
+for the environment before end-to-end testing. Pass the explicit environment to
+every status and test command to avoid comparing preview with production.
 
 ## Release production
 

@@ -43,7 +43,7 @@ An **unpriced** meter does **not** satisfy this. A meter with no rate, or a bare
 billing: past the pool, consumption is both unbounded and unbilled. That still
 needs a limit.
 
-> These examples use business SDK **2.0.0** semantics. Meter declarations and
+> These examples use business SDK **2.0.1** semantics. Meter declarations and
 > plan limits never attach meters to routes; attachment is explicit.
 
 ## The four shapes

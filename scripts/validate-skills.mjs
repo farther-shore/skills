@@ -170,8 +170,8 @@ const migrationReference = readFileSync(
   "utf8",
 );
 
-if (!businessSdk.includes("**Current: 2.0.0.**")) {
-  errors.push("farthershore-business-sdk: must identify SDK 2.0.0 as current");
+if (!businessSdk.includes("**Current: 2.0.1.**")) {
+  errors.push("farthershore-business-sdk: must identify SDK 2.0.1 as current");
 }
 if (/auto[- ]?attach/i.test(businessSdk) || /auto[- ]?attach/i.test(plansAndMetering)) {
   errors.push("business SDK guidance: SDK 2.0 meters must never be described as auto-attached");
