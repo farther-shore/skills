@@ -57,8 +57,38 @@ test("rejects raw credentials in login argv while allowing stdin ingestion", () 
     ["secret-bearing CLI authentication"],
   );
   assert.deepEqual(
-    findObsoleteGuidance("Pipe it to `farthershore login --token-stdin`."),
+    findObsoleteGuidance(
+      "Pipe an organization-scoped MakerToken to `farthershore login --token-stdin`, or set `FARTHERSHORE_TOKEN` as an ephemeral override.",
+    ),
     [],
+  );
+});
+
+test("rejects MakerToken administration and raw MakerToken literals", () => {
+  const administration = [
+    "Create a MakerToken for the agent.",
+    "Generate a MakerToken in the dashboard.",
+    "Update the MakerToken permissions.",
+    "Rotate the maker token when it expires.",
+  ];
+
+  for (const text of administration) {
+    assert.deepEqual(findObsoleteGuidance(text), [
+      "maker-token credential administration",
+    ]);
+  }
+  assert.deepEqual(
+    findObsoleteGuidance("Set FARTHERSHORE_TOKEN=mk_plaintext_secret."),
+    ["raw maker-token credential"],
+  );
+});
+
+test("rejects organization context described as authority narrowing", () => {
+  assert.deepEqual(
+    findObsoleteGuidance(
+      "Run farthershore auth organization use alpha to restrict the normal CLI credential to organization alpha.",
+    ),
+    ["organization context described as authority narrowing"],
   );
 });
 
@@ -96,8 +126,8 @@ test("requires the complete user-bound multi-organization login model", () => {
     "The standalone approval page has only Allow and Deny actions.",
     "Run `farthershore auth organization list --format json` and `farthershore auth organization use <id-or-slug>` to change the saved organization.",
     "Use `farthershore --organization <id-or-slug> business list --format json` for a one-command override.",
-    "For a separately pre-issued restricted credential, use `farthershore login --token-stdin`.",
-    "Never place a raw credential in argv, environment variables, stdout, or stderr.",
+    "For a separately pre-issued organization-scoped restricted MakerToken, use `farthershore login --token-stdin` or the ephemeral `FARTHERSHORE_TOKEN` override.",
+    "Never place a raw credential in argv, stdout, or stderr.",
   ].join("\n");
 
   assert.deepEqual(findMissingDeviceAuthGuidance(complete), []);
@@ -112,7 +142,8 @@ test("requires the complete user-bound multi-organization login model", () => {
       "organization list command",
       "organization use command",
       "one-command organization override",
-      "stdin-only restricted credential login",
+      "organization-scoped MakerToken stdin override",
+      "ephemeral MakerToken environment override",
       "secret-safe credential handling",
     ],
   );
@@ -127,12 +158,15 @@ test("requires normal login guidance to distinguish a restricted stdin credentia
     "The standalone approval page has only Allow and Deny actions.",
     "Run `farthershore auth organization list --format json` and `farthershore auth organization use <id-or-slug>` to change the saved organization.",
     "Use `farthershore --organization <id-or-slug> business list --format json` for a one-command override.",
-    "Never place a raw credential in argv, environment variables, stdout, or stderr.",
+    "Never place a raw credential in argv, stdout, or stderr.",
   ].join("\n");
 
   assert.deepEqual(
     findMissingDeviceAuthGuidance(guidanceWithoutRestrictedCredential),
-    ["stdin-only restricted credential login"],
+    [
+      "organization-scoped MakerToken stdin override",
+      "ephemeral MakerToken environment override",
+    ],
   );
 });
 

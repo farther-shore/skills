@@ -72,11 +72,15 @@ farthershore auth organization use <id-or-slug>
 farthershore --organization <id-or-slug> business list --format json
 ```
 
-The global `--organization` option is a one-command override. For a separately
-pre-issued restricted credential, use `farthershore login --token-stdin`.
-Pipe the secret-provider read directly into the command; never display or copy
-the raw credential into argv, environment variables, terminal stdout, or
-stderr.
+The global `--organization` option changes only command context; it does not
+narrow the normal user session. For a separately pre-issued,
+organization-scoped MakerToken, either pipe it directly from the secret provider
+into `farthershore login --token-stdin` to save it, or set
+`FARTHERSHORE_TOKEN` as an ephemeral override for the current shell. A
+MakerToken can be restricted to selected permissions and businesses inside its
+one organization. Never put the raw credential in argv, stdout, stderr, docs,
+or logs, and unset the environment override when the restricted operation is
+finished.
 
 Run `farthershore logout` to remove the saved CLI credential.
 

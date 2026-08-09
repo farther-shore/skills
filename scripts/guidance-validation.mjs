@@ -7,7 +7,11 @@ const FORBIDDEN_GUIDANCE = [
   [/\bfarthershore\s+(?:provision|init)\b|\/businesses\/init\b|\blocal provisioning\b/i, "obsolete local provisioning or init guidance"],
   [/farthershore\s+skills\s+recommend/i, "FartherShore skills recommendation guidance"],
   [/\bfarthershore\s+config\s+(?:propose|draft|apply)\b|\/config\/(?:propose|draft|apply)\b|\bconfig (?:proposal|draft)\b/i, "obsolete bidirectional config workflow"],
-  [/\bmaker[- ]tokens?\b|\bmk_[A-Za-z0-9_]*|FARTHERSHORE_TOKEN/i, "maker-token setup"],
+  [
+    /(?:\b(?:create|generate|provision|issue|mint|rotate|revoke|delete|update|edit|configure|modify|administer|manage)\b[^\n]{0,100}\bmaker[- ]?tokens?\b|\bmaker[- ]?tokens?\b[^\n]{0,100}\b(?:create|generation|provision|issuance|mint|rotate|revoke|delete|update|edit|configure|modify|administration)\b)/i,
+    "maker-token credential administration",
+  ],
+  [/\bmk_[A-Za-z0-9_]+\b/i, "raw maker-token credential"],
   [
     /\bfarthershore\s+(?:auth\s+login|login)\b[^\n`]*\s--token(?:=|\s|$)/i,
     "secret-bearing CLI authentication",
@@ -31,6 +35,10 @@ const FORBIDDEN_GUIDANCE = [
   [
     /\bstandalone approval page\b[\s\S]{0,160}(?:narrow|limit|restrict|select)[\s\S]{0,160}(?:organization|business|permission|tier|name)/i,
     "obsolete device-login approval options",
+  ],
+  [
+    /\bfarthershore\s+(?:auth\s+organization\s+(?:list|use)|--organization)\b[^\n]{0,180}\b(?:narrow|limit|restrict|reduce)\b[^\n]{0,100}\b(?:credential|authority|permissions?|access)\b/i,
+    "organization context described as authority narrowing",
   ],
 ];
 
@@ -63,9 +71,10 @@ const DEVICE_AUTH_REQUIREMENTS = [
     "one-command organization override",
   ],
   [
-    /\b(?:separately\s+)?pre-issued restricted credential\b[\s\S]{0,160}\bfarthershore\s+login\s+--token-stdin\b/i,
-    "stdin-only restricted credential login",
+    /\borganization-scoped\b[\s\S]{0,100}\bmaker[- ]?token\b[\s\S]{0,180}\bfarthershore\s+login\s+--token-stdin\b/i,
+    "organization-scoped MakerToken stdin override",
   ],
+  [/\bFARTHERSHORE_TOKEN\b[\s\S]{0,120}\b(?:ephemeral|temporary|one-command)\b|\b(?:ephemeral|temporary|one-command)\b[\s\S]{0,120}\bFARTHERSHORE_TOKEN\b/i, "ephemeral MakerToken environment override"],
   [
     /\b(?:never|do not)\b[\s\S]{0,160}(?:credential|secret|token)[\s\S]{0,160}(?:argv|command line)[\s\S]{0,160}(?:stdout|stderr|output)/i,
     "secret-safe credential handling",

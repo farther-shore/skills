@@ -56,14 +56,18 @@ farthershore --organization <id-or-slug> business list --format json
 ```
 
 `auth organization use` changes the saved default. The global `--organization`
-option overrides it for one command.
+option overrides it for one command. Both select routing context only; they do
+not narrow the user session's authority.
 
-If a human provides a separately pre-issued restricted credential, pipe it
-directly from the secret provider to
-`farthershore login --token-stdin`. This is separate from normal user-bound
-device login. The pipe carries the credential without displaying it; never copy
-the raw credential into argv, environment variables, terminal stdout, or
-stderr. Do not invent a `--token` flag.
+If narrower automation is required, a human can provide a separately
+pre-issued, organization-scoped MakerToken. A MakerToken may contain a subset of
+permissions and businesses, but it never spans organizations. Either pipe it
+directly from the secret provider to `farthershore login --token-stdin` to save
+it, or set `FARTHERSHORE_TOKEN` as an ephemeral override for the current shell.
+This is separate from normal user-bound device login. Never copy the raw
+credential into argv, stdout, stderr, docs, or logs; unset the environment
+override when finished. Do not invent a `--token` flag or attempt MakerToken
+administration through an agent workflow.
 
 Run `farthershore logout` to remove the saved CLI credential.
 
