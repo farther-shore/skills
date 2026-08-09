@@ -14,6 +14,16 @@ of flailing. Read [farthershore-overview](../farthershore-overview/SKILL.md) fir
 You operate a product through the public CLI/MCP. Your health picture comes from:
 
 ```bash
+farthershore auth organization list --format json
+farthershore auth organization use <id-or-slug>
+farthershore --organization <id-or-slug> business list --format json
+```
+
+The same user-bound credential uses the user's live role in each organization.
+Use `auth organization use` to change the saved context, or the global
+`--organization` option for one command.
+
+```bash
 farthershore business status <product> --format json   # lifecycle, release, is-it-live
 farthershore business list --format json                # all products + status
 farthershore usage summary <product> --format json     # recent usage / metering

@@ -27,30 +27,45 @@ URL. Clone that repository, read `AGENTS.md`, and continue in code.
 
 ## Authenticate the CLI
 
-On a new machine, run `farthershore auth login`. The CLI prints a verification
+On a new machine, run `farthershore login`. The CLI prints a verification
 URL and user code, may open the browser, and waits while a human signs in and
-reviews the request. A human approves the exact permissions and business scope;
-request hints do not grant authority and the human may change them.
+reviews the standalone approval page. That page has only Allow and Deny actions.
+The credential follows the user's live
+role and CLI-operable permissions across all current and future organizations
+and businesses. Role changes and organization removal take effect
+without issuing another credential.
 
-On a machine without a browser, use `farthershore auth login --headless`. Add
-the known narrow boundary rather than omitting it:
+On a machine without a browser, use:
 
 ```bash
-farthershore operations list --format json # find the operation's exact permission
-farthershore auth login --headless \
-  --access read-only \
-  --business <business-hint> \
-  --permission <exact-permission> \
-  --name <credential-name>
+farthershore login --headless
 ```
 
-Repeat `--business` and `--permission` as needed; never invent a permission.
-The URL and user code may be shown, but the issued credential must not be.
+Normal login has no naming, organization, business, access-tier, or permission
+options. The URL and user code may be shown, but the issued credential must not
+be.
 
-If a human provides a pre-issued credential, pipe it directly from the secret
-provider to `farthershore auth login --token-stdin`. Never place a raw
-credential in argv, environment variables, stdout, or stderr. Do not invent a
-`--token` flag.
+One credential can operate every organization where the user is a member.
+Inspect or change its
+local organization context without logging in again:
+
+```bash
+farthershore auth organization list --format json
+farthershore auth organization use <id-or-slug>
+farthershore --organization <id-or-slug> business list --format json
+```
+
+`auth organization use` changes the saved default. The global `--organization`
+option overrides it for one command.
+
+If a human provides a separately pre-issued restricted credential, pipe it
+directly from the secret provider to
+`farthershore login --token-stdin`. This is separate from normal user-bound
+device login. The pipe carries the credential without displaying it; never copy
+the raw credential into argv, environment variables, terminal stdout, or
+stderr. Do not invent a `--token` flag.
+
+Run `farthershore logout` to remove the saved CLI credential.
 
 ## Working loop
 

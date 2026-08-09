@@ -18,6 +18,7 @@ import { readdirSync, readFileSync, statSync, existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import {
   BUNDLE_INSTALL,
+  findMissingDeviceAuthGuidance,
   findObsoleteGuidance,
   findSkillsAddCommands,
 } from "./guidance-validation.mjs";
@@ -114,6 +115,17 @@ for (const file of guidanceFiles) {
   }
 }
 if (bundleInstallCount === 0) errors.push(`active guidance: missing bundle install command '${BUNDLE_INSTALL}'`);
+
+const deviceAuthGuidance = [
+  join(root, "README.md"),
+  join(skillsDir, "farthershore-overview", "SKILL.md"),
+  join(skillsDir, "farthershore-quickstart", "SKILL.md"),
+]
+  .map((file) => readFileSync(file, "utf8"))
+  .join("\n");
+for (const label of findMissingDeviceAuthGuidance(deviceAuthGuidance)) {
+  errors.push(`active guidance: missing ${label}`);
+}
 
 const businessSdk = readFileSync(join(skillsDir, "farthershore-business-sdk", "SKILL.md"), "utf8");
 const plansAndMetering = readFileSync(

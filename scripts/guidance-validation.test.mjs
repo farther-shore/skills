@@ -47,63 +47,92 @@ test("rejects retired FartherShore setup and bidirectional config constructs", (
   ]);
 });
 
-test("rejects raw credentials in auth argv while allowing stdin ingestion", () => {
+test("rejects raw credentials in login argv while allowing stdin ingestion", () => {
   assert.deepEqual(
-    findObsoleteGuidance(
-      "Run `farthershore auth login --token super-secret` now.",
-    ),
+    findObsoleteGuidance("Run `farthershore login --token super-secret` now."),
     ["secret-bearing CLI authentication"],
   );
   assert.deepEqual(
-    findObsoleteGuidance(
-      "Run `farthershore auth login --token=super-secret` now.",
-    ),
+    findObsoleteGuidance("Run `farthershore login --token=super-secret` now."),
     ["secret-bearing CLI authentication"],
   );
   assert.deepEqual(
-    findObsoleteGuidance("Pipe it to `farthershore auth login --token-stdin`."),
+    findObsoleteGuidance("Pipe it to `farthershore login --token-stdin`."),
     [],
   );
 });
 
-test("requires the complete device-login safety model in active guidance", () => {
-  const complete = [
-    "Run `farthershore auth login`; the CLI opens the browser for device approval.",
-    "Without a browser, run `farthershore auth login --headless`.",
-    "Example: `farthershore auth login --headless --access read-only --business alpha --permission usage:read`.",
+test("rejects the retired nested login and logout commands", () => {
+  assert.deepEqual(
+    findObsoleteGuidance(
+      "Run `farthershore auth login`, then `farthershore auth logout`.",
+    ),
+    ["obsolete nested authentication command"],
+  );
+});
+
+test("rejects login option flags and configurable approval guidance", () => {
+  const stale = [
+    "farthershore login --headless --name agent --access read-only --business alpha --permission usage:read",
+    "A human reviews exact permissions and business scope before approval.",
     "Request hints do not grant authority.",
-    "A human approves the exact permissions and business scope.",
-    "For a pre-issued credential, use `farthershore auth login --token-stdin`.",
+    "The standalone approval page may narrow organization and business scope.",
+  ].join("\n");
+
+  assert.deepEqual(findObsoleteGuidance(stale), [
+    "obsolete device-login option flags",
+    "obsolete device-login permission selection",
+    "obsolete device-login request hints",
+    "obsolete device-login approval options",
+  ]);
+});
+
+test("requires the complete user-bound multi-organization login model", () => {
+  const complete = [
+    "Run `farthershore login`; the CLI opens the browser for device approval.",
+    "Without a browser, run `farthershore login --headless`.",
+    "Run `farthershore logout` to remove the saved credential.",
+    "The credential follows the user's live role and CLI-operable permissions across all current and future organizations and businesses.",
+    "The standalone approval page has only Allow and Deny actions.",
+    "Run `farthershore auth organization list --format json` and `farthershore auth organization use <id-or-slug>` to change the saved organization.",
+    "Use `farthershore --organization <id-or-slug> business list --format json` for a one-command override.",
+    "For a separately pre-issued restricted credential, use `farthershore login --token-stdin`.",
     "Never place a raw credential in argv, environment variables, stdout, or stderr.",
   ].join("\n");
 
   assert.deepEqual(findMissingDeviceAuthGuidance(complete), []);
   assert.deepEqual(
-    findMissingDeviceAuthGuidance("Run `farthershore auth login`."),
+    findMissingDeviceAuthGuidance("Run `farthershore login`."),
     [
       "headless device login",
-      "headless narrow-authority request hints",
-      "stdin-only pre-issued credential login",
-      "non-authoritative request hints",
-      "human approval of exact permissions and business scope",
+      "logout command",
+      "live user authority",
+      "all-organization and all-business membership",
+      "zero-option approval",
+      "organization list command",
+      "organization use command",
+      "one-command organization override",
+      "stdin-only restricted credential login",
       "secret-safe credential handling",
     ],
   );
 });
 
-test("requires headless guidance to carry known narrow-authority hints", () => {
-  const deviceGuidanceWithoutNarrowExample = [
-    "Run `farthershore auth login`; the CLI opens the browser for device approval.",
-    "Without a browser, run `farthershore auth login --headless`.",
-    "Request hints do not grant authority.",
-    "A human approves the exact permissions and business scope.",
-    "For a pre-issued credential, use `farthershore auth login --token-stdin`.",
+test("requires normal login guidance to distinguish a restricted stdin credential", () => {
+  const guidanceWithoutRestrictedCredential = [
+    "Run `farthershore login`; the CLI opens the browser for device approval.",
+    "Without a browser, run `farthershore login --headless`.",
+    "Run `farthershore logout` to remove the saved credential.",
+    "The credential follows the user's live role and CLI-operable permissions across all current and future organizations and businesses.",
+    "The standalone approval page has only Allow and Deny actions.",
+    "Run `farthershore auth organization list --format json` and `farthershore auth organization use <id-or-slug>` to change the saved organization.",
+    "Use `farthershore --organization <id-or-slug> business list --format json` for a one-command override.",
     "Never place a raw credential in argv, environment variables, stdout, or stderr.",
   ].join("\n");
 
   assert.deepEqual(
-    findMissingDeviceAuthGuidance(deviceGuidanceWithoutNarrowExample),
-    ["headless narrow-authority request hints"],
+    findMissingDeviceAuthGuidance(guidanceWithoutRestrictedCredential),
+    ["stdin-only restricted credential login"],
   );
 });
 

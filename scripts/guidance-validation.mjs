@@ -9,32 +9,62 @@ const FORBIDDEN_GUIDANCE = [
   [/\bfarthershore\s+config\s+(?:propose|draft|apply)\b|\/config\/(?:propose|draft|apply)\b|\bconfig (?:proposal|draft)\b/i, "obsolete bidirectional config workflow"],
   [/\bmaker[- ]tokens?\b|\bmk_[A-Za-z0-9_]*|FARTHERSHORE_TOKEN/i, "maker-token setup"],
   [
-    /\bfarthershore(?:\s+auth\s+login\b[^\n`]*)?\s+--token(?:=|\s|$)/i,
+    /\bfarthershore\s+(?:auth\s+login|login)\b[^\n`]*\s--token(?:=|\s|$)/i,
     "secret-bearing CLI authentication",
+  ],
+  [
+    /\bfarthershore\s+auth\s+(?:login|logout)\b/i,
+    "obsolete nested authentication command",
   ],
   [/(?:GitHub|Stripe)\s+connect|connect(?:ing)?\s+(?:GitHub|Stripe)/i, "GitHub or Stripe connection setup"],
   [/farthershore\s+business\s+create\s+--/i, "obsolete flag-based business creation"],
   [/farthershore\s+business\s+update|farthershore\s+plan\s+(?:create|update|delete|promote|rollback)/i, "CLI contract mutation"],
+  [
+    /\bfarthershore\s+login\b[\s\S]{0,240}--(?:access|business|name|permission)\b/i,
+    "obsolete device-login option flags",
+  ],
+  [
+    /\b(?:human|approver|approval)[^\n]*(?:approves?|reviews?|selects?)[^\n]*exact permissions?/i,
+    "obsolete device-login permission selection",
+  ],
+  [/\brequest hints?\b/i, "obsolete device-login request hints"],
+  [
+    /\bstandalone approval page\b[\s\S]{0,160}(?:narrow|limit|restrict|select)[\s\S]{0,160}(?:organization|business|permission|tier|name)/i,
+    "obsolete device-login approval options",
+  ],
 ];
 
 const DEVICE_AUTH_REQUIREMENTS = [
-  [/\bfarthershore\s+auth\s+login\b/i, "browser device login"],
-  [/\bfarthershore\s+auth\s+login\s+--headless\b/i, "headless device login"],
+  [/\bfarthershore\s+login\b/i, "browser device login"],
+  [/\bfarthershore\s+login\s+--headless\b/i, "headless device login"],
+  [/\bfarthershore\s+logout\b/i, "logout command"],
   [
-    /\bfarthershore\s+auth\s+login\s+--headless\b[\s\S]{0,200}--access\s+read-only\b[\s\S]{0,200}--business\b[\s\S]{0,200}--permission\b/i,
-    "headless narrow-authority request hints",
+    /\bcredential\b[\s\S]{0,100}(?:follows?|uses?)[\s\S]{0,100}live[\s\S]{0,100}(?:role|permissions?)/i,
+    "live user authority",
   ],
   [
-    /\bfarthershore\s+auth\s+login\s+--token-stdin\b/i,
-    "stdin-only pre-issued credential login",
+    /\ball\s+current\s+and\s+future\s+organizations\s+and\s+businesses\b/i,
+    "all-organization and all-business membership",
   ],
   [
-    /\bhints?\b[^\n]*(?:do not|does not|are not|is not)[^\n]*(?:grant|authority|authorization)/i,
-    "non-authoritative request hints",
+    /\bstandalone approval page\b[\s\S]{0,140}(?:only|just)[\s\S]{0,60}(?:allow|approve)[\s\S]{0,60}(?:deny|decline)/i,
+    "zero-option approval",
   ],
   [
-    /\bhuman\b[^\n]*(?:approves?|reviews?)[^\n]*permissions?[^\n]*(?:business\s+)?scope/i,
-    "human approval of exact permissions and business scope",
+    /\bfarthershore\s+auth\s+organization\s+list\b/i,
+    "organization list command",
+  ],
+  [
+    /\bfarthershore\s+auth\s+organization\s+use\s+<id-or-slug>/i,
+    "organization use command",
+  ],
+  [
+    /\bfarthershore\s+--organization\s+<id-or-slug>/i,
+    "one-command organization override",
+  ],
+  [
+    /\b(?:separately\s+)?pre-issued restricted credential\b[\s\S]{0,160}\bfarthershore\s+login\s+--token-stdin\b/i,
+    "stdin-only restricted credential login",
   ],
   [
     /\b(?:never|do not)\b[\s\S]{0,160}(?:credential|secret|token)[\s\S]{0,160}(?:argv|command line)[\s\S]{0,160}(?:stdout|stderr|output)/i,

@@ -11,8 +11,17 @@ Use one setup flow. Do not invent another bootstrap path.
 
 Follow the device-login guidance in
 [farthershore-overview](../farthershore-overview/SKILL.md). Wait for the human to
-approve authority that includes creating the business; a request hint is not a
-grant. Do not continue until `farthershore auth login` completes.
+allow the CLI to act as them. Normal login follows the user's live platform role
+across all current and future organizations and businesses. Do not continue until
+`farthershore login` completes.
+
+If the business belongs in a different organization than the saved default,
+select that context without logging in again:
+
+```bash
+farthershore auth organization list --format json
+farthershore auth organization use <id-or-slug>
+```
 
 ## 2. Create
 

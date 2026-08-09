@@ -45,7 +45,7 @@ first and loads a body only when its trigger matches.
 The only setup sequence taught by this bundle is:
 
 ```text
-farthershore auth login → human reviews exact permissions and business scope
+farthershore login → human allows the CLI to act as them
 → farthershore business create <slug>
 → clone the returned managed repository URL
 → read AGENTS.md
@@ -57,10 +57,28 @@ farthershore auth login → human reviews exact permissions and business scope
 ```
 
 Device login may open a browser. On a headless machine, run
-`farthershore auth login --headless` and give the verification URL and user code
-to the human approver. Request hints are not grants. For a pre-issued
-credential, use `farthershore auth login --token-stdin`; never put the raw
-credential in argv, environment variables, stdout, or stderr.
+`farthershore login --headless` and give the verification URL and user code
+to the human approver. The credential follows the user's live role and
+CLI-operable permissions across all current and future organizations and
+businesses. The standalone approval page has only Allow and Deny
+actions; normal login has no naming, organization, business, tier, or permission
+options.
+
+List or change the saved organization without logging in again:
+
+```bash
+farthershore auth organization list --format json
+farthershore auth organization use <id-or-slug>
+farthershore --organization <id-or-slug> business list --format json
+```
+
+The global `--organization` option is a one-command override. For a separately
+pre-issued restricted credential, use `farthershore login --token-stdin`.
+Pipe the secret-provider read directly into the command; never display or copy
+the raw credential into argv, environment variables, terminal stdout, or
+stderr.
+
+Run `farthershore logout` to remove the saved CLI credential.
 
 Do not write contract state through the CLI or API. Change the repository and
 push it.
