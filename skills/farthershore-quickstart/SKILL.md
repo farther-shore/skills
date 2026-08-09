@@ -5,10 +5,40 @@ description: Use when creating a new FartherShore business or taking one from a 
 
 # Create a business
 
-Use one setup flow. Do not add prerequisite account, credential, integration, or
-local bootstrap steps that the command does not request.
+Use one setup flow. Do not invent another bootstrap path.
 
-## 1. Create
+## Read current docs first
+
+**Required before acting:** fetch the live machine-readable index:
+
+```bash
+curl -fsSL https://docs.farthershore.com/llms.txt
+```
+
+Use:
+
+- https://docs.farthershore.com/get-started/quickstart
+- https://docs.farthershore.com/get-started/install
+- https://docs.farthershore.com/agents/overview
+- https://docs.farthershore.com/reference/cli
+
+## 1. Authenticate
+
+Follow the device-login guidance in
+[farthershore-overview](../farthershore-overview/SKILL.md). Wait for the human to
+allow the CLI to act as them. Normal login follows the user's live platform role
+across all current and future organizations and businesses. Do not continue until
+`farthershore login` completes.
+
+If the business belongs in a different organization than the saved default,
+select that context without logging in again:
+
+```bash
+farthershore auth organization list --format json
+farthershore auth organization use <id-or-slug>
+```
+
+## 2. Create
 
 ```bash
 farthershore business create <slug>
@@ -17,7 +47,7 @@ farthershore business create <slug>
 The command returns the managed repository URL. That URL is the handoff; do not
 infer another lookup path or retry creation through a different surface.
 
-## 2. Clone and read local instructions
+## 3. Clone and read local instructions
 
 ```bash
 git clone <managed-repository-url>
@@ -28,7 +58,7 @@ Read `AGENTS.md` completely before editing. It is authoritative for the
 repository layout, pinned package versions, build commands, branch rules, and
 release checks.
 
-## 3. Author the business from scratch
+## 4. Author the business from scratch
 
 Write the requested structure under `business/` with the current functional
 `@farthershore/business` SDK. The repository owns routes, features, plans,
@@ -40,7 +70,7 @@ authoring model and
 [farthershore-plans-and-metering](../farthershore-plans-and-metering/SKILL.md)
 when plans or metering are involved.
 
-## 4. Build
+## 5. Build
 
 Follow `AGENTS.md` for dependency installation, then run:
 
@@ -51,13 +81,13 @@ farthershore build
 Fix build diagnostics in `business/`. A successful build is the local contract
 check.
 
-## 5. Push and inspect checks
+## 6. Push and inspect checks
 
 Commit the coherent change, push it according to `AGENTS.md`, and inspect the
 GitHub checks for that pushed commit. Do not declare success from a local build
 alone. Fix a failed business check in the repository and push the correction.
 
-## 6. Operate
+## 7. Operate
 
 After repository checks pass, use the `farthershore` CLI for platform operations
 that have no code representation. Run `farthershore <command> --help` before

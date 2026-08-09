@@ -18,12 +18,24 @@ import { readdirSync, readFileSync, statSync, existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import {
   BUNDLE_INSTALL,
+  findMissingDeviceAuthGuidance,
   findObsoleteGuidance,
   findSkillsAddCommands,
 } from "./guidance-validation.mjs";
 
 const root = process.cwd();
 const errors = [];
+const EXPECTED_SKILLS = [
+  "farthershore-backends-and-runtime",
+  "farthershore-building-uis",
+  "farthershore-business-sdk",
+  "farthershore-customer-operations",
+  "farthershore-environments-and-releasing",
+  "farthershore-observability-and-troubleshooting",
+  "farthershore-overview",
+  "farthershore-plans-and-metering",
+  "farthershore-quickstart",
+];
 
 function frontmatter(text) {
   if (!text.startsWith("---")) return null;
@@ -83,6 +95,16 @@ if (!existsSync(skillsDir)) {
   }
 }
 if (skillCount === 0) errors.push("no skills found under skills/");
+const discoveredSkills = existsSync(skillsDir)
+  ? readdirSync(skillsDir)
+      .filter((name) => statSync(join(skillsDir, name)).isDirectory())
+      .sort()
+  : [];
+if (JSON.stringify(discoveredSkills) !== JSON.stringify(EXPECTED_SKILLS)) {
+  errors.push(
+    `skills/: expected the nine job-shaped skills (${EXPECTED_SKILLS.join(", ")}); found ${discoveredSkills.join(", ")}`,
+  );
+}
 
 // 2. Active guidance must describe the current agent-first workflow only.
 const guidanceFiles = [
@@ -94,6 +116,18 @@ for (const file of guidanceFiles) {
   const text = readFileSync(file, "utf8");
   for (const label of findObsoleteGuidance(text)) {
     errors.push(`${file.slice(root.length + 1)}: contains ${label}`);
+  }
+
+  if (file.endsWith("/SKILL.md")) {
+    if (!text.includes("https://docs.farthershore.com/llms.txt")) {
+      errors.push(`${file.slice(root.length + 1)}: missing live docs index URL`);
+    }
+    if (!text.includes("**Required before acting:** fetch the live machine-readable index")) {
+      errors.push(`${file.slice(root.length + 1)}: missing required docs callout`);
+    }
+    if (!/https:\/\/docs\.farthershore\.com\/(?:get-started|agents|define|monetize|frontend|backend|operate|cookbook|reference)\/[a-z0-9-]+/.test(text)) {
+      errors.push(`${file.slice(root.length + 1)}: missing exact related docs page URL`);
+    }
   }
 
   for (const match of text.matchAll(/\[[^\]]+\]\(([^)]+)\)/g)) {
@@ -115,6 +149,17 @@ for (const file of guidanceFiles) {
 }
 if (bundleInstallCount === 0) errors.push(`active guidance: missing bundle install command '${BUNDLE_INSTALL}'`);
 
+const deviceAuthGuidance = [
+  join(root, "README.md"),
+  join(skillsDir, "farthershore-overview", "SKILL.md"),
+  join(skillsDir, "farthershore-quickstart", "SKILL.md"),
+]
+  .map((file) => readFileSync(file, "utf8"))
+  .join("\n");
+for (const label of findMissingDeviceAuthGuidance(deviceAuthGuidance)) {
+  errors.push(`active guidance: missing ${label}`);
+}
+
 const businessSdk = readFileSync(join(skillsDir, "farthershore-business-sdk", "SKILL.md"), "utf8");
 const plansAndMetering = readFileSync(
   join(skillsDir, "farthershore-plans-and-metering", "SKILL.md"),
@@ -125,8 +170,8 @@ const migrationReference = readFileSync(
   "utf8",
 );
 
-if (!businessSdk.includes("**Current: 2.0.0.**")) {
-  errors.push("farthershore-business-sdk: must identify SDK 2.0.0 as current");
+if (!businessSdk.includes("**Current: 2.0.1.**")) {
+  errors.push("farthershore-business-sdk: must identify SDK 2.0.1 as current");
 }
 if (/auto[- ]?attach/i.test(businessSdk) || /auto[- ]?attach/i.test(plansAndMetering)) {
   errors.push("business SDK guidance: SDK 2.0 meters must never be described as auto-attached");
@@ -153,12 +198,131 @@ if (!businessSdk.includes("gateway-known fixed costs do not require a signed ups
   errors.push("farthershore-business-sdk: must distinguish fixed costs from signed dynamic reports");
 }
 
-const escalationReference = readFileSync(
-  join(skillsDir, "farthershore-operating-and-escalation", "references", "escalation.md"),
+const backendRuntime = readFileSync(
+  join(skillsDir, "farthershore-backends-and-runtime", "SKILL.md"),
   "utf8",
 );
-if (/revert manifest/i.test(escalationReference)) {
-  errors.push("escalation reference: repository fixes must say to revert the business/ program");
+for (const required of [
+  "@farthershore/backend",
+  "Current: 0.20.0",
+  "FS_RUNTIME_TOKEN",
+  "requireMember",
+  "ctx.principal.org.id",
+  "ctx.signedContext!.subscriberId",
+  "ctx.signedContext!.subscriptionId",
+  "unique constraint",
+  "atomic upsert",
+  "origin_unavailable",
+  "withUsage",
+  "backend tokens revoke <business> <old-token-id> --yes --format json",
+  "logical slug",
+  '--name "Preview API" --slug api --transport direct',
+]) {
+  if (!backendRuntime.includes(required)) {
+    errors.push(`farthershore-backends-and-runtime: missing '${required}' guidance`);
+  }
+}
+
+const releases = readFileSync(
+  join(skillsDir, "farthershore-environments-and-releasing", "SKILL.md"),
+  "utf8",
+);
+for (const required of [
+  "reviewed-known-good-release-id",
+  "Omitting `--env` targets production",
+  "pins only",
+  "There is no `frontend deploy` command",
+  "every repeat `business publish`, including `--dry-run`, returns",
+  "git switch main",
+  "git pull --ff-only origin main",
+  "gh release create <version> --verify-tag",
+  "The pin also prevents a later successful production build from auto-activating",
+  "Despite the verb name, this operation reactivates any succeeded release",
+  "Preview rollback changes the active release but never pins it",
+]) {
+  if (!releases.includes(required)) {
+    errors.push(`farthershore-environments-and-releasing: missing '${required}' guidance`);
+  }
+}
+
+const buildingUis = readFileSync(
+  join(skillsDir, "farthershore-building-uis", "SKILL.md"),
+  "utf8",
+);
+for (const required of ["<ApiKeysPanel>", "useApiKeys()", "useResourceLimitUsage()"]) {
+  if (!buildingUis.includes(required)) {
+    errors.push(`farthershore-building-uis: missing '${required}' current SDK surface`);
+  }
+}
+
+const overview = readFileSync(
+  join(skillsDir, "farthershore-overview", "SKILL.md"),
+  "utf8",
+);
+for (const required of [
+  "builder-org membership, or invitations",
+  "platform agents, bulletins, or notifications",
+  "Configure API-managed webhooks or frontend/runtime variables",
+  "Inspect workflows",
+]) {
+  if (!overview.includes(required)) {
+    errors.push(`farthershore-overview: missing '${required}' job routing`);
+  }
+}
+if (buildingUis.includes("<ApiKeys>") || buildingUis.includes("useLimits()")) {
+  errors.push("farthershore-building-uis: contains a nonexistent frontend SDK export");
+}
+
+const customerOperations = readFileSync(
+  join(skillsDir, "farthershore-customer-operations", "SKILL.md"),
+  "utf8",
+);
+for (const required of [
+  "consumer block",
+  "consumer remove",
+  "There is currently no CLI unblock command",
+  "--policy by_date --complete-by",
+  "proposal preview",
+  "promo-code",
+  "audit-log business-list",
+]) {
+  if (!customerOperations.includes(required)) {
+    errors.push(`farthershore-customer-operations: missing '${required}' guidance`);
+  }
+}
+
+const observability = readFileSync(
+  join(skillsDir, "farthershore-observability-and-troubleshooting", "SKILL.md"),
+  "utf8",
+);
+for (const required of [
+  "denial show",
+  "Subscription/payment",
+  "SUSPENDED",
+  "persona bootstrap",
+  "Retry-After",
+  "X-FS-Decision-Id",
+]) {
+  if (!observability.includes(required)) {
+    errors.push(`farthershore-observability-and-troubleshooting: missing '${required}' guidance`);
+  }
+}
+for (const required of [
+  "farthershore agents runs-show <business> <runId> --format json",
+  "farthershore notifications preferences <business> --format json",
+]) {
+  if (!observability.includes(required)) {
+    errors.push(
+      `farthershore-observability-and-troubleshooting: missing '${required}' current CLI command`,
+    );
+  }
+}
+for (const retired of ["farthershore agents runs show", "farthershore notifications list"]) {
+  if (observability.includes(retired)) {
+    errors.push(
+      `farthershore-observability-and-troubleshooting: contains nonexistent '${retired}' command`,
+    );
+  }
 }
 
 // 3. marketplace.json

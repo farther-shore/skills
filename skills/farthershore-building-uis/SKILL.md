@@ -5,6 +5,24 @@ description: Use when building customer-facing application surfaces for a Farthe
 
 # Building the application
 
+## Read current docs first
+
+**Required before acting:** fetch the live machine-readable index:
+
+```bash
+curl -fsSL https://docs.farthershore.com/llms.txt
+```
+
+Use:
+
+- https://docs.farthershore.com/frontend/overview
+- https://docs.farthershore.com/frontend/auth
+- https://docs.farthershore.com/frontend/components
+- https://docs.farthershore.com/frontend/access-aware-ui
+- https://docs.farthershore.com/frontend/permission-gates
+- https://docs.farthershore.com/frontend/variables
+- https://docs.farthershore.com/reference/frontend-sdk
+
 **The goal is to build ANY SaaS application that needs plans and metering.** Not
 API products — *any* SaaS. If it sells access in tiers and counts something, it
 belongs here.
@@ -61,11 +79,11 @@ reimplementing a security or billing control.
 | --- | --- | --- |
 | Sign-in, session, signed-out state | `<FartherShoreRoot>`, `useFsAuth()` | Session is single-sourced; `/me` is the authority on signed-in state |
 | Plans + checkout | plan/pricing components | Prices come from the compiled plan — never hand-typed, never drift from what is enforced |
-| API keys | `<ApiKeys>` | Mint/revoke against the real key service; secrets shown once |
+| API keys | `<ApiKeysPanel>`, `useApiKeys()` | Mint/revoke against the real key service; secrets shown once |
 | Usage | `useUsage()`, usage card | The SAME settled numbers the edge billed — not a client estimate |
 | Billing | billing components | Subscription state, cancel/restore, credit surfaces |
 | Docs | product-docs components | Rendered from the published release |
-| Entitlement in the UI | `useLimits()`, limit boundaries | Reflects the plan actually granted |
+| Entitlement in the UI | `useEntitlements()`, `useResourceLimitUsage()`, `useRouteRateLimit()` | Reflects the plan actually granted and the latest observed route budget |
 
 **The frontend is never an authorization boundary.** Hiding a button is a
 courtesy; the gateway is what enforces. Never gate on client state and assume
@@ -77,13 +95,15 @@ Prefer the **hooks** when you want your own presentation, and the **components**
 when the default presentation is fine:
 
 ```tsx
+import { useResourceLimitUsage } from "@farthershore/farthershore-js/react";
+
 // Your layout, your language, our guarantees.
 function Seats() {
-  const { data: usage } = useUsage();
-  const { data: limits } = useLimits();
+  const { data: limits } = useResourceLimitUsage();
+  const seats = limits?.seats;
   return (
     <YourCard title="Seats in use">
-      <YourMeter value={usage?.seats ?? 0} max={limits?.seats ?? 0} />
+      <YourMeter value={seats?.current ?? 0} max={seats?.limit ?? 0} />
     </YourCard>
   );
 }

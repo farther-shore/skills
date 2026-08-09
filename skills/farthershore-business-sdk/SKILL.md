@@ -9,8 +9,24 @@ description: Use when writing or editing a `business/` program with `@farthersho
 contract artifact. What you write here is the business structure: routes,
 features, plans, pricing, meters, limits, policies, and surfaces.
 
-**Current: 2.0.0.** Check the repo's `business/package.json` pin; behaviour
+**Current: 2.0.1.** Check the repo's `business/package.json` pin; behaviour
 differs across majors and the pin is what the build actually uses.
+
+## Read current docs first
+
+**Required before acting:** fetch the live machine-readable index:
+
+```bash
+curl -fsSL https://docs.farthershore.com/llms.txt
+```
+
+Use:
+
+- https://docs.farthershore.com/reference/business-sdk
+- https://docs.farthershore.com/define/business-class
+- https://docs.farthershore.com/define/routes
+- https://docs.farthershore.com/define/build-output
+- https://docs.farthershore.com/agents/operation-classes
 
 ## Functional authoring surface
 
@@ -79,8 +95,8 @@ by hand; always hold the value the verb returned.
 
 The compiler imports **every module under `business/`** and compiles the single
 `fs.business()` result that is default-exported. Filenames are irrelevant — the
-starter is `business/index.ts`, but you may split routes, plans, and meters into
-sibling files and import them.
+starter convention is `business/business.ts`, but you may split routes, plans,
+and meters into sibling files and import them.
 
 `fs.business()` **seals the registry**. Any declaration evaluated after it
 throws. In practice: keep `export default fs.business({...})` last, and never
@@ -172,7 +188,7 @@ object is just `{ match: {...} }`, neither meter is wired.
 | --- | --- |
 | `plan "x" meter 0 must be an SDK-created meter ref` | You passed a string where a `MeterRef` belongs. |
 | `Free plans must include at least one hard enforced limit` | `fs.free()` with no `limits`. An unlimited free plan is unbounded liability. |
-| `PLAN_RATE_LIMIT_REQUIRED` | No `limits[]` **and** no priced meter. In SDK 2.0.0 a priced meter satisfies this; an unpriced one or a bare `included_units` pool does not. |
+| `PLAN_RATE_LIMIT_REQUIRED` | No `limits[]` **and** no priced meter. In SDK 2.0.x a priced meter satisfies this; an unpriced one or a bare `included_units` pool does not. |
 | `ROUTE_METER_NOT_ALLOWED_BY_BACKEND` | A backend's `meters` allowlist must include every meter explicitly attached to its routes, including `requests` when used. |
 | `… is from registry generation N, not M` | Two copies of `@farthershore/business` loaded. Usually a module outside `business/` with its own `node_modules`. |
 | `cannot declare after business() sealed the registry` | A declaration ran after `fs.business()`. |

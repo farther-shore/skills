@@ -5,6 +5,24 @@ description: Use when designing or changing plans, pricing, limits, quotas, or u
 
 # Plans, limits, and metering
 
+## Read current docs first
+
+**Required before acting:** fetch the live machine-readable index:
+
+```bash
+curl -fsSL https://docs.farthershore.com/llms.txt
+```
+
+Use:
+
+- https://docs.farthershore.com/define/plans
+- https://docs.farthershore.com/define/meters
+- https://docs.farthershore.com/define/resources
+- https://docs.farthershore.com/monetize/strategies
+- https://docs.farthershore.com/monetize/plan-changes
+- https://docs.farthershore.com/operate/migrations
+- https://docs.farthershore.com/operate/usage-billing-policy
+
 A plan answers three questions: **what can they call** (`grants`), **how much
 can they consume** (`limits` / `meters`), and **what does it cost** (`price`).
 
@@ -25,7 +43,7 @@ An **unpriced** meter does **not** satisfy this. A meter with no rate, or a bare
 billing: past the pool, consumption is both unbounded and unbilled. That still
 needs a limit.
 
-> These examples use business SDK **2.0.0** semantics. Meter declarations and
+> These examples use business SDK **2.0.1** semantics. Meter declarations and
 > plan limits never attach meters to routes; attachment is explicit.
 
 ## The four shapes
@@ -125,7 +143,7 @@ A declared meter bills only where a route explicitly attaches it:
 3. Attach upstream-computed dimensions under `reports`. Their units count only
    when the upstream sends a valid signed metering report using its runtime
    token. See
-   [farthershore-backends-and-tokens](../farthershore-backends-and-tokens/SKILL.md).
+   [farthershore-backends-and-runtime](../farthershore-backends-and-runtime/SKILL.md).
 
 `onStatusCodes` controls which response statuses are billable.
 `postStreamBilling: true` marks dynamic units that normally arrive after the

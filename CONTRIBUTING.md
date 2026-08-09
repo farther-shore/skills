@@ -15,6 +15,9 @@ cross-linked skill.
 - Verify command signatures against current source or `--help`; do not invent
   flags or response fields.
 - Put necessary long-form material in a linked `references/` file.
+- In every `SKILL.md`, tell the agent to fetch
+  `https://docs.farthershore.com/llms.txt` and list exact current
+  `https://docs.farthershore.com/<path>` pages for the job.
 - Update the skills table in [README.md](README.md).
 - Run `node scripts/validate-skills.mjs`.
 - Confirm install guidance uses the complete tagged bundle:

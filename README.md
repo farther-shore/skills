@@ -1,7 +1,7 @@
 # FartherShore Skills
 
 Agent Skills for creating and operating a business on FartherShore. The bundle
-teaches one ownership model:
+is organized around nine jobs an agent performs and teaches one ownership model:
 
 - The repository owns business structure: routes, features, plans, pricing,
   meters, limits, policies, and surfaces.
@@ -20,9 +20,21 @@ Load `farthershore-overview` first. For a new business, continue with
 | [`farthershore-plans-and-metering`](skills/farthershore-plans-and-metering/SKILL.md) | designing plans, pricing, limits, or meters |
 | [`farthershore-building-uis`](skills/farthershore-building-uis/SKILL.md) | building customer-facing application surfaces |
 | [`farthershore-environments-and-releasing`](skills/farthershore-environments-and-releasing/SKILL.md) | testing changes or releasing them |
-| [`farthershore-backends-and-tokens`](skills/farthershore-backends-and-tokens/SKILL.md) | operating backends and runtime tokens |
-| [`farthershore-frontend-hosting`](skills/farthershore-frontend-hosting/SKILL.md) | deploying or rolling back a hosted frontend |
-| [`farthershore-operating-and-escalation`](skills/farthershore-operating-and-escalation/SKILL.md) | monitoring health or escalating platform faults |
+| [`farthershore-backends-and-runtime`](skills/farthershore-backends-and-runtime/SKILL.md) | building an application backend, verifying requests, storing user data, reporting usage, or operating origins and tokens |
+| [`farthershore-customer-operations`](skills/farthershore-customer-operations/SKILL.md) | operating customer access, subscriptions, roles, proposals, promo codes, and preview personas |
+| [`farthershore-observability-and-troubleshooting`](skills/farthershore-observability-and-troubleshooting/SKILL.md) | diagnosing denials, releases, usage, backends, or platform faults |
+
+## Live documentation
+
+Every skill starts by fetching the current machine-readable documentation index:
+
+```bash
+curl -fsSL https://docs.farthershore.com/llms.txt
+```
+
+It then identifies the exact `https://docs.farthershore.com/...` pages for that
+job. The skills carry the critical invariants and safe operating sequence; the
+website carries the full current reference.
 
 ## Install or update the bundle
 
@@ -45,7 +57,8 @@ first and loads a body only when its trigger matches.
 The only setup sequence taught by this bundle is:
 
 ```text
-farthershore business create <slug>
+farthershore login → human allows the CLI to act as them
+→ farthershore business create <slug>
 → clone the returned managed repository URL
 → read AGENTS.md
 → author business/ from scratch
@@ -54,6 +67,34 @@ farthershore business create <slug>
 → inspect the GitHub checks
 → operate through the CLI
 ```
+
+Device login may open a browser. On a headless machine, run
+`farthershore login --headless` and give the verification URL and user code
+to the human approver. The credential follows the user's live role and
+CLI-operable permissions across all current and future organizations and
+businesses. The standalone approval page has only Allow and Deny
+actions; normal login has no naming, organization, business, tier, or permission
+options.
+
+List or change the saved organization without logging in again:
+
+```bash
+farthershore auth organization list --format json
+farthershore auth organization use <id-or-slug>
+farthershore --organization <id-or-slug> business list --format json
+```
+
+The global `--organization` option changes only command context; it does not
+narrow the normal user session. For a separately pre-issued,
+organization-scoped MakerToken, either pipe it directly from the secret provider
+into `farthershore login --token-stdin` to save it, or set
+`FARTHERSHORE_TOKEN` as an ephemeral override for the current shell. A
+MakerToken can be restricted to selected permissions and businesses inside its
+one organization. Never put the raw credential in argv, stdout, stderr, docs,
+or logs, and unset the environment override when the restricted operation is
+finished.
+
+Run `farthershore logout` to remove the saved CLI credential.
 
 Do not write contract state through the CLI or API. Change the repository and
 push it.
