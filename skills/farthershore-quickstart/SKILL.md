@@ -7,6 +7,21 @@ description: Use when creating a new FartherShore business or taking one from a 
 
 Use one setup flow. Do not invent another bootstrap path.
 
+## Read current docs first
+
+**Required before acting:** fetch the live machine-readable index:
+
+```bash
+curl -fsSL https://docs.farthershore.com/llms.txt
+```
+
+Use:
+
+- https://docs.farthershore.com/get-started/quickstart
+- https://docs.farthershore.com/get-started/install
+- https://docs.farthershore.com/agents/overview
+- https://docs.farthershore.com/reference/cli
+
 ## 1. Authenticate
 
 Follow the device-login guidance in

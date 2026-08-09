@@ -12,6 +12,22 @@ features, plans, pricing, meters, limits, policies, and surfaces.
 **Current: 2.0.0.** Check the repo's `business/package.json` pin; behaviour
 differs across majors and the pin is what the build actually uses.
 
+## Read current docs first
+
+**Required before acting:** fetch the live machine-readable index:
+
+```bash
+curl -fsSL https://docs.farthershore.com/llms.txt
+```
+
+Use:
+
+- https://docs.farthershore.com/reference/business-sdk
+- https://docs.farthershore.com/define/business-class
+- https://docs.farthershore.com/define/routes
+- https://docs.farthershore.com/define/build-output
+- https://docs.farthershore.com/agents/operation-classes
+
 ## Functional authoring surface
 
 Use the current functional surface of **15 verbs**:
@@ -79,8 +95,8 @@ by hand; always hold the value the verb returned.
 
 The compiler imports **every module under `business/`** and compiles the single
 `fs.business()` result that is default-exported. Filenames are irrelevant — the
-starter is `business/index.ts`, but you may split routes, plans, and meters into
-sibling files and import them.
+starter convention is `business/business.ts`, but you may split routes, plans,
+and meters into sibling files and import them.
 
 `fs.business()` **seals the registry**. Any declaration evaluated after it
 throws. In practice: keep `export default fs.business({...})` last, and never

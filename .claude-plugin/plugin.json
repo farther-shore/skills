@@ -2,8 +2,8 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin.json",
   "name": "farthershore",
   "displayName": "FartherShore Skills",
-  "version": "2.1.0",
-  "description": "Create and operate a FartherShore business with repository-owned structure and CLI-operated platform state. Skills live in skills/.",
+  "version": "2.2.0",
+  "description": "Nine job-shaped skills for creating, building, releasing, operating, and troubleshooting FartherShore businesses.",
   "author": {
     "name": "Farther Shore",
     "url": "https://github.com/farther-shore"

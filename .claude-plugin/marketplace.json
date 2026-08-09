@@ -5,12 +5,12 @@
     "name": "Farther Shore",
     "url": "https://github.com/farther-shore"
   },
-  "description": "Skills for building and operating businesses on the FartherShore platform.",
+  "description": "Nine job-shaped skills for building, releasing, operating, and troubleshooting businesses on FartherShore.",
   "plugins": [
     {
       "name": "farthershore",
       "source": "./",
-      "description": "Create and operate a FartherShore business with repository-owned structure and CLI-operated platform state.",
+      "description": "Create, build, release, operate, and troubleshoot a FartherShore business with clear repository and platform ownership.",
       "repository": "https://github.com/farther-shore/skills",
       "keywords": ["farthershore", "business-as-code", "agent-skills"]
     }

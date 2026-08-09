@@ -1,7 +1,7 @@
 # FartherShore Skills
 
 Agent Skills for creating and operating a business on FartherShore. The bundle
-teaches one ownership model:
+is organized around nine jobs an agent performs and teaches one ownership model:
 
 - The repository owns business structure: routes, features, plans, pricing,
   meters, limits, policies, and surfaces.
@@ -20,9 +20,21 @@ Load `farthershore-overview` first. For a new business, continue with
 | [`farthershore-plans-and-metering`](skills/farthershore-plans-and-metering/SKILL.md) | designing plans, pricing, limits, or meters |
 | [`farthershore-building-uis`](skills/farthershore-building-uis/SKILL.md) | building customer-facing application surfaces |
 | [`farthershore-environments-and-releasing`](skills/farthershore-environments-and-releasing/SKILL.md) | testing changes or releasing them |
-| [`farthershore-backends-and-tokens`](skills/farthershore-backends-and-tokens/SKILL.md) | operating backends and runtime tokens |
-| [`farthershore-frontend-hosting`](skills/farthershore-frontend-hosting/SKILL.md) | deploying or rolling back a hosted frontend |
-| [`farthershore-operating-and-escalation`](skills/farthershore-operating-and-escalation/SKILL.md) | monitoring health or escalating platform faults |
+| [`farthershore-backends-and-runtime`](skills/farthershore-backends-and-runtime/SKILL.md) | building an application backend, verifying requests, storing user data, reporting usage, or operating origins and tokens |
+| [`farthershore-customer-operations`](skills/farthershore-customer-operations/SKILL.md) | operating customer access, subscriptions, roles, proposals, promo codes, and preview personas |
+| [`farthershore-observability-and-troubleshooting`](skills/farthershore-observability-and-troubleshooting/SKILL.md) | diagnosing denials, releases, usage, backends, or platform faults |
+
+## Live documentation
+
+Every skill starts by fetching the current machine-readable documentation index:
+
+```bash
+curl -fsSL https://docs.farthershore.com/llms.txt
+```
+
+It then identifies the exact `https://docs.farthershore.com/...` pages for that
+job. The skills carry the critical invariants and safe operating sequence; the
+website carries the full current reference.
 
 ## Install or update the bundle
 

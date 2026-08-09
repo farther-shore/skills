@@ -5,6 +5,24 @@ description: Use when building customer-facing application surfaces for a Farthe
 
 # Building the application
 
+## Read current docs first
+
+**Required before acting:** fetch the live machine-readable index:
+
+```bash
+curl -fsSL https://docs.farthershore.com/llms.txt
+```
+
+Use:
+
+- https://docs.farthershore.com/frontend/overview
+- https://docs.farthershore.com/frontend/auth
+- https://docs.farthershore.com/frontend/components
+- https://docs.farthershore.com/frontend/access-aware-ui
+- https://docs.farthershore.com/frontend/permission-gates
+- https://docs.farthershore.com/frontend/variables
+- https://docs.farthershore.com/reference/frontend-sdk
+
 **The goal is to build ANY SaaS application that needs plans and metering.** Not
 API products — *any* SaaS. If it sells access in tiers and counts something, it
 belongs here.

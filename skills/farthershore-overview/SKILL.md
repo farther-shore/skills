@@ -8,6 +8,22 @@ description: Use when starting any FartherShore task or working in a FartherShor
 FartherShore is Business-as-Code. Start with the repository, and read its
 `AGENTS.md` before acting.
 
+## Read current docs first
+
+**Required before acting:** fetch the live machine-readable index:
+
+```bash
+curl -fsSL https://docs.farthershore.com/llms.txt
+```
+
+Start with these exact pages, then follow the task-specific links from the
+selected skill:
+
+- https://docs.farthershore.com/agents/overview
+- https://docs.farthershore.com/agents/operation-classes
+- https://docs.farthershore.com/get-started/overview
+- https://docs.farthershore.com/reference/cli
+
 ## One owner for each kind of state
 
 | State | Owner | Change surface |
@@ -66,8 +82,7 @@ directly from the secret provider to `farthershore login --token-stdin` to save
 it, or set `FARTHERSHORE_TOKEN` as an ephemeral override for the current shell.
 This is separate from normal user-bound device login. Never copy the raw
 credential into argv, stdout, stderr, docs, or logs; unset the environment
-override when finished. Do not invent a `--token` flag or attempt MakerToken
-administration through an agent workflow.
+override when finished. Do not invent a `--token` flag.
 
 Run `farthershore logout` to remove the saved CLI credential.
 
@@ -94,6 +109,7 @@ releases.
 | Design plans, pricing, limits, or meters | [farthershore-plans-and-metering](../farthershore-plans-and-metering/SKILL.md) |
 | Build a customer-facing surface | [farthershore-building-uis](../farthershore-building-uis/SKILL.md) |
 | Test or release a repository change | [farthershore-environments-and-releasing](../farthershore-environments-and-releasing/SKILL.md) |
-| Operate backends or runtime tokens | [farthershore-backends-and-tokens](../farthershore-backends-and-tokens/SKILL.md) |
-| Operate hosted frontend releases | [farthershore-frontend-hosting](../farthershore-frontend-hosting/SKILL.md) |
-| Monitor or escalate | [farthershore-operating-and-escalation](../farthershore-operating-and-escalation/SKILL.md) |
+| Build or operate a backend | [farthershore-backends-and-runtime](../farthershore-backends-and-runtime/SKILL.md) |
+| Preview, release, or recover | [farthershore-environments-and-releasing](../farthershore-environments-and-releasing/SKILL.md) |
+| Operate customer state | [farthershore-customer-operations](../farthershore-customer-operations/SKILL.md) |
+| Diagnose a request, release, usage, or platform problem | [farthershore-observability-and-troubleshooting](../farthershore-observability-and-troubleshooting/SKILL.md) |

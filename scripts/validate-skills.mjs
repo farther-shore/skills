@@ -25,6 +25,17 @@ import {
 
 const root = process.cwd();
 const errors = [];
+const EXPECTED_SKILLS = [
+  "farthershore-backends-and-runtime",
+  "farthershore-building-uis",
+  "farthershore-business-sdk",
+  "farthershore-customer-operations",
+  "farthershore-environments-and-releasing",
+  "farthershore-observability-and-troubleshooting",
+  "farthershore-overview",
+  "farthershore-plans-and-metering",
+  "farthershore-quickstart",
+];
 
 function frontmatter(text) {
   if (!text.startsWith("---")) return null;
@@ -84,6 +95,16 @@ if (!existsSync(skillsDir)) {
   }
 }
 if (skillCount === 0) errors.push("no skills found under skills/");
+const discoveredSkills = existsSync(skillsDir)
+  ? readdirSync(skillsDir)
+      .filter((name) => statSync(join(skillsDir, name)).isDirectory())
+      .sort()
+  : [];
+if (JSON.stringify(discoveredSkills) !== JSON.stringify(EXPECTED_SKILLS)) {
+  errors.push(
+    `skills/: expected the nine job-shaped skills (${EXPECTED_SKILLS.join(", ")}); found ${discoveredSkills.join(", ")}`,
+  );
+}
 
 // 2. Active guidance must describe the current agent-first workflow only.
 const guidanceFiles = [
@@ -95,6 +116,18 @@ for (const file of guidanceFiles) {
   const text = readFileSync(file, "utf8");
   for (const label of findObsoleteGuidance(text)) {
     errors.push(`${file.slice(root.length + 1)}: contains ${label}`);
+  }
+
+  if (file.endsWith("/SKILL.md")) {
+    if (!text.includes("https://docs.farthershore.com/llms.txt")) {
+      errors.push(`${file.slice(root.length + 1)}: missing live docs index URL`);
+    }
+    if (!text.includes("**Required before acting:** fetch the live machine-readable index")) {
+      errors.push(`${file.slice(root.length + 1)}: missing required docs callout`);
+    }
+    if (!/https:\/\/docs\.farthershore\.com\/(?:get-started|agents|define|monetize|frontend|backend|operate|cookbook|reference)\/[a-z0-9-]+/.test(text)) {
+      errors.push(`${file.slice(root.length + 1)}: missing exact related docs page URL`);
+    }
   }
 
   for (const match of text.matchAll(/\[[^\]]+\]\(([^)]+)\)/g)) {
@@ -165,12 +198,82 @@ if (!businessSdk.includes("gateway-known fixed costs do not require a signed ups
   errors.push("farthershore-business-sdk: must distinguish fixed costs from signed dynamic reports");
 }
 
-const escalationReference = readFileSync(
-  join(skillsDir, "farthershore-operating-and-escalation", "references", "escalation.md"),
+const backendRuntime = readFileSync(
+  join(skillsDir, "farthershore-backends-and-runtime", "SKILL.md"),
   "utf8",
 );
-if (/revert manifest/i.test(escalationReference)) {
-  errors.push("escalation reference: repository fixes must say to revert the business/ program");
+for (const required of [
+  "@farthershore/backend",
+  "Current: 0.20.0",
+  "FS_RUNTIME_TOKEN",
+  "requireMember",
+  "ctx.principal.org.id",
+  "ctx.signedContext!.subscriberId",
+  "ctx.signedContext!.subscriptionId",
+  "unique constraint",
+  "atomic upsert",
+  "origin_unavailable",
+  "withUsage",
+  "backend tokens revoke <business> <old-token-id> --yes --format json",
+  "logical slug",
+  '--name "Preview API" --slug api --transport direct',
+]) {
+  if (!backendRuntime.includes(required)) {
+    errors.push(`farthershore-backends-and-runtime: missing '${required}' guidance`);
+  }
+}
+
+const releases = readFileSync(
+  join(skillsDir, "farthershore-environments-and-releasing", "SKILL.md"),
+  "utf8",
+);
+for (const required of [
+  "reviewed-known-good-release-id",
+  "Omitting `--env` targets production",
+  "pins only",
+  "There is no `frontend deploy` command",
+  "every repeat `business publish`, including `--dry-run`, returns",
+  "gh release create <version> --verify-tag",
+  "The pin also prevents a later successful production build from auto-activating",
+  "Despite the verb name, this operation reactivates any succeeded release",
+]) {
+  if (!releases.includes(required)) {
+    errors.push(`farthershore-environments-and-releasing: missing '${required}' guidance`);
+  }
+}
+
+const customerOperations = readFileSync(
+  join(skillsDir, "farthershore-customer-operations", "SKILL.md"),
+  "utf8",
+);
+for (const required of [
+  "consumer block",
+  "consumer remove",
+  "--policy by_date --complete-by",
+  "proposal preview",
+  "promo-code",
+  "audit-log business-list",
+]) {
+  if (!customerOperations.includes(required)) {
+    errors.push(`farthershore-customer-operations: missing '${required}' guidance`);
+  }
+}
+
+const observability = readFileSync(
+  join(skillsDir, "farthershore-observability-and-troubleshooting", "SKILL.md"),
+  "utf8",
+);
+for (const required of [
+  "denial show",
+  "Subscription/payment",
+  "SUSPENDED",
+  "persona bootstrap",
+  "Retry-After",
+  "X-FS-Decision-Id",
+]) {
+  if (!observability.includes(required)) {
+    errors.push(`farthershore-observability-and-troubleshooting: missing '${required}' guidance`);
+  }
 }
 
 // 3. marketplace.json

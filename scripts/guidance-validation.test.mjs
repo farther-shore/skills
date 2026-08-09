@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import test from "node:test";
 
 import {
@@ -184,4 +184,44 @@ test("published overview and quickstart contain the complete device-login safety
   ].join("\n");
 
   assert.deepEqual(findMissingDeviceAuthGuidance(publishedGuidance), []);
+});
+
+test("publishes exactly nine job-shaped skills", () => {
+  const expected = [
+    "farthershore-backends-and-runtime",
+    "farthershore-building-uis",
+    "farthershore-business-sdk",
+    "farthershore-customer-operations",
+    "farthershore-environments-and-releasing",
+    "farthershore-observability-and-troubleshooting",
+    "farthershore-overview",
+    "farthershore-plans-and-metering",
+    "farthershore-quickstart",
+  ];
+
+  assert.deepEqual(
+    readdirSync(new URL("../skills", import.meta.url), { withFileTypes: true })
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => entry.name)
+      .sort(),
+    expected,
+  );
+});
+
+test("every skill routes agents through the live docs index and exact pages", () => {
+  for (const entry of readdirSync(new URL("../skills", import.meta.url), {
+    withFileTypes: true,
+  })) {
+    if (!entry.isDirectory()) continue;
+    const text = readFileSync(
+      new URL(`../skills/${entry.name}/SKILL.md`, import.meta.url),
+      "utf8",
+    );
+    assert.match(text, /https:\/\/docs\.farthershore\.com\/llms\.txt/);
+    assert.match(text, /\*\*Required before acting:\*\* fetch the live machine-readable index/);
+    assert.match(
+      text,
+      /https:\/\/docs\.farthershore\.com\/(?:get-started|agents|define|monetize|frontend|backend|operate|cookbook|reference)\/[a-z0-9-]+/,
+    );
+  }
 });
