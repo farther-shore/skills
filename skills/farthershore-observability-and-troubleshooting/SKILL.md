@@ -28,6 +28,25 @@ Use the pages for the symptom:
 - https://docs.farthershore.com/cookbook/diagnose-billing-usage
 - https://docs.farthershore.com/reference/response-codes
 
+## Inspect platform agents and communications
+
+Treat platform-agent state, bulletin posts, and notifications as separate
+operational signals:
+
+```bash
+farthershore agents list <business> --format json
+farthershore agents status <business> --format json
+farthershore agents runs-show <business> <runId> --format json
+farthershore bulletin list <business> --format json
+farthershore notifications preferences <business> --format json
+```
+
+Use `agents runs-show` for one run's paper trail. Notification preferences show
+email opt-outs; they are not an inbox or delivery log. Enabling or disabling an
+operator changes live behavior and billing, so inspect status and run `--help`
+before the write. A bulletin acknowledgment is a handoff marker; it does not
+prove the requested change was applied.
+
 ## Establish target and serving state
 
 Record organization, business, environment, UTC time, full commit SHA or
@@ -109,6 +128,10 @@ farthershore apply-timeline inspect <business> <id-or-tag-or-sha> \
 farthershore frontend status <business> --env <environmentId> \
   --wait --timeout 600 --format json
 ```
+
+For agent-operable workflows, the Apply Timeline is the authoritative
+inspection surface. Do not invent an internal workflow-admin credential or use
+an undocumented replay command.
 
 - `build`/`compile`: inspect repository input and diagnostics; fix and push a new
   commit when the source is wrong.

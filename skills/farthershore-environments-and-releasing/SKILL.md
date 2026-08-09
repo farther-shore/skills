@@ -80,9 +80,12 @@ Apply Timeline semantic diff, and choose the next version according to
 `AGENTS.md` and the repository's published tags:
 
 ```bash
+git switch main
+git pull --ff-only origin main
 farthershore build --format json
+approved_sha="$(git rev-parse HEAD)"
 git push origin main
-farthershore apply-timeline inspect <business> "$(git rev-parse HEAD)" \
+farthershore apply-timeline inspect <business> "$approved_sha" \
   --env production --format json
 gh release list --limit 10
 ```
@@ -90,7 +93,7 @@ gh release list --limit 10
 Then cut a published GitHub Release on the exact approved repository commit:
 
 ```bash
-git tag -a <version> <full-approved-sha> -m "Release <version>"
+git tag -a <version> "$approved_sha" -m "Release <version>"
 git push origin <version>
 gh release create <version> --verify-tag --title <version> --generate-notes
 ```
@@ -149,9 +152,8 @@ farthershore frontend status <business> --format json
 
 Choose the release ID from this target's recent **SUCCEEDED** releases. Prove it
 is known-good from the producing build/commit and prior behavior; age alone is
-not evidence. For preview, include the same `--env <environmentId>` on status
-and rollback. Omitting `--env` targets production. Rollback flips and pins only
-that target's frontend pointer; it does not change plans, billing, routes,
+not evidence. Omitting `--env` targets production. Production rollback flips
+and pins only the frontend pointer; it does not change plans, billing, routes,
 backend, or repository source. Verify the exact active release ID and pin state.
 
 The pin also prevents a later successful production build from auto-activating.
@@ -169,6 +171,11 @@ farthershore frontend status <business> --format json
 Despite the verb name, this operation reactivates any succeeded release in that
 same target's build history and leaves the chosen release pinned. Verify the new
 active release ID and pin state; never assume the GitHub Release cleared a pin.
+
+For preview, include the same `--env <environmentId>` on status and rollback.
+Preview rollback changes the active release but never pins it; the next
+successful preview build autoactivates. Use it as temporary containment, stop or
+fix the bad source, and verify the active release again after every build.
 
 ## Stop conditions
 

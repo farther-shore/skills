@@ -233,13 +233,44 @@ for (const required of [
   "pins only",
   "There is no `frontend deploy` command",
   "every repeat `business publish`, including `--dry-run`, returns",
+  "git switch main",
+  "git pull --ff-only origin main",
   "gh release create <version> --verify-tag",
   "The pin also prevents a later successful production build from auto-activating",
   "Despite the verb name, this operation reactivates any succeeded release",
+  "Preview rollback changes the active release but never pins it",
 ]) {
   if (!releases.includes(required)) {
     errors.push(`farthershore-environments-and-releasing: missing '${required}' guidance`);
   }
+}
+
+const buildingUis = readFileSync(
+  join(skillsDir, "farthershore-building-uis", "SKILL.md"),
+  "utf8",
+);
+for (const required of ["<ApiKeysPanel>", "useApiKeys()", "useResourceLimitUsage()"]) {
+  if (!buildingUis.includes(required)) {
+    errors.push(`farthershore-building-uis: missing '${required}' current SDK surface`);
+  }
+}
+
+const overview = readFileSync(
+  join(skillsDir, "farthershore-overview", "SKILL.md"),
+  "utf8",
+);
+for (const required of [
+  "builder-org membership, or invitations",
+  "platform agents, bulletins, or notifications",
+  "Configure API-managed webhooks or frontend/runtime variables",
+  "Inspect workflows",
+]) {
+  if (!overview.includes(required)) {
+    errors.push(`farthershore-overview: missing '${required}' job routing`);
+  }
+}
+if (buildingUis.includes("<ApiKeys>") || buildingUis.includes("useLimits()")) {
+  errors.push("farthershore-building-uis: contains a nonexistent frontend SDK export");
 }
 
 const customerOperations = readFileSync(
@@ -249,6 +280,7 @@ const customerOperations = readFileSync(
 for (const required of [
   "consumer block",
   "consumer remove",
+  "There is currently no CLI unblock command",
   "--policy by_date --complete-by",
   "proposal preview",
   "promo-code",
@@ -273,6 +305,23 @@ for (const required of [
 ]) {
   if (!observability.includes(required)) {
     errors.push(`farthershore-observability-and-troubleshooting: missing '${required}' guidance`);
+  }
+}
+for (const required of [
+  "farthershore agents runs-show <business> <runId> --format json",
+  "farthershore notifications preferences <business> --format json",
+]) {
+  if (!observability.includes(required)) {
+    errors.push(
+      `farthershore-observability-and-troubleshooting: missing '${required}' current CLI command`,
+    );
+  }
+}
+for (const retired of ["farthershore agents runs show", "farthershore notifications list"]) {
+  if (observability.includes(retired)) {
+    errors.push(
+      `farthershore-observability-and-troubleshooting: contains nonexistent '${retired}' command`,
+    );
   }
 }
 

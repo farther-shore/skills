@@ -1,6 +1,6 @@
 ---
 name: farthershore-customer-operations
-description: Use when inspecting or changing customer access, subscriptions, roles, proposals, promo codes, test personas, or customer audit evidence.
+description: Use when inspecting or changing customer access, subscriptions, roles, proposals, promo codes, test personas, builder organization membership, invitations, or related audit evidence.
 ---
 
 # Operate customer state
@@ -30,6 +30,23 @@ Use the pages for the task:
 Run the relevant command group's `--help` before a write and use
 `--format json`. Read the narrow state back after every mutation.
 
+## Operate builder organization membership
+
+Organization membership is live platform state. Resolve the organization and
+read its current members before inviting, changing a role, or removing anyone:
+
+```bash
+farthershore organization list --format json
+farthershore organization members <organizationId> --format json
+farthershore organization invite <organizationId> <email> --role member --format json
+farthershore organization member-role <organizationId> <memberUserId> --role admin --format json
+farthershore organization member-remove <organizationId> <memberUserId> --yes --format json
+```
+
+Run `farthershore organization --help` before a mutation, obtain confirmation
+for role elevation or removal, and read the member list back. Do not confuse
+builder-organization membership with customer members or repo-defined RBAC.
+
 ## Resolve the exact customer
 
 ```bash
@@ -43,7 +60,7 @@ absence alone is not always proof of removal.
 
 ## Contain, remove, or move access
 
-Block is reversible containment and revokes active API keys:
+Block is containment and revokes active API keys. There is currently no CLI unblock command, so do not describe it as a reversible pause:
 
 ```bash
 farthershore consumer block <business> <subscriberId> --yes --format json

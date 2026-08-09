@@ -27,6 +27,7 @@ Use the pages for the task:
 - https://docs.farthershore.com/backend/runtime-tokens
 - https://docs.farthershore.com/backend/transport-modes
 - https://docs.farthershore.com/frontend/variables
+- https://docs.farthershore.com/define/webhooks
 - https://docs.farthershore.com/cookbook/add-backend
 
 If a command or SDK call differs, follow the current docs and the repository's
@@ -171,6 +172,18 @@ or a coordinated restart where interruption is acceptable.
 
 A backend cannot invent a meter. Define it, attach it to the route, allow it on
 the logical backend, build, and push before reporting it.
+
+## Route variables and webhooks to the correct owner
+
+`PUBLIC`, `BUILD`, and `RUNTIME` variables are hosted-frontend and edge
+integration state. PUBLIC values are readable; BUILD and RUNTIME values are
+write-only. They are not backend-process environment variables—put database
+URLs and server secrets in the backend host instead.
+
+Webhook ownership is mode-dependent. A `webhooks` block in `business/` is
+repository-owned. Without that block, API-managed endpoints are platform
+operations under `farthershore webhook`; run its `--help` and never mix both
+owners for the same business.
 
 For an Express response whose exact units are known before it finishes, use the
 verified request ID and copy the signed response headers back to Express:
