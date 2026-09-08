@@ -26,11 +26,13 @@ import {
 const root = process.cwd();
 const errors = [];
 const EXPECTED_SKILLS = [
+  "farthershore-agent-operations",
   "farthershore-backends-and-runtime",
   "farthershore-building-uis",
   "farthershore-business-sdk",
   "farthershore-customer-operations",
   "farthershore-environments-and-releasing",
+  "farthershore-governance",
   "farthershore-observability-and-troubleshooting",
   "farthershore-overview",
   "farthershore-plans-and-metering",
@@ -70,13 +72,21 @@ if (!existsSync(skillsDir)) {
     skillCount++;
     const fm = frontmatter(readFileSync(file, "utf8"));
     if (!fm) {
-      errors.push(`skills/${name}/SKILL.md: missing YAML frontmatter (--- block)`);
+      errors.push(
+        `skills/${name}/SKILL.md: missing YAML frontmatter (--- block)`,
+      );
       continue;
     }
-    const keys = [...fm.matchAll(/^([A-Za-z0-9_-]+):/gm)].map((match) => match[1]);
-    const unsupportedKeys = keys.filter((key) => !["name", "description"].includes(key));
+    const keys = [...fm.matchAll(/^([A-Za-z0-9_-]+):/gm)].map(
+      (match) => match[1],
+    );
+    const unsupportedKeys = keys.filter(
+      (key) => !["name", "description"].includes(key),
+    );
     if (unsupportedKeys.length) {
-      errors.push(`skills/${name}/SKILL.md: unsupported frontmatter fields: ${unsupportedKeys.join(", ")}`);
+      errors.push(
+        `skills/${name}/SKILL.md: unsupported frontmatter fields: ${unsupportedKeys.join(", ")}`,
+      );
     }
     const nameMatch = fm.match(/^name:\s*(.+)$/m);
     if (!nameMatch) {
@@ -84,13 +94,17 @@ if (!existsSync(skillsDir)) {
     } else {
       const declared = nameMatch[1].trim().replace(/^["']|["']$/g, "");
       if (declared !== name) {
-        errors.push(`skills/${name}/SKILL.md: name '${declared}' does not match folder '${name}'`);
+        errors.push(
+          `skills/${name}/SKILL.md: name '${declared}' does not match folder '${name}'`,
+        );
       }
     }
     if (!/^description:\s*\S/m.test(fm) && !/^description:\s*$/m.test(fm)) {
       errors.push(`skills/${name}/SKILL.md: frontmatter missing 'description'`);
     } else if (!/^description:\s*Use when\b[^\n]*$/m.test(fm)) {
-      errors.push(`skills/${name}/SKILL.md: description must be one line starting with 'Use when'`);
+      errors.push(
+        `skills/${name}/SKILL.md: description must be one line starting with 'Use when'`,
+      );
     }
   }
 }
@@ -102,7 +116,7 @@ const discoveredSkills = existsSync(skillsDir)
   : [];
 if (JSON.stringify(discoveredSkills) !== JSON.stringify(EXPECTED_SKILLS)) {
   errors.push(
-    `skills/: expected the nine job-shaped skills (${EXPECTED_SKILLS.join(", ")}); found ${discoveredSkills.join(", ")}`,
+    `skills/: expected the complete job-shaped bundle (${EXPECTED_SKILLS.join(", ")}); found ${discoveredSkills.join(", ")}`,
   );
 }
 
@@ -120,13 +134,27 @@ for (const file of guidanceFiles) {
 
   if (file.endsWith("/SKILL.md")) {
     if (!text.includes("https://docs.farthershore.com/llms.txt")) {
-      errors.push(`${file.slice(root.length + 1)}: missing live docs index URL`);
+      errors.push(
+        `${file.slice(root.length + 1)}: missing live docs index URL`,
+      );
     }
-    if (!text.includes("**Required before acting:** fetch the live machine-readable index")) {
-      errors.push(`${file.slice(root.length + 1)}: missing required docs callout`);
+    if (
+      !text.includes(
+        "**Required before acting:** fetch the live machine-readable index",
+      )
+    ) {
+      errors.push(
+        `${file.slice(root.length + 1)}: missing required docs callout`,
+      );
     }
-    if (!/https:\/\/docs\.farthershore\.com\/(?:get-started|agents|define|monetize|frontend|backend|operate|cookbook|reference)\/[a-z0-9-]+/.test(text)) {
-      errors.push(`${file.slice(root.length + 1)}: missing exact related docs page URL`);
+    if (
+      !/https:\/\/docs\.farthershore\.com\/(?:get-started|agents|define|monetize|frontend|backend|operate|cookbook|reference)\/[a-z0-9-]+/.test(
+        text,
+      )
+    ) {
+      errors.push(
+        `${file.slice(root.length + 1)}: missing exact related docs page URL`,
+      );
     }
   }
 
@@ -134,7 +162,8 @@ for (const file of guidanceFiles) {
     const target = match[1].split("#", 1)[0];
     if (!target || /^[a-z]+:/i.test(target)) continue;
     const linked = resolve(dirname(file), target);
-    if (!existsSync(linked)) errors.push(`${file.slice(root.length + 1)}: broken link '${match[1]}'`);
+    if (!existsSync(linked))
+      errors.push(`${file.slice(root.length + 1)}: broken link '${match[1]}'`);
   }
 }
 
@@ -144,10 +173,16 @@ for (const file of guidanceFiles) {
   const installCommands = findSkillsAddCommands(text);
   for (const command of installCommands) {
     if (command === BUNDLE_INSTALL) bundleInstallCount++;
-    else errors.push(`${file.slice(root.length + 1)}: npx skills installation must use '${BUNDLE_INSTALL}'`);
+    else
+      errors.push(
+        `${file.slice(root.length + 1)}: npx skills installation must use '${BUNDLE_INSTALL}'`,
+      );
   }
 }
-if (bundleInstallCount === 0) errors.push(`active guidance: missing bundle install command '${BUNDLE_INSTALL}'`);
+if (bundleInstallCount === 0)
+  errors.push(
+    `active guidance: missing bundle install command '${BUNDLE_INSTALL}'`,
+  );
 
 const deviceAuthGuidance = [
   join(root, "README.md"),
@@ -160,67 +195,75 @@ for (const label of findMissingDeviceAuthGuidance(deviceAuthGuidance)) {
   errors.push(`active guidance: missing ${label}`);
 }
 
-const businessSdk = readFileSync(join(skillsDir, "farthershore-business-sdk", "SKILL.md"), "utf8");
+const businessSdk = readFileSync(
+  join(skillsDir, "farthershore-business-sdk", "SKILL.md"),
+  "utf8",
+);
 const plansAndMetering = readFileSync(
   join(skillsDir, "farthershore-plans-and-metering", "SKILL.md"),
   "utf8",
 );
 const migrationReference = readFileSync(
-  join(skillsDir, "farthershore-plans-and-metering", "references", "experiments-and-migration.md"),
+  join(
+    skillsDir,
+    "farthershore-plans-and-metering",
+    "references",
+    "experiments-and-migration.md",
+  ),
   "utf8",
 );
 
-if (!businessSdk.includes("**Current: 2.0.1.**")) {
-  errors.push("farthershore-business-sdk: must identify SDK 2.0.1 as current");
+// Critical invariants live in the skills; exhaustive syntax lives in docs.
+for (const [name, source, required] of [
+  [
+    "business-sdk",
+    businessSdk,
+    [
+      "3.2.x",
+      "kind: fs.plan.kind.free",
+      "requests.fixed(1)",
+      "fs.business()",
+      "deterministic",
+    ],
+  ],
+  [
+    "plans-and-metering",
+    plansAndMetering,
+    ["usagePricing", "funding", "pricing.current()", "Nanos", "bill-preview"],
+  ],
+  [
+    "change safety",
+    migrationReference,
+    ["recurring", "deferred", "subject pins", "private APIs"],
+  ],
+]) {
+  for (const term of required)
+    if (!source.includes(term))
+      errors.push(`${name}: missing invariant '${term}'`);
 }
-if (/auto[- ]?attach/i.test(businessSdk) || /auto[- ]?attach/i.test(plansAndMetering)) {
-  errors.push("business SDK guidance: SDK 2.0 meters must never be described as auto-attached");
-}
-if (!/fs\.meterRoutes\(everything,\s*\{\s*costs:\s*\[requests\.fixed\(1\)\]\s*\}\);/s.test(businessSdk)) {
-  errors.push("farthershore-business-sdk: primary example must attach requests.fixed(1) as a route cost");
-}
-if (!/fs\.meterRoutes\(publicRoutes,\s*\{\s*costs:\s*\[requests\.fixed\(1\)\]\s*\}\);/s.test(plansAndMetering)) {
-  errors.push("farthershore-plans-and-metering: free-plan example must attach requests.fixed(1) as a route cost");
-}
-if (!migrationReference.includes("farthershore plan migrate <business> <plan-key> --from <version> --to <version|head> --policy <policy> --format json")) {
-  errors.push("plan change reference: missing exact subscriber migration command");
-}
-if (!migrationReference.includes("data.migration.status")) {
-  errors.push("plan change reference: missing migration response status guidance");
-}
-if (!migrationReference.includes("MIGRATION_SKIPPED")) {
-  errors.push("plan change reference: must document MIGRATION_SKIPPED as an error response");
-}
-if (!businessSdk.includes("onStatusCodes") || !businessSdk.includes("postStreamBilling")) {
-  errors.push("farthershore-business-sdk: meterRoutes guidance must cover status policy and post-stream billing");
-}
-if (!businessSdk.includes("gateway-known fixed costs do not require a signed upstream report")) {
-  errors.push("farthershore-business-sdk: must distinguish fixed costs from signed dynamic reports");
-}
-
 const backendRuntime = readFileSync(
   join(skillsDir, "farthershore-backends-and-runtime", "SKILL.md"),
   "utf8",
 );
 for (const required of [
   "@farthershore/backend",
-  "Current: 0.20.0",
+  "0.21.x",
   "FS_RUNTIME_TOKEN",
-  "requireMember",
+  "requireMember(ctx)",
   "ctx.principal.org.id",
-  "ctx.signedContext!.subscriberId",
-  "ctx.signedContext!.subscriptionId",
   "unique constraint",
   "atomic upsert",
   "origin_unavailable",
-  "withUsage",
-  "backend tokens revoke <business> <old-token-id> --yes --format json",
-  "logical slug",
-  '--name "Preview API" --slug api --transport direct',
+  "ctx.report",
+  "responseSink",
+  "single-use",
+  "hard cutover",
+  "propagation",
 ]) {
-  if (!backendRuntime.includes(required)) {
-    errors.push(`farthershore-backends-and-runtime: missing '${required}' guidance`);
-  }
+  if (!backendRuntime.includes(required))
+    errors.push(
+      `farthershore-backends-and-runtime: missing '${required}' guidance`,
+    );
 }
 
 const releases = readFileSync(
@@ -241,7 +284,9 @@ for (const required of [
   "Preview rollback changes the active release but never pins it",
 ]) {
   if (!releases.includes(required)) {
-    errors.push(`farthershore-environments-and-releasing: missing '${required}' guidance`);
+    errors.push(
+      `farthershore-environments-and-releasing: missing '${required}' guidance`,
+    );
   }
 }
 
@@ -249,9 +294,15 @@ const buildingUis = readFileSync(
   join(skillsDir, "farthershore-building-uis", "SKILL.md"),
   "utf8",
 );
-for (const required of ["<ApiKeysPanel>", "useApiKeys()", "useResourceLimitUsage()"]) {
+for (const required of [
+  "<ApiKeysPanel>",
+  "useApiKeys()",
+  "useResourceLimitUsage()",
+]) {
   if (!buildingUis.includes(required)) {
-    errors.push(`farthershore-building-uis: missing '${required}' current SDK surface`);
+    errors.push(
+      `farthershore-building-uis: missing '${required}' current SDK surface`,
+    );
   }
 }
 
@@ -270,7 +321,9 @@ for (const required of [
   }
 }
 if (buildingUis.includes("<ApiKeys>") || buildingUis.includes("useLimits()")) {
-  errors.push("farthershore-building-uis: contains a nonexistent frontend SDK export");
+  errors.push(
+    "farthershore-building-uis: contains a nonexistent frontend SDK export",
+  );
 }
 
 const customerOperations = readFileSync(
@@ -281,13 +334,16 @@ for (const required of [
   "consumer block",
   "consumer remove",
   "There is currently no CLI unblock command",
-  "--policy by_date --complete-by",
+  "generalized commercial rebind",
+  "edge",
   "proposal preview",
   "promo-code",
   "audit-log business-list",
 ]) {
   if (!customerOperations.includes(required)) {
-    errors.push(`farthershore-customer-operations: missing '${required}' guidance`);
+    errors.push(
+      `farthershore-customer-operations: missing '${required}' guidance`,
+    );
   }
 }
 
@@ -304,7 +360,9 @@ for (const required of [
   "X-FS-Decision-Id",
 ]) {
   if (!observability.includes(required)) {
-    errors.push(`farthershore-observability-and-troubleshooting: missing '${required}' guidance`);
+    errors.push(
+      `farthershore-observability-and-troubleshooting: missing '${required}' guidance`,
+    );
   }
 }
 for (const required of [
@@ -317,7 +375,10 @@ for (const required of [
     );
   }
 }
-for (const retired of ["farthershore agents runs show", "farthershore notifications list"]) {
+for (const retired of [
+  "farthershore agents runs show",
+  "farthershore notifications list",
+]) {
   if (observability.includes(retired)) {
     errors.push(
       `farthershore-observability-and-troubleshooting: contains nonexistent '${retired}' command`,
@@ -338,11 +399,20 @@ if (!existsSync(mkPath)) {
       errors.push("marketplace.json: 'plugins' must be a non-empty array");
     } else {
       for (const p of mk.plugins) {
-        if (!p.name) errors.push("marketplace.json: a plugin entry is missing 'name'");
+        if (!p.name)
+          errors.push("marketplace.json: a plugin entry is missing 'name'");
         if (!p.source) {
-          errors.push(`marketplace.json: plugin '${p.name}' is missing 'source'`);
-        } else if (typeof p.source === "string" && p.source.startsWith(".") && !existsSync(join(root, p.source))) {
-          errors.push(`marketplace.json: plugin '${p.name}' source '${p.source}' does not exist`);
+          errors.push(
+            `marketplace.json: plugin '${p.name}' is missing 'source'`,
+          );
+        } else if (
+          typeof p.source === "string" &&
+          p.source.startsWith(".") &&
+          !existsSync(join(root, p.source))
+        ) {
+          errors.push(
+            `marketplace.json: plugin '${p.name}' source '${p.source}' does not exist`,
+          );
         }
       }
     }

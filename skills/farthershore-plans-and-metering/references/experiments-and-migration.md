@@ -1,59 +1,39 @@
-# Plan change safety reference
+# Release and change safety
 
-Plan changes can affect revenue and subscribers. Treat them as **confirm**
-actions.
+Read https://docs.farthershore.com/monetize/plan-changes and
+https://docs.farthershore.com/reference/commercial-releases before changing a
+live product.
 
-## Ownership
+1. Identify business, environment, installed SDK, current accepted release, and
+   affected subscribers. Separate recurring-price changes from live-catalog
+   changes and customer-specific agreements.
+2. Author public product changes in `business/`. Build and compare the exact
+   release artifacts with `farthershore commercial-release diff --help`.
+3. Verify preview behavior and GitHub checks for the exact proposed commit.
+4. Present impact, activation timing, existing-customer behavior, and recovery
+   to the user. Obtain approval before the production release.
+5. Inspect apply timeline, active release, subject pins, and bill preview.
+   A successful publication is not proof that an existing subscription moved.
 
-Plans, variants, prices, grants, limits, and meters are repository-owned. Make
-the complete change in `business/`, run `farthershore build`, push it, and
-inspect the GitHub checks. Never use a CLI or API write as a second contract
-editing surface.
+## Customer-specific terms
 
-## Before releasing
+Economic agreements and amendments are operational writes. Preview their exact
+subject and terms before applying, retain the agreement identity, and read the
+subject's pins afterward. Fixed agreements do not silently follow catalog
+changes.
 
-1. Identify which subscribers and environments the change can affect.
-2. Compare current and proposed pricing, grants, limits, and meters.
-3. Decide how to reverse the repository change.
-4. Test on the repository's preview path when available.
-5. Present the exact pushed commit and impact to the human.
-6. Release only after explicit approval and passing GitHub checks.
+## Migration boundary
 
-## Migrate subscribers between released versions
+The existing `farthershore consumer migrate-latest` command is not a promise
+of generalized commercial rebinding. The post-launch operation that refreshes
+recurring and non-current usage-pricing pins is deferred. Do not invent a
+plan-version batch migration command or claim release activation migrates
+every customer.
 
-Subscriber migration changes live subscription state; it does not redefine a
-plan. Use this operate workflow only after both source and target versions were
-created from repository changes and released.
+Inspect the current operation catalog, exact command help, structured response,
+and resulting subject pins. If the desired rebind is unavailable, report the
+unsupported outcome and request a platform handoff; never emulate it through
+private APIs or database writes.
 
-1. Inspect the current signature and policies:
-
-   ```bash
-   farthershore plan migrate --help
-   ```
-
-2. Identify the business, plan key, source and target versions, affected
-   subscribers, timing policy, and any proration impact. Supported policies are
-   `next_renewal`, `immediate`, `by_date`, and `opt_in`; `by_date` also requires
-   `--complete-by <iso8601>`, while `--proration none|prorate|credit` is
-   optional where relevant.
-3. Present that exact impact and command to the human and obtain explicit
-   approval. The command has no interactive confirmation or `--yes` flag, so
-   human approval is the confirmation gate.
-4. Run the approved command:
-
-   ```bash
-   farthershore plan migrate <business> <plan-key> --from <version> --to <version|head> --policy <policy> --format json
-   ```
-
-5. Require `ok: true`, then record `data.migration.status`. The only success
-   statuses are `PENDING`, `RUNNING`, and `COMPLETED`; the response also returns
-   `batchId` and `transitionsScheduled`.
-6. An inapplicable migration returns HTTP 409 with `ok: false` and error code
-   `MIGRATION_SKIPPED`. No batch was created. Report the error message and stop;
-   do not describe this as a successful migration status.
-
-The CLI currently exposes scheduling status in the create response, not a
-separate migration-status command; do not invent a polling command.
-
-This verb is only for moving subscribers between released plan versions. Plan
-shape, pricing, grants, limits, and meters remain repository-owned.
+Rollback changes the active release forward through the release log. It does
+not undo settled usage, reverse payments, or rewrite existing subscriber pins.

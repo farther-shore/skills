@@ -2,8 +2,8 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin.json",
   "name": "farthershore",
   "displayName": "FartherShore Skills",
-  "version": "2.2.0",
-  "description": "Nine job-shaped skills for creating, building, releasing, operating, and troubleshooting FartherShore businesses.",
+  "version": "3.0.0",
+  "description": "Eleven task-focused skills for creating, building, releasing, operating, and governing FartherShore businesses with canonical collection-based docs.",
   "author": {
     "name": "Farther Shore",
     "url": "https://github.com/farther-shore"

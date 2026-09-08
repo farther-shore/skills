@@ -131,22 +131,19 @@ test("requires the complete user-bound multi-organization login model", () => {
   ].join("\n");
 
   assert.deepEqual(findMissingDeviceAuthGuidance(complete), []);
-  assert.deepEqual(
-    findMissingDeviceAuthGuidance("Run `farthershore login`."),
-    [
-      "headless device login",
-      "logout command",
-      "live user authority",
-      "all-organization and all-business membership",
-      "zero-option approval",
-      "organization list command",
-      "organization use command",
-      "one-command organization override",
-      "organization-scoped MakerToken stdin override",
-      "ephemeral MakerToken environment override",
-      "secret-safe credential handling",
-    ],
-  );
+  assert.deepEqual(findMissingDeviceAuthGuidance("Run `farthershore login`."), [
+    "headless device login",
+    "logout command",
+    "live user authority",
+    "all-organization and all-business membership",
+    "zero-option approval",
+    "organization list command",
+    "organization use command",
+    "one-command organization override",
+    "organization-scoped MakerToken stdin override",
+    "ephemeral MakerToken environment override",
+    "secret-safe credential handling",
+  ]);
 });
 
 test("requires normal login guidance to distinguish a restricted stdin credential", () => {
@@ -186,13 +183,15 @@ test("published overview and quickstart contain the complete device-login safety
   assert.deepEqual(findMissingDeviceAuthGuidance(publishedGuidance), []);
 });
 
-test("publishes exactly nine job-shaped skills", () => {
+test("publishes the complete job-shaped bundle", () => {
   const expected = [
+    "farthershore-agent-operations",
     "farthershore-backends-and-runtime",
     "farthershore-building-uis",
     "farthershore-business-sdk",
     "farthershore-customer-operations",
     "farthershore-environments-and-releasing",
+    "farthershore-governance",
     "farthershore-observability-and-troubleshooting",
     "farthershore-overview",
     "farthershore-plans-and-metering",
@@ -208,6 +207,17 @@ test("publishes exactly nine job-shaped skills", () => {
   );
 });
 
+test("rejects obsolete SDK economics, reporting, and migration instructions", () => {
+  for (const text of [
+    "fs.rbac()",
+    "price_per_unit_micros: 2000",
+    "included_units: 1000",
+    'import { withUsage } from "@farthershore/backend"',
+    "farthershore plan migrate acme pro --to head",
+  ])
+    assert.ok(findObsoleteGuidance(text).length > 0, text);
+});
+
 test("every skill routes agents through the live docs index and exact pages", () => {
   for (const entry of readdirSync(new URL("../skills", import.meta.url), {
     withFileTypes: true,
@@ -218,7 +228,10 @@ test("every skill routes agents through the live docs index and exact pages", ()
       "utf8",
     );
     assert.match(text, /https:\/\/docs\.farthershore\.com\/llms\.txt/);
-    assert.match(text, /\*\*Required before acting:\*\* fetch the live machine-readable index/);
+    assert.match(
+      text,
+      /\*\*Required before acting:\*\* fetch the live machine-readable index/,
+    );
     assert.match(
       text,
       /https:\/\/docs\.farthershore\.com\/(?:get-started|agents|define|monetize|frontend|backend|operate|cookbook|reference)\/[a-z0-9-]+/,

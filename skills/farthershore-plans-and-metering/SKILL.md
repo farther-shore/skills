@@ -1,191 +1,84 @@
 ---
 name: farthershore-plans-and-metering
-description: Use when designing or changing plans, pricing, limits, quotas, or usage-based metering for a FartherShore business.
+description: Use when designing or changing plans, pricing catalogs, funding, trials, spend controls, economic agreements, or metering for a FartherShore business.
 ---
 
-# Plans, limits, and metering
+# Commerce and measurement
+
+Target the repository's installed Business SDK version; this guide describes
+3.2.x. Money-impacting changes need the user's approval of the affected
+customers, environment, terms, and timing before publication or application.
 
 ## Read current docs first
 
-**Required before acting:** fetch the live machine-readable index:
+**Required before acting:** fetch the live machine-readable index and read the
+task's pages. Prefer CLI traversal when supported; `docs ls` fetches that index,
+so no separate `curl` is needed:
 
 ```bash
-curl -fsSL https://docs.farthershore.com/llms.txt
+farthershore docs --help
+farthershore docs ls --format json
+farthershore docs tree commerce --format json
+farthershore docs read define/plans --format json
 ```
 
-Use:
+Collections are root folders; expand section folders with `docs ls <path>`.
+Use returned paths rather than guessing. Read the [overview's traversal guide](../farthershore-overview/SKILL.md#traverse-docs-as-a-filesystem)
+for heading reads, search, and provenance. Docs need no login. If the CLI lacks
+`docs` or its artifacts are unavailable, fetch
+https://docs.farthershore.com/llms.txt and follow its page links; do not silently
+switch to stage or assume guidance was retrieved.
 
-- https://docs.farthershore.com/define/plans
-- https://docs.farthershore.com/define/meters
-- https://docs.farthershore.com/define/resources
-- https://docs.farthershore.com/monetize/strategies
+Read https://docs.farthershore.com/define/plans and
+https://docs.farthershore.com/define/meters. For this task, also read the relevant
+pricing, funding, admission, or agreement page:
+
+- https://docs.farthershore.com/reference/pricing-catalogs
+- https://docs.farthershore.com/reference/funding-and-allowances
+- https://docs.farthershore.com/reference/monetary-admission
+- https://docs.farthershore.com/reference/economic-agreements
 - https://docs.farthershore.com/monetize/plan-changes
-- https://docs.farthershore.com/operate/migrations
-- https://docs.farthershore.com/operate/usage-billing-policy
 
-A plan answers three questions: **what can they call** (`grants`), **how much
-can they consume** (`limits` / `meters`), and **what does it cost** (`price`).
+## Choose each control independently
 
-## Every plan needs a control on consumption
+Every plan declares `kind: fs.plan.kind.free | flat | usage | prepaid | hybrid |
+trial | custom`. The compiler validates the allowed combination; it does not
+infer a kind from money fields.
 
-A plan must either **ration** or **bill**. One of:
+| Concern                     | Source of truth                                             |
+| --------------------------- | ----------------------------------------------------------- |
+| What can be called          | Route/group refs under grants                               |
+| Structural bounds           | Typed rate/resource limits and per-request capacity         |
+| What was measured           | Meter measures/dimensions and explicit route bindings       |
+| How measurements are priced | `fs.pricing` catalog and a plan's `usagePricing` binding    |
+| What funds usage            | Included, prepaid, promo, or referral funding buckets       |
+| What happens at exhaustion  | Plan spend policy and bounded monetary admission            |
+| Negotiated terms            | Confirm-gated economic agreement, not a public catalog edit |
 
-- a `limits[]` rate rule — ration it, or
-- a **priced** meter — bill it.
+Use SDK constructors for money, rates, kinds, funding and exhaustion policies.
+`fs.money.usd(n)` takes major dollars; use `fs.rate.per(...)` or
+`perMillion(...)` for sub-cent rates. Monetary wire values ending in
+`Nanos` are decimal strings; do not turn them into JavaScript floating-point
+arithmetic.
 
-The rule exists because an unlimited flat-fee plan is unbounded liability
-against your own upstream: a runaway consumer costs you money and you have no
-lever. Usage-based billing does not have that problem — consumption *is* the
-lever, because every extra unit is revenue.
+A meter declaration, price, or limit does not bind measurements to a route.
+Attach fixed costs and dynamic reports explicitly; actual backend work reports
+through `ctx.report`. Metered admission must bound the work before forwarding;
+do not treat an estimate as final usage. Use
+[farthershore-backends-and-runtime](../farthershore-backends-and-runtime/SKILL.md).
 
-An **unpriced** meter does **not** satisfy this. A meter with no rate, or a bare
-`included_units` pool with nothing charged beyond it, is *tracking*, not
-billing: past the pool, consumption is both unbounded and unbilled. That still
-needs a limit.
+## Prices, pins, and customer impact
 
-> These examples use business SDK **2.0.1** semantics. Meter declarations and
-> plan limits never attach meters to routes; attachment is explicit.
+Recurring-price pins and usage-pricing bindings are different.
+`pricing.current()` follows activated catalogs forward even for existing
+subscriptions. `fixedVersion(n)` does not. Agreement-bound pricing follows
+its terms and amendment rules. No release retroactively rerates admitted work.
 
-## The four shapes
+Read [change safety](references/experiments-and-migration.md) before release.
+A build, release, checkout, payment, funding issuance, and customer migration
+are separate outcomes. Verify each relevant state; do not promise that a
+successful repository build changed an existing customer's commercial pins.
 
-### Free — rationed
-
-```ts
-fs.meterRoutes(publicRoutes, { costs: [requests.fixed(1)] });
-
-fs.plan("free", {
-  name: "Free",
-  price: fs.free(),
-  grants: [publicRoutes],
-  limits: [requests.perMinute(60)],   // required: free + unlimited is a liability
-});
-```
-
-### Flat subscription — rationed
-
-```ts
-fs.meterRoutes(everything, { costs: [requests.fixed(1)] });
-
-fs.plan("pro", {
-  name: "Pro",
-  price: fs.money.usd(29).monthly(),   // major units — 29 = $29.00
-  grants: [everything],
-  limits: [requests.perMinute(6_000)],
-});
-```
-
-### Pay-as-you-go — billed, no rate limit
-
-```ts
-const tokens = fs.meter("tokens", { display: "Tokens", unit: "token" });
-fs.meterRoutes(generate, { reports: [tokens] });   // ← without this it never bills
-
-fs.plan("payg", {
-  name: "Pay as you go",
-  price: fs.money.usd(0).monthly(),    // no base fee
-  meters: [{
-    dimension: tokens,
-    kind: "linear",
-    price_per_unit_micros: 2000,       // $0.002 per token
-    included_units: 10_000,            // first 10k free each cycle
-  }],
-  grants: [generate],
-  // no limits — the meter is the control
-});
-```
-
-### Hybrid — base fee plus overage
-
-Same as above but with a real `price` and a smaller `included_units`. This is
-the most common commercial shape.
-
-## Pricing units — get these right
-
-| Field | Unit | Example |
-| --- | --- | --- |
-| `fs.money.usd(n)` | **major** units (dollars) | `usd(29)` = $29.00 |
-| `price_per_unit_micros` | **micros** (1e-6 of a unit) | `2000` = $0.002 |
-| `included_units` | meter units | `10_000` tokens |
-
-Micros exist so sub-cent rates are exact. `$0.002` is `2000`, not `0.002`.
-
-## Tiered pricing
-
-```ts
-meters: [{
-  dimension: tokens,
-  tiered: {
-    strategy: "graduated",   // or "volume"
-    tiers: [
-      { up_to: 100_000, price_per_unit_micros: 2000 },
-      { up_to: null,    price_per_unit_micros: 1000 },  // null = final open tier
-    ],
-  },
-}]
-```
-
-- **`graduated`** — each tier's rate applies only to units *within* that
-  bracket. Bill = Σ (units in tier × tier rate).
-- **`volume`** — the tier the **total** falls into sets one rate applied to
-  **every** unit.
-
-They differ a lot at scale. `tiered` and a non-zero `price_per_unit_micros` are
-mutually exclusive. Model a free pool as a zero-priced first tier rather than
-combining `tiered` with `included_units`.
-
-## Fixed costs and dynamic reports are different
-
-A declared meter bills only where a route explicitly attaches it:
-
-1. Declare the refs: `fs.requests()` and/or `fs.meter("tokens", …)`.
-2. Attach gateway-known fixed units under `costs`, for example
-   `requests.fixed(1)`. Fixed costs need no upstream report.
-3. Attach upstream-computed dimensions under `reports`. Their units count only
-   when the upstream sends a valid signed metering report using its runtime
-   token. See
-   [farthershore-backends-and-runtime](../farthershore-backends-and-runtime/SKILL.md).
-
-`onStatusCodes` controls which response statuses are billable.
-`postStreamBilling: true` marks dynamic units that normally arrive after the
-response stream; fixed costs are admitted before the call and reports settle
-later.
-
-If units never appear in `farthershore usage summary`, walk those three in
-order. The most common miss is (2), and the second is (3) with the wrong
-runtime token — the gateway rejects the unverifiable report and silently falls
-back to route defaults. An explicitly attached `requests.fixed(1)` cost still
-counts, while the unverifiable reported dimension does not.
-
-## Limits
-
-```ts
-fs.meterRoutes(apiRoutes, { costs: [requests.fixed(1)] });
-
-requests.perMinute(600)
-requests.perHour(10_000)
-requests.perDay(100_000)
-```
-
-Limits are **enforced at the edge** — a plan over its limit is denied before it
-reaches your upstream, which is the point: your origin never sees the traffic.
-
-## Changing a live plan
-
-Prices, limits, grants, and meters are **contract**. Once the business is live
-and repo-linked, the API/CLI refuses those writes with `MANAGED_BY_CODE` —
-that is the platform telling you to edit `business/` and push, not to retry.
-
-Existing subscribers are **pinned to the compiled plan they bought**. Editing a
-plan does not silently move them; it mints a new version and the platform
-decides who moves and when. Preview it before you ship:
-
-```bash
-farthershore plan diff <businessId> --format json
-```
-
-Read [farthershore-environments-and-releasing](../farthershore-environments-and-releasing/SKILL.md)
-for how a change reaches existing customers.
-Before a subscriber-impacting plan release, read the
-[plan change safety reference](references/experiments-and-migration.md). Moving
-subscribers between already-released versions is an operate action; it does not
-edit the repository-owned plan definition.
+Use server bill-preview results for customer money displays and preserve opaque
+disclosure. Usage summaries can be approximate and are not a locally
+reconstructable invoice.

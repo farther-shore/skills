@@ -2,11 +2,32 @@ export const BUNDLE_INSTALL =
   "npx skills add https://github.com/farther-shore/skills/tree/<tag> --skill '*' -g -y";
 
 const FORBIDDEN_GUIDANCE = [
-  [/@(?:Business|Plan|Feature|Meter)\b|\bdecorators?\b|experimentalDecorators/i, "obsolete decorator guidance"],
-  [/\bfarthershore\s+(?:business\s+)?(?:template|preset)\b|\bfarthershore[^\n`]*--(?:template|preset)\b/i, "obsolete FartherShore template or preset guidance"],
-  [/\bfarthershore\s+(?:provision|init)\b|\/businesses\/init\b|\blocal provisioning\b/i, "obsolete local provisioning or init guidance"],
-  [/farthershore\s+skills\s+recommend/i, "FartherShore skills recommendation guidance"],
-  [/\bfarthershore\s+config\s+(?:propose|draft|apply)\b|\/config\/(?:propose|draft|apply)\b|\bconfig (?:proposal|draft)\b/i, "obsolete bidirectional config workflow"],
+  [
+    /\bfs\.rbac\s*\(|\bprice_per_unit_micros\b|\bincluded_units\b/,
+    "retired Business SDK authoring",
+  ],
+  [/\bwithUsage\b/, "retired backend reporting API"],
+  [/\bfarthershore\s+plan\s+migrate\b/, "retired cohort migration command"],
+  [
+    /@(?:Business|Plan|Feature|Meter)\b|\bdecorators?\b|experimentalDecorators/i,
+    "obsolete decorator guidance",
+  ],
+  [
+    /\bfarthershore\s+(?:business\s+)?(?:template|preset)\b|\bfarthershore[^\n`]*--(?:template|preset)\b/i,
+    "obsolete FartherShore template or preset guidance",
+  ],
+  [
+    /\bfarthershore\s+(?:provision|init)\b|\/businesses\/init\b|\blocal provisioning\b/i,
+    "obsolete local provisioning or init guidance",
+  ],
+  [
+    /farthershore\s+skills\s+recommend/i,
+    "FartherShore skills recommendation guidance",
+  ],
+  [
+    /\bfarthershore\s+config\s+(?:propose|draft|apply)\b|\/config\/(?:propose|draft|apply)\b|\bconfig (?:proposal|draft)\b/i,
+    "obsolete bidirectional config workflow",
+  ],
   [
     /(?:\b(?:create|generate|provision|issue|mint|rotate|revoke|delete|update|edit|configure|modify|administer|manage)\b[^\n]{0,100}\bmaker[- ]?tokens?\b|\bmaker[- ]?tokens?\b[^\n]{0,100}\b(?:create|generation|provision|issuance|mint|rotate|revoke|delete|update|edit|configure|modify|administration)\b)/i,
     "maker-token credential administration",
@@ -20,9 +41,18 @@ const FORBIDDEN_GUIDANCE = [
     /\bfarthershore\s+auth\s+(?:login|logout)\b/i,
     "obsolete nested authentication command",
   ],
-  [/(?:GitHub|Stripe)\s+connect|connect(?:ing)?\s+(?:GitHub|Stripe)/i, "GitHub or Stripe connection setup"],
-  [/farthershore\s+business\s+create\s+--/i, "obsolete flag-based business creation"],
-  [/farthershore\s+business\s+update|farthershore\s+plan\s+(?:create|update|delete|promote|rollback)/i, "CLI contract mutation"],
+  [
+    /(?:GitHub|Stripe)\s+connect|connect(?:ing)?\s+(?:GitHub|Stripe)/i,
+    "GitHub or Stripe connection setup",
+  ],
+  [
+    /farthershore\s+business\s+create\s+--/i,
+    "obsolete flag-based business creation",
+  ],
+  [
+    /farthershore\s+business\s+update|farthershore\s+plan\s+(?:create|update|delete|promote|rollback)/i,
+    "CLI contract mutation",
+  ],
   [
     /\bfarthershore\s+login\b[\s\S]{0,240}--(?:access|business|name|permission)\b/i,
     "obsolete device-login option flags",
@@ -74,7 +104,10 @@ const DEVICE_AUTH_REQUIREMENTS = [
     /\borganization-scoped\b[\s\S]{0,100}\bmaker[- ]?token\b[\s\S]{0,180}\bfarthershore\s+login\s+--token-stdin\b/i,
     "organization-scoped MakerToken stdin override",
   ],
-  [/\bFARTHERSHORE_TOKEN\b[\s\S]{0,120}\b(?:ephemeral|temporary|one-command)\b|\b(?:ephemeral|temporary|one-command)\b[\s\S]{0,120}\bFARTHERSHORE_TOKEN\b/i, "ephemeral MakerToken environment override"],
+  [
+    /\bFARTHERSHORE_TOKEN\b[\s\S]{0,120}\b(?:ephemeral|temporary|one-command)\b|\b(?:ephemeral|temporary|one-command)\b[\s\S]{0,120}\bFARTHERSHORE_TOKEN\b/i,
+    "ephemeral MakerToken environment override",
+  ],
   [
     /\b(?:never|do not)\b[\s\S]{0,160}(?:credential|secret|token)[\s\S]{0,160}(?:argv|command line)[\s\S]{0,160}(?:stdout|stderr|output)/i,
     "secret-safe credential handling",
@@ -82,12 +115,14 @@ const DEVICE_AUTH_REQUIREMENTS = [
 ];
 
 export function findObsoleteGuidance(text) {
-  return FORBIDDEN_GUIDANCE.filter(([pattern]) => pattern.test(text)).map(([, label]) => label);
+  return FORBIDDEN_GUIDANCE.filter(([pattern]) => pattern.test(text)).map(
+    ([, label]) => label,
+  );
 }
 
 export function findSkillsAddCommands(text) {
-  return [...text.matchAll(/npx(?:\s+-y)?\s+skills\s+add\s+[^`\n]+/g)].map((match) =>
-    match[0].trim(),
+  return [...text.matchAll(/npx(?:\s+-y)?\s+skills\s+add\s+[^`\n]+/g)].map(
+    (match) => match[0].trim(),
   );
 }
 

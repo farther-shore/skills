@@ -11,11 +11,23 @@ are separate facts.
 
 ## Read current docs first
 
-**Required before acting:** fetch the live machine-readable index:
+**Required before acting:** fetch the live machine-readable index and read the
+task's pages. Prefer CLI traversal when supported; `docs ls` fetches that index,
+so no separate `curl` is needed:
 
 ```bash
-curl -fsSL https://docs.farthershore.com/llms.txt
+farthershore docs --help
+farthershore docs ls --format json
+farthershore docs tree operations --format json
+farthershore docs read operate/observability-and-troubleshooting --format json
 ```
+
+Collections are root folders; expand section folders with `docs ls <path>`.
+Use returned paths rather than guessing. Read the [overview's traversal guide](../farthershore-overview/SKILL.md#traverse-docs-as-a-filesystem)
+for heading reads, search, and provenance. Docs need no login. If the CLI lacks
+`docs` or its artifacts are unavailable, fetch
+https://docs.farthershore.com/llms.txt and follow its page links; do not silently
+switch to stage or assume guidance was retrieved.
 
 Use the pages for the symptom:
 
@@ -152,15 +164,15 @@ current-state read-back or prove an asynchronous workflow converged.
 
 ## Repair or escalate
 
-| Evidence | Owner | Safe next action |
-| --- | --- | --- |
-| Wrong route, grant, plan, limit, meter, policy | Repository | Fix `business/`, preview, push, release |
-| Wrong customer status, role assignment, promo, persona | Platform operation | Use the narrow customer operation, then read back |
-| Missing/wrong preview origin | Environment backend | Create/bind the exact environment backend |
-| Wrong hosted frontend only | Frontend pointer | Roll back to a reviewed known-good target and verify pin |
-| Accepted apply repeatedly fails publication | Platform workflow | Preserve evidence and escalate |
-| Payment succeeded but subscription never activates | Platform/provider workflow | Preserve customer/provider/workflow evidence and escalate |
-| Equivalent targets behave differently for the same artifact/request | Platform/runtime | Preserve both traces and escalate |
+| Evidence                                                            | Owner                      | Safe next action                                          |
+| ------------------------------------------------------------------- | -------------------------- | --------------------------------------------------------- |
+| Wrong route, grant, plan, limit, meter, policy                      | Repository                 | Fix `business/`, preview, push, release                   |
+| Wrong customer status, role assignment, promo, persona              | Platform operation         | Use the narrow customer operation, then read back         |
+| Missing/wrong preview origin                                        | Environment backend        | Create/bind the exact environment backend                 |
+| Wrong hosted frontend only                                          | Frontend pointer           | Roll back to a reviewed known-good target and verify pin  |
+| Accepted apply repeatedly fails publication                         | Platform workflow          | Preserve evidence and escalate                            |
+| Payment succeeded but subscription never activates                  | Platform/provider workflow | Preserve customer/provider/workflow evidence and escalate |
+| Equivalent targets behave differently for the same artifact/request | Platform/runtime           | Preserve both traces and escalate                         |
 
 Stop mutating when the failure lies in a platform-owned provider, queue,
 workflow, edge publication, or retained state that the CLI cannot safely repair;

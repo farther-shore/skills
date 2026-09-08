@@ -11,11 +11,23 @@ writes.
 
 ## Read current docs first
 
-**Required before acting:** fetch the live machine-readable index:
+**Required before acting:** fetch the live machine-readable index and read the
+task's pages. Prefer CLI traversal when supported; `docs ls` fetches that index,
+so no separate `curl` is needed:
 
 ```bash
-curl -fsSL https://docs.farthershore.com/llms.txt
+farthershore docs --help
+farthershore docs ls --format json
+farthershore docs tree operations --format json
+farthershore docs read operate/environments --format json
 ```
+
+Collections are root folders; expand section folders with `docs ls <path>`.
+Use returned paths rather than guessing. Read the [overview's traversal guide](../farthershore-overview/SKILL.md#traverse-docs-as-a-filesystem)
+for heading reads, search, and provenance. Docs need no login. If the CLI lacks
+`docs` or its artifacts are unavailable, fetch
+https://docs.farthershore.com/llms.txt and follow its page links; do not silently
+switch to stage or assume guidance was retrieved.
 
 Then use the exact pages for the task:
 

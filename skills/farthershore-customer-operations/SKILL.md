@@ -11,24 +11,36 @@ definitions, grants, limits, and RBAC vocabulary remain repository-owned.
 
 ## Read current docs first
 
-**Required before acting:** fetch the live machine-readable index:
+**Required before acting:** fetch the live machine-readable index and read the
+task's pages. Prefer CLI traversal when supported; `docs ls` fetches that index,
+so no separate `curl` is needed:
 
 ```bash
-curl -fsSL https://docs.farthershore.com/llms.txt
+farthershore docs --help
+farthershore docs ls --format json
+farthershore docs tree operations --format json
+farthershore docs read operate/customer-operations --format json
 ```
+
+Collections are root folders; expand section folders with `docs ls <path>`.
+Use returned paths rather than guessing. Read the [overview's traversal guide](../farthershore-overview/SKILL.md#traverse-docs-as-a-filesystem)
+for heading reads, search, and provenance. Docs need no login. If the CLI lacks
+`docs` or its artifacts are unavailable, fetch
+https://docs.farthershore.com/llms.txt and follow its page links; do not silently
+switch to stage or assume guidance was retrieved.
 
 Use the pages for the task:
 
 - https://docs.farthershore.com/operate/customer-operations
-- https://docs.farthershore.com/operate/migrations
 - https://docs.farthershore.com/operate/limits
 - https://docs.farthershore.com/monetize/plan-changes
-- https://docs.farthershore.com/cookbook/migrate-subscribers
+- https://docs.farthershore.com/reference/commercial-releases
 - https://docs.farthershore.com/cookbook/share-with-a-member
 - https://docs.farthershore.com/cookbook/diagnose-denied-request
 
 Run the relevant command group's `--help` before a write and use
-`--format json`. Read the narrow state back after every mutation.
+`--format json`. Read the narrow state back after every mutation. Accepted writes
+and downstream convergence are different outcomes.
 
 ## Operate builder organization membership
 
@@ -66,6 +78,11 @@ Block is containment and revokes active API keys. There is currently no CLI unbl
 farthershore consumer block <business> <subscriberId> --yes --format json
 ```
 
+A blocked response and `SUSPENDED` read-back prove control-plane state, not edge
+convergence. Verify the compromised credential is denied at the gateway before
+declaring containment complete. Propagation can fail after the state change;
+retain the request/audit evidence and escalate incomplete containment.
+
 Remove is destructive and has no restore command:
 
 ```bash
@@ -84,31 +101,18 @@ farthershore consumer migrate-latest <business> <subscriberId> --format json
 
 It does not choose an unrelated plan.
 
-## Migrate a cohort
+## Commercial migration boundary
 
-Resolve and dry-run exact versions first:
+Do not use the lineage command as a generalized commercial rebind. Moving
+recurring and non-current usage-pricing pins to the latest commercial terms is
+deferred; publication itself does not perform that operation. Inspect the
+operation catalog and subject pins, and report an unavailable migration as a
+platform handoff. Do not invent a batch command or use private API writes.
 
-```bash
-farthershore plan list <business> --format json
-farthershore plan migrate <business> <plan-key> \
-  --from <version> --to <version|head> \
-  --policy next_renewal --dry-run --format json
-```
-
-For a deadline, the exact timing form is:
-
-```bash
-farthershore plan migrate <business> <plan-key> \
-  --from <version> --to <version|head> \
-  --policy by_date --complete-by <full-ISO-8601-timestamp> \
-  --dry-run --format json
-```
-
-Review resolved compiled plan IDs, cohort, timing, proration, and provider impact.
-After approval, remove `--dry-run`, add a stable `--idempotency-key`, schedule
-once, and record the batch ID. Scheduling is not convergence; verify customer
-state at the selected transition time. Never automatically reverse a mistaken
-batch.
+Changes to a live `pricing.current()` catalog can affect existing subscribers
+forward at activation without moving the recurring-price pin. Read
+[change safety](../farthershore-plans-and-metering/references/experiments-and-migration.md)
+before promising who will pay which terms.
 
 ## Replace customer-member roles
 
@@ -119,7 +123,7 @@ farthershore consumer rbac assign <business> <subscriberId> <userExternalId> \
 ```
 
 Assignment replaces the complete role set; `--roles ""` clears it. Role keys
-must exist in the accepted repository-defined vocabulary. Compare the returned
+must exist in the customer's accepted organization role set. Compare the returned
 membership exactly; stale keys grant nothing.
 
 ## Govern changes with proposals
