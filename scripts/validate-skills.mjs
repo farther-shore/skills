@@ -19,6 +19,7 @@ import { dirname, join, resolve } from "node:path";
 import {
   BUNDLE_INSTALL,
   findMissingDeviceAuthGuidance,
+  findMissingRetryGuidance,
   findObsoleteGuidance,
   findSkillsAddCommands,
 } from "./guidance-validation.mjs";
@@ -193,6 +194,14 @@ const deviceAuthGuidance = [
   .join("\n");
 for (const label of findMissingDeviceAuthGuidance(deviceAuthGuidance)) {
   errors.push(`active guidance: missing ${label}`);
+}
+
+const agentOperations = readFileSync(
+  join(skillsDir, "farthershore-agent-operations", "SKILL.md"),
+  "utf8",
+);
+for (const label of findMissingRetryGuidance(agentOperations)) {
+  errors.push(`farthershore-agent-operations: missing ${label}`);
 }
 
 const businessSdk = readFileSync(

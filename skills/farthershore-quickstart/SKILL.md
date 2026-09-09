@@ -53,7 +53,8 @@ farthershore auth organization use <id-or-slug>
 ## 2. Create
 
 ```bash
-farthershore business create <slug>
+farthershore business create <slug> \
+  --idempotency-key <persisted-business-create-attempt-key> --format json
 ```
 
 The command returns the managed repository URL. That URL is the handoff; do not

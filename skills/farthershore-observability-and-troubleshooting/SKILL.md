@@ -111,7 +111,8 @@ For preview persona reproduction, use the same environment and plan:
 ```bash
 farthershore persona list <business> --env <environment> --format json
 farthershore persona bootstrap <business> --env <environment> \
-  --plan <plan> --format json
+  --plan <plan> \
+  --idempotency-key <persisted-persona-bootstrap-attempt-key> --format json
 ```
 
 The returned persona key is one-time secret output. Keep it out of logs and use

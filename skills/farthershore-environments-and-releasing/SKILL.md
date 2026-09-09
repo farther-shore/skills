@@ -58,7 +58,8 @@ farthershore apply-timeline list <business> --env test --format json
 If branch-prefix creation is disabled, create the environment explicitly first:
 
 ```bash
-farthershore env create <business> --name test --branch env/test --format json
+farthershore env create <business> --name test --branch env/test \
+  --idempotency-key <persisted-environment-create-attempt-key> --format json
 ```
 
 Inspect `branchCreated`, and push the exact branch if Core could not create it.
@@ -82,7 +83,8 @@ Preview that first activation, then run it only after approval:
 
 ```bash
 farthershore business publish <business> --dry-run --format json
-farthershore business publish <business> --format json
+farthershore business publish <business> \
+  --idempotency-key <persisted-first-publish-attempt-key> --format json
 ```
 
 Once a managed-repository business is **ACTIVE**, the contract is managed by

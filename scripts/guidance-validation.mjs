@@ -114,6 +114,41 @@ const DEVICE_AUTH_REQUIREMENTS = [
   ],
 ];
 
+const RETRY_GUIDANCE_REQUIREMENTS = [
+  [/\bretry\.kind\b/, "operation retry classification"],
+  [/\bread_current\b/, "read-current retry rule"],
+  [/\bconvergent_write\b/, "convergent-write retry rule"],
+  [/\bsame_key_replay\b/, "same-key replay rule"],
+  [/\bintrinsic_replay\b/, "intrinsic replay rule"],
+  [/\bno_automatic_retry\b/, "no-automatic-retry rule"],
+  [/\bretry\.reconcile\b/, "operation reconciliation guidance"],
+  [/\bretry\.rationale\b/, "operation retry rationale guidance"],
+  [/\bretry\.enforcement\b/, "server enforcement guidance"],
+  [/\bretry\.responseSemantics\b/, "response freshness guidance"],
+  [/\bmeta\.idempotency\.replayed\b/, "successful replay marker"],
+  [/\bIDEMPOTENCY_KEY_IN_FLIGHT\b/, "in-flight attempt handling"],
+  [/\bIDEMPOTENCY_RESULT_INDETERMINATE\b/, "indeterminate attempt handling"],
+  [/\bIDEMPOTENCY_KEY_REUSED\b/, "reused-key handling"],
+  [/\bIDEMPOTENCY_REPLAY_UNAVAILABLE\b/, "unavailable replay handling"],
+  [/\bDRY_RUN_NOT_SUPPORTED\b/, "unsupported preview handling"],
+  [
+    /webhook (?:test|trigger)[\s\S]{0,240}(?:same_key_replay|idempotency key)/i,
+    "webhook delivery attempt identity",
+  ],
+  [
+    /auth context-token[\s\S]{0,240}(?:no_automatic_retry|short-lived|new token)/i,
+    "short-lived context token retry boundary",
+  ],
+  [
+    /preview[\s\S]{0,180}(?:never|does not)[\s\S]{0,100}(?:consume|accept)[\s\S]{0,80}idempotency key/i,
+    "preview key prohibition",
+  ],
+  [
+    /replay[\s\S]{0,120}(?:historical|original)[\s\S]{0,100}(?:read|current state)/i,
+    "replay freshness warning",
+  ],
+];
+
 export function findObsoleteGuidance(text) {
   return FORBIDDEN_GUIDANCE.filter(([pattern]) => pattern.test(text)).map(
     ([, label]) => label,
@@ -128,6 +163,12 @@ export function findSkillsAddCommands(text) {
 
 export function findMissingDeviceAuthGuidance(text) {
   return DEVICE_AUTH_REQUIREMENTS.filter(
+    ([pattern]) => !pattern.test(text),
+  ).map(([, label]) => label);
+}
+
+export function findMissingRetryGuidance(text) {
+  return RETRY_GUIDANCE_REQUIREMENTS.filter(
     ([pattern]) => !pattern.test(text),
   ).map(([, label]) => label);
 }

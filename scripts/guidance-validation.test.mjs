@@ -5,6 +5,7 @@ import test from "node:test";
 import {
   BUNDLE_INSTALL,
   findMissingDeviceAuthGuidance,
+  findMissingRetryGuidance,
   findObsoleteGuidance,
   findSkillsAddCommands,
 } from "./guidance-validation.mjs";
@@ -181,6 +182,18 @@ test("published overview and quickstart contain the complete device-login safety
   ].join("\n");
 
   assert.deepEqual(findMissingDeviceAuthGuidance(publishedGuidance), []);
+});
+
+test("published agent operations contains the complete retry safety model", () => {
+  const guidance = readFileSync(
+    new URL(
+      "../skills/farthershore-agent-operations/SKILL.md",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+
+  assert.deepEqual(findMissingRetryGuidance(guidance), []);
 });
 
 test("publishes the complete job-shaped bundle", () => {

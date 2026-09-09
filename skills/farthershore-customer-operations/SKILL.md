@@ -50,7 +50,8 @@ read its current members before inviting, changing a role, or removing anyone:
 ```bash
 farthershore organization list --format json
 farthershore organization members <organizationId> --format json
-farthershore organization invite <organizationId> <email> --role member --format json
+farthershore organization invite <organizationId> <email> --role member \
+  --idempotency-key <persisted-invite-attempt-key> --format json
 farthershore organization member-role <organizationId> <memberUserId> --role admin --format json
 farthershore organization member-remove <organizationId> <memberUserId> --yes --format json
 ```
@@ -96,7 +97,8 @@ until current state and audit evidence prove it did not complete.
 Move one customer to the active head of its current plan lineage:
 
 ```bash
-farthershore consumer migrate-latest <business> <subscriberId> --format json
+farthershore consumer migrate-latest <business> <subscriberId> \
+  --idempotency-key <persisted-consumer-migration-attempt-key> --format json
 ```
 
 It does not choose an unrelated plan.
@@ -150,7 +152,8 @@ approvals, and status; never describe proposed or approved state as applied.
 farthershore promo-code list <business> --format json
 farthershore promo-code create <business> \
   --code LAUNCH25 --kind percent_off --percent 25 \
-  --duration-months 3 --plan <planId> --format json
+  --duration-months 3 --plan <planId> \
+  --idempotency-key <persisted-promo-create-attempt-key> --format json
 farthershore promo-code archive <business> <promoCodeId> --format json
 farthershore promo-code reactivate <business> <promoCodeId> --format json
 ```
@@ -166,9 +169,11 @@ Personas are for environments configured for test-persona customer auth:
 
 ```bash
 farthershore persona bootstrap <business> --env <environment> \
-  --plan <plan> --format json
+  --plan <plan> \
+  --idempotency-key <persisted-persona-bootstrap-attempt-key> --format json
 farthershore persona list <business> --env <environment> --format json
-farthershore persona rotate <business> <personaId> --env <environment> --format json
+farthershore persona rotate <business> <personaId> --env <environment> \
+  --idempotency-key <persisted-persona-rotate-attempt-key> --format json
 farthershore persona revoke <business> <personaId> --env <environment> --format json
 ```
 
