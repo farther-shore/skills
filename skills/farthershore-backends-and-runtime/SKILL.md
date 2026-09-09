@@ -34,6 +34,8 @@ https://docs.farthershore.com/backend/metering,
 https://docs.farthershore.com/backend/user-data,
 https://docs.farthershore.com/backend/runtime-tokens, or
 https://docs.farthershore.com/backend/transport-modes.
+For per-environment upstream configuration, read
+https://docs.farthershore.com/cookbook/add-backend through the docs reader.
 
 ## Environment and verification boundaries
 
@@ -42,6 +44,35 @@ row. Commands asking for backend ID need that row's UUID. Production and preview
 origins are separate; inspect `farthershore backend --help` and explicitly
 select the environment. Missing routing can return `origin_unavailable` even
 when authentication and grants succeed.
+
+### Bind a different upstream in each environment
+
+Keep the same logical backend in business code. After that backend exists in
+each target environment, bind its concrete URL operationally. Verify
+`farthershore backend bind --help` against the installed CLI before acting:
+
+```bash
+farthershore backend bind acme analytics \
+  --env staging \
+  --origin-url https://api-staging.example.com \
+  --dry-run
+
+farthershore backend bind acme analytics \
+  --env feature-preview \
+  --origin-url https://api-preview.example.com \
+  --dry-run
+```
+
+Here `acme` is the business and `analytics` is the logical backend slug.
+Inspect each preview, then remove `--dry-run` to apply the intended binding.
+For **backend bind**, omitted `--env` targets production: always pass the
+intended environment explicitly and obtain approval before production changes.
+A production backend row cannot be rebound as a preview row. Use the selected
+environment's matching row; missing preview bindings do not fall back to the
+production origin. This changes only that environment's concrete binding,
+not other origins or the route declaration. Issue or select a runtime token
+scoped to that same business, environment and backend, and store it only in
+that upstream's secret manager. Do not reuse a production token in preview.
 
 Store `FS_RUNTIME_TOKEN`, database URLs, and application secrets in the backend
 host's secret manager. Platform variables do not configure an external

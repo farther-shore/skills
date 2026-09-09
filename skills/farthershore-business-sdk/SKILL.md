@@ -60,8 +60,10 @@ separate. Do not transplant older plan or meter shapes.
 ## Rules that change how you implement
 
 - The compiler discovers all source modules under `business/`, not one required
-  filename. Exactly one default-exported `fs.business()` seals the registry;
-  evaluate every declaration before that call. Use sibling modules for growth.
+  filename. Exactly one module default-exports `fs.business()`. The normal folder
+  loader finalizes after importing all discovered modules; direct SDK execution
+  seals immediately. Explicitly import declaration dependencies before the call
+  so the program works in either context. Use sibling modules for growth.
 - Declarations return immutable branded refs. Pass those refs, not strings or
   hand-built reference objects. Use one installed SDK copy.
 - Declaring a meter does not attach it. Bind route `costs` for gateway-known
@@ -81,11 +83,23 @@ separate. Do not transplant older plan or meter shapes.
 
 ## Verify and hand off
 
-Run `farthershore build --format json` and inspect failures and the generated
-IR. Constructor success is not proof of a valid build. Push only the reviewed
+Run the repository's TypeScript typecheck separately from
+`farthershore build --format json`; build executes TypeScript but does not
+type-check it. Inspect failures and the generated IR. Every plan needs a complete
+rate-limit rule, including paid plans; a resource cap alone does not suffice.
+Constructor success is not proof of a valid build. Push only the reviewed
 repository change, then inspect validation/apply checks in the intended
 environment. Existing subscriptions can retain commercial pins; a successful
 compile does not prove a customer received the new terms.
+
+## Product roles and permissions
+
+For RBAC work, read [the implementation checklist](references/rbac-implementation.md)
+and fetch https://docs.farthershore.com/define/team-rbac plus
+https://docs.farthershore.com/cookbook/add-team-rbac through the docs reader.
+The checklist covers essential safety distinctions even when an older published
+page is less explicit. If versioned docs contradict it, inspect the actual
+version and report the discrepancy before a mutation.
 
 For authorization or unsupported operations, use
 https://docs.farthershore.com/agents/operation-classes; do not bypass an ownership
