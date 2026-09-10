@@ -45,7 +45,12 @@ Follow the managed repository's `AGENTS.md` when it is stricter.
 
 With the default `branch-prefix` policy, the first push of an `env/<name>`
 branch creates that isolated environment. Each environment has its own accepted
-contract, frontend release, customers, variables, and concrete backend binding.
+contract, frontend release, customers, variables, and optional concrete backend
+overrides. The branch is the sole source for plans, pricing, routes,
+permissions, meters, limits, policies, and frontend declarations. None of that
+contract state is inherited from production. If the environment has not yet
+accepted its branch contract, contract-backed operations must fail closed; do
+not interpret a production-shaped response as a valid bootstrap state.
 
 ```bash
 git switch -c env/test
@@ -58,14 +63,17 @@ farthershore apply-timeline list <business> --env test --format json
 If branch-prefix creation is disabled, create the environment explicitly first:
 
 ```bash
-farthershore env create <business> --name test --branch env/test \
-  --idempotency-key <persisted-environment-create-attempt-key> --format json
+farthershore env create <business> --name test --branch env/test --format json
 ```
 
 Inspect `branchCreated`, and push the exact branch if Core could not create it.
-Production's backend origin does not serve the preview; create or bind an origin
-for the environment before end-to-end testing. Pass the explicit environment to
-every status and test command to avoid comparing preview with production.
+Concrete backend origins are the one fallback: when the preview contract
+declares a backend slug and has no environment override for it, the gateway
+resolves that slug to the production binding. An explicit environment binding
+overrides only that slug's target and credentials. This never imports a
+production plan or any other contract declaration. Pass the explicit
+environment to every status and test command to avoid comparing preview with
+production.
 
 ## Release production
 
@@ -83,8 +91,7 @@ Preview that first activation, then run it only after approval:
 
 ```bash
 farthershore business publish <business> --dry-run --format json
-farthershore business publish <business> \
-  --idempotency-key <persisted-first-publish-attempt-key> --format json
+farthershore business publish <business> --format json
 ```
 
 Once a managed-repository business is **ACTIVE**, the contract is managed by
