@@ -196,6 +196,38 @@ test("published agent operations contains the complete retry safety model", () =
   assert.deepEqual(findMissingRetryGuidance(guidance), []);
 });
 
+test("preview contracts stay isolated while backend origins inherit by stable slug", () => {
+  const environments = readFileSync(
+    new URL(
+      "../skills/farthershore-environments-and-releasing/SKILL.md",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+  const backends = readFileSync(
+    new URL(
+      "../skills/farthershore-backends-and-runtime/SKILL.md",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+
+  assert.match(
+    environments,
+    /None of that\s+contract state is inherited from production/,
+  );
+  assert.match(environments, /resolves that slug to the production binding/);
+  assert.match(
+    backends,
+    /resolves the same stable slug to its production\s+binding/,
+  );
+  assert.match(backends, /explicit preview binding overrides only that slug/);
+  assert.doesNotMatch(
+    environments,
+    /Production's backend origin does not serve the preview/,
+  );
+});
+
 test("publishes the complete job-shaped bundle", () => {
   const expected = [
     "farthershore-agent-operations",
