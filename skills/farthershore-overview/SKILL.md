@@ -172,5 +172,7 @@ syntax; do not combine incompatible skill releases.
 | Configure API-managed webhooks or frontend/runtime variables                 | [farthershore-backends-and-runtime](../farthershore-backends-and-runtime/SKILL.md)                           |
 | Preview, release, or recover                                                 | [farthershore-environments-and-releasing](../farthershore-environments-and-releasing/SKILL.md)               |
 | Operate customer state, builder-org membership, or invitations               | [farthershore-customer-operations](../farthershore-customer-operations/SKILL.md)                             |
+| Sign in as a test persona (hosted portal or local live launch), prove RBAC   | [farthershore-customer-operations](../farthershore-customer-operations/SKILL.md)                             |
+| Run a frontend checkout locally as a signed-in customer                      | [farthershore-building-uis](../farthershore-building-uis/SKILL.md)                                           |
 | Operate platform agents, bulletins, or notifications                         | [farthershore-observability-and-troubleshooting](../farthershore-observability-and-troubleshooting/SKILL.md) |
 | Inspect workflows or diagnose a request, release, usage, or platform problem | [farthershore-observability-and-troubleshooting](../farthershore-observability-and-troubleshooting/SKILL.md) |

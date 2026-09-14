@@ -6,7 +6,7 @@ description: Use when building customer-facing application surfaces for a Farthe
 # Building the application
 
 Target the installed `@farthershore/farthershore-js` version; this guide
-describes 0.28.x. Match docs to the dependency pin before selecting APIs.
+describes 0.31.x. Match docs to the dependency pin before selecting APIs.
 
 ## Read current docs first
 
@@ -139,6 +139,52 @@ Customer money comes from `useBillPreview()` / the server bill-preview API.
 Honor `transparent` versus `opaque` disclosure; opaque responses intentionally
 omit monetary detail. Do not recompute a bill from usage charts, multiply local
 rates, or coerce decimal-string nanodollars into floating-point arithmetic.
+
+## Develop as a signed-in customer
+
+Build and check the application as a real customer, never with a pasted key.
+Test personas are temporary customers in a real subscriber workspace; they
+exercise the same account membership, product roles, token minting, and
+gateway authorization as a human customer. The browser only ever holds a
+server-owned HttpOnly session cookie — no persona key, bearer, handoff, or
+lease is ever in page JavaScript, a URL, storage, or a log. Requires CLI
+0.33.4+ and frontend SDK 0.31.0+ (`farthershore --version`,
+`npm ls @farthershore/farthershore-js`).
+
+Two journeys, both authenticated from the CLI's maker token (needs
+`persona:read persona:issue business:read environment:read frontend:read`):
+
+```bash
+# 1. Hosted portal: open the deployed frontend already signed in.
+farthershore persona login <business> <personaId> --env <environment> --format json
+
+# 2. Local live launch: run the frontend from this checkout against the real
+#    platform, signed in as the persona, with hot reload.
+farthershore frontend dev --live --business <business> --env <environment> \
+  --persona <personaId-or-name> --port 5173 --format json
+```
+
+What `frontend dev --live --persona` does: resolves the target, issues a
+short-lived local-preview lease, starts Vite on a private loopback port, and
+serves `http://localhost:<port>` through a CLI-owned proxy that attaches the
+lease to `/_fs/api/*` calls and strips every credential from what Vite sees.
+The JSON envelope is emitted only once the preview is actually signed in
+(`localUrl`, `signInUrl`, `vitePort`); read it before opening anything. The
+lease renews itself while the command runs and is revoked on Ctrl-C (SIGINT,
+SIGTERM, SIGHUP all tear down Vite and revoke). Never call the
+`persona.local_preview.*` operations by hand. `--mock` and `--core-url` cannot
+be combined with a persona. `frontend preview` builds the production bundle
+and serves it the same way. Lifecycle problems (a renewal that keeps failing,
+Vite exiting) are printed on stderr even in JSON mode.
+
+Prove permissions with two personas, not one: an **account role**
+(`owner`/`member`, workspace administration) is separate from the
+**product roles** the subscriber composes under RBAC. Sign in as a member
+persona holding only a read role, and the write action must yield the typed
+`permission_denied` at the gateway while the owner persona's write is
+forwarded. Read [farthershore-customer-operations](../farthershore-customer-operations/SKILL.md#exercise-preview-personas)
+for creating, rotating, and deleting personas, and
+https://docs.farthershore.com/frontend/auth for the session contract.
 
 ## Empty states are a design decision
 
