@@ -39,12 +39,14 @@ locking before the first `tofu apply`, and keep one state file per environment
 
 ```hcl
 terraform {
-  required_version = ">= 1.8"
+  required_version = ">= 1.10"
 
   backend "s3" {
-    bucket       = "acme-tofu-state"
-    key          = "farthershore/api.tfstate"
-    region       = "us-east-1"
+    bucket = "acme-tofu-state"
+    key    = "farthershore/api.tfstate"
+    region = "us-east-1"
+    # Native S3 conditional-write locking. On older OpenTofu, lock with
+    # `dynamodb_table` instead; both mechanisms remain supported.
     use_lockfile = true
   }
 }
