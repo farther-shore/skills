@@ -55,6 +55,23 @@ infer a kind from money fields.
 | What happens at exhaustion  | Plan spend policy and bounded monetary admission            |
 | Negotiated terms            | Confirm-gated economic agreement, not a public catalog edit |
 
+Not every control is admissible under every kind, and the compiler rejects
+rather than infers. `fs.plan.kind.free` refuses `funding` and `spendPolicy` — a
+free plan's included allowance must be a structural `perMonth` limit, which is a
+rolling 30-day window rather than a billing period. `hybrid` refuses `lifecycle`,
+so it cannot carry a trial. A plan that needs a trial AND funding AND spend
+controls must be `fs.plan.kind.custom`; no diagnostic suggests it, so reach for
+`custom` as soon as two rejected controls are both required.
+
+`fs.included()` is MONEY-denominated. An allowance expressed in units ("600
+transcription minutes a month") needs `display: fs.display.multiplier(...)` to
+render as those units instead of as currency.
+
+A meter with `countSource: "action_inferred"` never releases its count without a
+corresponding `deletes:` route. An intended "5 concurrent jobs" cap silently
+becomes a lifetime cap when nothing decrements it; declare the delete route or
+choose a different count source.
+
 Use SDK constructors for money, rates, kinds, funding and exhaustion policies.
 `fs.money.usd(n)` takes major dollars; use `fs.rate.per(...)` or
 `perMillion(...)` for sub-cent rates. Monetary wire values ending in

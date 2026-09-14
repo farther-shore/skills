@@ -72,6 +72,23 @@ farthershore env list <business> --format json
 farthershore apply-timeline list <business> --env test --format json
 ```
 
+A direct push reports `farthershore/build` then `farthershore/apply` on that
+commit; `farthershore/validate` fires only on pull requests, so do not wait for
+it after a branch push.
+
+**Every push to an environment branch reflashes that environment.** It is a
+wipe-and-recompile, not a patch: test personas, subscriber API keys, and
+customer identity rows for that environment are destroyed. Re-mint the persona
+after each push and never carry a credential across one — the key that worked
+before the push is gone, not merely stale. Wait for the apply to report applied
+before minting, or the mint races the recompile and fails with
+`TEST_PERSONA_ENVIRONMENT_NOT_READY`.
+
+`business show <business> --env <name>` returns the BUSINESS-level accepted spec
+— the contract compiled from the default branch — not that environment's own
+accepted or edge state. Read the environment's Apply Timeline entry instead; it
+is the authoritative per-environment view.
+
 If branch-prefix creation is disabled, create the environment explicitly first:
 
 ```bash
@@ -97,6 +114,21 @@ stays behind the reviewed production Release.
 Before any production handoff, require the current commit, GitHub checks,
 semantic diff, version, and subscriber impact to be reviewed. Production
 release is confirm-gated.
+
+Going live also requires that EVERY backend declared in `business/` has a
+concrete production binding. Publishing without one fails with
+`BACKEND_TARGET_REQUIRED`; several backends with none marked default fail with
+`DEFAULT_BACKEND_REQUIRED`. Check and remedy before the handoff:
+
+```bash
+farthershore backend list <business> --format json
+farthershore backend bind <business> --env production \
+  --origin-url <production-https-url> --format json
+```
+
+`backend list` is business-wide and takes no `--env`; read the environment off
+each returned row. See
+[farthershore-backends-and-runtime](../farthershore-backends-and-runtime/SKILL.md).
 
 `business publish` is only the one-time transition for a new **DRAFT** business.
 Preview that first activation, then run it only after approval:
