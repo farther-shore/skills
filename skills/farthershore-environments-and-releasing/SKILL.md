@@ -41,6 +41,18 @@ Then use the exact pages for the task:
 
 Follow the managed repository's `AGENTS.md` when it is stricter.
 
+## Preview the frontend locally before a release
+
+A frontend change does not need a release to be exercised as a customer:
+`farthershore frontend dev --live --business <business> --env <environment>
+--persona <personaId-or-name> --format json` (CLI 0.33.4+) runs the checkout's
+Vite dev server behind a CLI-owned localhost proxy, signed in as that test
+persona against the real environment (plans, RBAC, gateway, backends), with hot
+reload. `frontend preview` serves the production bundle the same way. See
+[farthershore-customer-operations](../farthershore-customer-operations/SKILL.md#sign-a-persona-into-a-browser-cli-0334)
+for personas and the sign-in contract; a hosted release is still required for
+anything a customer will reach.
+
 ## Preview in an environment
 
 With the default `branch-prefix` policy, the first push of an `env/<name>`

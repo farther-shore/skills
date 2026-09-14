@@ -165,20 +165,69 @@ spec rather than assuming a partial edit.
 
 ## Exercise preview personas
 
-Personas are for environments configured for test-persona customer auth:
+Personas are for environments configured for test-persona customer auth. They
+are temporary users in a real subscriber-owned workspace, so they exercise the
+same account membership, product roles, token minting, and gateway
+authorization as human customers.
 
 ```bash
+# The first persona creates the temporary subscriber workspace and owns it.
 farthershore persona bootstrap <business> --env <environment> \
   --plan <plan> \
   --idempotency-key <persisted-persona-bootstrap-attempt-key> --format json
 farthershore persona list <business> --env <environment> --format json
+
+# Another temporary user in the SAME workspace: account role member, product
+# roles from the subscriber's own RBAC roles (omit --role for the default).
+farthershore persona bootstrap <business> --env <environment> --plan <plan> \
+  --subscriber-id <subscriberId> --account-role member --role <roleKey> \
+  --idempotency-key <persisted-member-bootstrap-attempt-key> --format json
+
 farthershore persona rotate <business> <personaId> --env <environment> \
   --idempotency-key <persisted-persona-rotate-attempt-key> --format json
-farthershore persona revoke <business> <personaId> --env <environment> --format json
+farthershore persona delete <business> <personaId> --env <environment> --format json
 ```
 
 Bootstrap/rotation return a secret once. Do not log or commit it. Verify with
 `persona list` and an actual request when end-to-end behavior matters.
+Deleting a persona (or the environment) revokes its sessions and any local
+preview lease it held.
+
+### Sign a persona into a browser (CLI 0.33.4+)
+
+Browsers never receive a persona key or bearer. Both sign-in paths hand a
+single-use, host-bound handoff to a platform-owned page which exchanges it for
+a server-owned HttpOnly session cookie; the frontend bundle sees no secret.
+
+```bash
+# Hosted portal (the deployed frontend on the environment's portal host):
+farthershore persona login <business> <personaId> --env <environment> --format json
+
+# Local live launch of a frontend checkout, signed in, hot reload:
+farthershore frontend dev --live --business <business> --env <environment> \
+  --persona <personaId-or-name> [--port 5173] --format json
+```
+
+The local launch issues a short-lived local-preview lease that lives only in
+the CLI process: the CLI renews it automatically, revokes it on Ctrl-C
+(SIGINT/SIGTERM/SIGHUP), and prints lifecycle notices on stderr. Its JSON
+envelope (`localUrl`, `signInUrl`, `vitePort`) appears only once the preview
+is signed in; if the browser could not be opened, open `signInUrl` yourself.
+Never invoke the `persona.local_preview.issue|renew|revoke` operations
+directly. Two previews for different personas in one browser profile share the
+`localhost` cookie and will sign each other out — run one at a time.
+
+### Prove allowed and denied, not just signed in
+
+An **account role** (`owner` / `member`) governs workspace administration; a
+**product role** is what the subscriber composes under Team RBAC over the route
+permission catalog. Enabling RBAC creates no product roles and selects no
+default. To prove a permission change actually holds: sign in the owner
+persona and the member persona separately, mint a gateway token from each
+session, and send the constrained request — the member must receive the typed
+`permission_denied` (HTTP 403) from the gateway while the owner's request is
+forwarded to the backend. A UI that hides the button proves nothing; the
+gateway answer does.
 
 ## Audit and completion
 
