@@ -8,6 +8,29 @@ description: Use when starting any FartherShore task or working in a FartherShor
 FartherShore is Business-as-Code. Start with the repository, and read its
 `AGENTS.md` before acting.
 
+## Deployment is a prerequisite
+
+FartherShore is the gateway, billing, and entitlement plane in FRONT of an HTTP
+service that the builder runs. It does not host that service, and a production
+publish fails until every declared backend has a real origin bound to it.
+
+Before creating or authoring anything, confirm all three:
+
+1. **Somewhere to run it** — a host that serves a long-lived HTTP process on a
+   public HTTPS URL: Railway, Render, Fly.io, Cloud Run, AWS, or the builder's
+   own infrastructure. Verify you can authenticate to it (`railway whoami`,
+   `render whoami`, `flyctl auth whoami`, `gcloud auth list`, or equivalent).
+2. **Somewhere to put secrets** — the ability to set environment variables or
+   secrets on that host, because the service reads `FS_RUNTIME_TOKEN` from its
+   environment and that value must never be committed.
+3. **Somewhere to read logs** — bootstrap and signature-verification failures
+   appear only in that service's own logs.
+
+If any is missing, STOP and ask the human to provide it. Do not author a
+business that cannot be deployed. When cloud credentials already exist and the
+human approves, provisioning it with OpenTofu is the durable answer: see
+[farthershore-backends-and-runtime](../farthershore-backends-and-runtime/SKILL.md).
+
 ## Read current docs first
 
 **Required before acting:** fetch the live machine-readable index and retrieve
@@ -140,8 +163,18 @@ Run `farthershore logout` to remove the saved CLI credential.
 2. Edit business structure in `business/` with the pinned SDK.
 3. Run `farthershore build`.
 4. Commit and push.
-5. Inspect the GitHub checks and fix failures in the repository.
+5. Inspect the GitHub checks and fix failures in the repository. A direct branch
+   push reports `farthershore/build` (Manifest IR) then `farthershore/apply`
+   (compile, accept, publish to edge); a customized portal also reports
+   `farthershore/frontend`. `farthershore/validate` fires only on pull requests
+   — after a plain push, waiting for it is waiting for a check that will never
+   appear.
 6. Use the CLI only for platform operations that have no code representation.
+
+Run `farthershore <command> --help` before composing an unfamiliar operation:
+not every command takes `--env`, and `--organization` is a GLOBAL option that
+must precede the subcommand (`farthershore --organization acme business create
+…`), not follow it.
 
 Before a CLI operation, run `farthershore <command> --help` and use the current
 signature. Pass `--format json` when machine-readable output is useful. Obtain
@@ -169,6 +202,7 @@ syntax; do not combine incompatible skill releases.
 | Build a customer-facing surface                                              | [farthershore-building-uis](../farthershore-building-uis/SKILL.md)                                           |
 | Test or release a repository change                                          | [farthershore-environments-and-releasing](../farthershore-environments-and-releasing/SKILL.md)               |
 | Build or operate a backend                                                   | [farthershore-backends-and-runtime](../farthershore-backends-and-runtime/SKILL.md)                           |
+| Scaffold the backend service or provision hosting with OpenTofu              | [farthershore-backends-and-runtime](../farthershore-backends-and-runtime/SKILL.md)                           |
 | Configure API-managed webhooks or frontend/runtime variables                 | [farthershore-backends-and-runtime](../farthershore-backends-and-runtime/SKILL.md)                           |
 | Preview, release, or recover                                                 | [farthershore-environments-and-releasing](../farthershore-environments-and-releasing/SKILL.md)               |
 | Operate customer state, builder-org membership, or invitations               | [farthershore-customer-operations](../farthershore-customer-operations/SKILL.md)                             |

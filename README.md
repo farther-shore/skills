@@ -10,6 +10,12 @@ is organized around eleven jobs an agent performs and teaches one ownership mode
 Load `farthershore-overview` first. For a new business, continue with
 `farthershore-quickstart`.
 
+FartherShore is the gateway, billing, and entitlement plane in FRONT of an HTTP
+service the builder runs. Somewhere to deploy that service, a way to set
+`FS_RUNTIME_TOKEN` there, and a way to read its logs are prerequisites to using
+the platform at all — `farthershore-overview` gates on them before anything is
+created.
+
 ## Skills
 
 | Skill                                                                                                              | Load when…                                                                                                               |
@@ -22,7 +28,7 @@ Load `farthershore-overview` first. For a new business, continue with
 | [`farthershore-plans-and-metering`](skills/farthershore-plans-and-metering/SKILL.md)                               | designing plans, pricing, limits, or meters                                                                              |
 | [`farthershore-building-uis`](skills/farthershore-building-uis/SKILL.md)                                           | building customer-facing application surfaces                                                                            |
 | [`farthershore-environments-and-releasing`](skills/farthershore-environments-and-releasing/SKILL.md)               | testing changes or releasing them                                                                                        |
-| [`farthershore-backends-and-runtime`](skills/farthershore-backends-and-runtime/SKILL.md)                           | building an application backend, verifying requests, storing user data, reporting usage, or operating origins and tokens |
+| [`farthershore-backends-and-runtime`](skills/farthershore-backends-and-runtime/SKILL.md)                           | scaffolding and deploying an application backend, provisioning hosting with OpenTofu, verifying requests, storing user data, reporting usage, or operating origins and tokens |
 | [`farthershore-customer-operations`](skills/farthershore-customer-operations/SKILL.md)                             | operating customer access, subscriptions, roles, proposals, promo codes, and preview personas                            |
 | [`farthershore-observability-and-troubleshooting`](skills/farthershore-observability-and-troubleshooting/SKILL.md) | diagnosing denials, releases, usage, backends, or platform faults                                                        |
 
@@ -44,7 +50,7 @@ Commerce, Gateway, Operations, Agents, and CLI & MCP collections. Their full
 corpora and capability catalog retain package versions and source evidence.
 Check these against installed pins; the skill version is not an SDK version.
 
-Version 3 guidance targets Business SDK 3.2.x, Backend SDK 0.21.x and Frontend
+Version 3.2 guidance targets Business SDK 3.2.x, Backend SDK 0.21.x and Frontend
 SDK 0.28.x. This preproduction bundle may ship ahead of the corresponding docs
 and CLI release. Follow each skill's documentation fallback when traversal is
 unavailable, and report missing guidance rather than guessing. Repository edits
