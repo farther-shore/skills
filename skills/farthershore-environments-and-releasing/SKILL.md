@@ -193,13 +193,14 @@ eligible prior publish workflow:
 ```bash
 farthershore business rollback <business> <workflowExecutionId> \
   --reason "restore the reviewed serving snapshot" \
-  --idempotency-key rollback-<workflowExecutionId> \
   --format json
 ```
 
 This uses the snapshot captured by that publish workflow. It does not move a
 Git tag or change repository source. An `enqueued` response is not convergence;
-record the new workflow ID and read status back.
+record the new workflow ID and read status back. If the response is lost, read
+`business status` and `apply-timeline list` before repeating; a second rollback
+while one is running returns `ROLLBACK_IN_FLIGHT`.
 
 ### Hosted frontend only
 

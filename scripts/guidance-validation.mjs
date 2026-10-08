@@ -1,7 +1,14 @@
 export const BUNDLE_INSTALL =
   "npx skills add https://github.com/farther-shore/skills/tree/<tag> --skill '*' -g -y";
 
+// The caller-supplied retry-key mechanism was removed from every external
+// surface. The patterns spell the retired word with a character class so this
+// repository never contains it verbatim.
 const FORBIDDEN_GUIDANCE = [
+  [
+    /idem[p]oten|--idem[p]otency-key|\bsame_key_replay\b|\bintrinsic_replay\b|\bretry\.keyRequired\b|\breplay key\b/i,
+    "retired caller-supplied retry key",
+  ],
   [
     /\bfs\.rbac\s*\(|\bprice_per_unit_micros\b|\bincluded_units\b/,
     "retired Business SDK authoring",
@@ -118,34 +125,29 @@ const RETRY_GUIDANCE_REQUIREMENTS = [
   [/\bretry\.kind\b/, "operation retry classification"],
   [/\bread_current\b/, "read-current retry rule"],
   [/\bconvergent_write\b/, "convergent-write retry rule"],
-  [/\bsame_key_replay\b/, "same-key replay rule"],
-  [/\bintrinsic_replay\b/, "intrinsic replay rule"],
   [/\bno_automatic_retry\b/, "no-automatic-retry rule"],
   [/\bretry\.reconcile\b/, "operation reconciliation guidance"],
   [/\bretry\.rationale\b/, "operation retry rationale guidance"],
   [/\bretry\.enforcement\b/, "server enforcement guidance"],
   [/\bretry\.responseSemantics\b/, "response freshness guidance"],
-  [/\bmeta\.idempotency\.replayed\b/, "successful replay marker"],
-  [/\bIDEMPOTENCY_KEY_IN_FLIGHT\b/, "in-flight attempt handling"],
-  [/\bIDEMPOTENCY_RESULT_INDETERMINATE\b/, "indeterminate attempt handling"],
-  [/\bIDEMPOTENCY_KEY_REUSED\b/, "reused-key handling"],
-  [/\bIDEMPOTENCY_REPLAY_UNAVAILABLE\b/, "unavailable replay handling"],
+  [/\bOUTCOME_UNKNOWN\b/, "unknown-outcome write handling"],
+  [/\bsafe_to_repeat\b/, "server safe-to-repeat verdict"],
+  [/\b429\b/, "rate-limit write retry"],
+  [/\bCONFLICT\b/, "repeated-create conflict handling"],
+  [/\bRELEASE_PENDING_ACCEPTANCE\b/, "pending-release publish handling"],
+  [/\bROLLBACK_IN_FLIGHT\b/, "in-flight rollback handling"],
   [/\bDRY_RUN_NOT_SUPPORTED\b/, "unsupported preview handling"],
   [
-    /webhook (?:test|trigger)[\s\S]{0,240}(?:same_key_replay|idempotency key)/i,
-    "webhook delivery attempt identity",
+    /webhook (?:test|trigger)[\s\S]{0,240}webhook deliveries/i,
+    "webhook delivery reconciliation",
   ],
   [
     /auth context-token[\s\S]{0,240}(?:no_automatic_retry|short-lived|new token)/i,
     "short-lived context token retry boundary",
   ],
   [
-    /preview[\s\S]{0,180}(?:never|does not)[\s\S]{0,100}(?:consume|accept)[\s\S]{0,80}idempotency key/i,
-    "preview key prohibition",
-  ],
-  [
-    /replay[\s\S]{0,120}(?:historical|original)[\s\S]{0,100}(?:read|current state)/i,
-    "replay freshness warning",
+    /point-in-time[\s\S]{0,120}(?:never|not)[\s\S]{0,60}(?:fresh read|current state)/i,
+    "write-result freshness warning",
   ],
 ];
 

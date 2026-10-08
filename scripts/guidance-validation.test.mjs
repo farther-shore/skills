@@ -252,6 +252,50 @@ test("publishes the complete job-shaped bundle", () => {
   );
 });
 
+test("rejects the retired caller-supplied retry key in every spelling", () => {
+  // Built from parts so this repository never contains the retired word.
+  const retired = "idem" + "potency";
+  for (const text of [
+    `farthershore business create acme --${retired}-key <key> --format json`,
+    `Persist an ${retired} key before the first send.`,
+    "Use `same_key_replay` for webhook test.",
+    "Use `intrinsic_replay` with the transition identifier.",
+    "Check `retry.keyRequired` before dispatch.",
+    "Do not attach a replay key.",
+    `Branch on ${retired.toUpperCase()}_KEY_IN_FLIGHT.`,
+    `A replay is marked at meta.${retired}.replayed.`,
+  ])
+    assert.deepEqual(
+      findObsoleteGuidance(text),
+      ["retired caller-supplied retry key"],
+      text,
+    );
+});
+
+test("retry guidance requires the reconcile-before-repeat write contract", () => {
+  assert.deepEqual(
+    findMissingRetryGuidance(
+      "Use retry.kind: read_current, convergent_write, no_automatic_retry.",
+    ),
+    [
+      "operation reconciliation guidance",
+      "operation retry rationale guidance",
+      "server enforcement guidance",
+      "response freshness guidance",
+      "unknown-outcome write handling",
+      "server safe-to-repeat verdict",
+      "rate-limit write retry",
+      "repeated-create conflict handling",
+      "pending-release publish handling",
+      "in-flight rollback handling",
+      "unsupported preview handling",
+      "webhook delivery reconciliation",
+      "short-lived context token retry boundary",
+      "write-result freshness warning",
+    ],
+  );
+});
+
 test("rejects obsolete SDK economics, reporting, and migration instructions", () => {
   for (const text of [
     "fs.rbac()",

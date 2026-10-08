@@ -63,8 +63,7 @@ farthershore auth organization use <id-or-slug>
 ## 2. Create
 
 ```bash
-farthershore business create <slug> \
-  --idempotency-key <persisted-business-create-attempt-key> --format json
+farthershore business create <slug> --format json
 ```
 
 To create outside the saved default organization, note that `--organization` is
@@ -74,6 +73,11 @@ a GLOBAL option and must precede the subcommand:
 
 The command returns the managed repository URL. That URL is the handoff; do not
 infer another lookup path or retry creation through a different surface.
+
+If create fails with `OUTCOME_UNKNOWN`, the business may already exist. Run
+`farthershore business list --format json` before creating again; repeating a
+create for a slug that now exists returns `CONFLICT`, and the existing business
+is usually yours.
 
 ## 3. Clone and read local instructions
 
