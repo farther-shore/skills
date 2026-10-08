@@ -151,7 +151,6 @@ A runtime token scopes to backend rows, so the row must exist before the mint.
      --transport direct \
      --origin-url "$(tofu output -raw origin_url)" \
      --default \
-     --idempotency-key <persisted-backend-create-attempt-key> \
      --format json
    ```
 
@@ -160,7 +159,6 @@ A runtime token scopes to backend rows, so the row must exist before the mint.
    ```bash
    farthershore backend tokens create <business> \
      --env preview \
-     --idempotency-key <persisted-backend-tokens-create-attempt-key> \
      --format json
    ```
 

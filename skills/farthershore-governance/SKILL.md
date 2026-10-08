@@ -68,9 +68,10 @@ to make an action pass.
 ## Evidence and recovery
 
 Retain rule, run, proposal, request, receipt and audit identifiers. Reconcile
-uncertain actions before retrying with the original idempotency identity where
-supported. Acknowledge or resolve Bulletin work only after reviewing its
-evidence and actual handoff outcome.
+an uncertain action through its `retry.reconcile` read before repeating it, and
+repeat only when that read shows the effect is absent and still wanted.
+Acknowledge or resolve Bulletin work only after reviewing its evidence and
+actual handoff outcome.
 
 Disabling a rule or Operator prevents future work as documented; it is not an
 undo for messages, proposals, billing or already-started effects. Inspect

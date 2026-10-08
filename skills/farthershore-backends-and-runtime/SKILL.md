@@ -98,15 +98,17 @@ first.
 ```bash
 farthershore backend create <business> --env <environment> \
   --name api --slug api --transport direct \
-  --origin-url <https-url> --default \
-  --idempotency-key <persisted-backend-create-attempt-key> --format json
-farthershore backend tokens create <business> --env <environment> \
-  --idempotency-key <persisted-backend-tokens-create-attempt-key> --format json
+  --origin-url <https-url> --default --format json
+farthershore backend tokens create <business> --env <environment> --format json
 ```
 
 Pass `--backend <backend-id>` on the mint when the environment has more than one
 backend, so the token resolves to the intended row rather than depending on the
 backend set staying singular.
+
+If either write fails with `OUTCOME_UNKNOWN`, do not repeat it blindly: read
+`backend list` (or `backend tokens list`) first. A token whose one-time value
+was lost is rotated with `backend tokens rotate`, not minted again.
 
 `backend list` and `backend tokens list` accept no `--env`: both are
 business-wide reads. Filter on each returned row's environment instead of
