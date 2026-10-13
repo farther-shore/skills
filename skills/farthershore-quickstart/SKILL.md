@@ -109,8 +109,8 @@ the repository root — never hand-write the raw-body capture or the
 `fs.middleware()` verification chain:
 
 ```bash
-farthershore create api --help   # the current language list
-farthershore create api --node
+farthershore backend scaffold --help   # the current language list
+farthershore backend scaffold --node
 ```
 
 It lands in `api/` and appends build-output entries to the root `.gitignore`.
@@ -154,14 +154,14 @@ composing an operation, and load the relevant operating skill from
 
 ## Skill order for a new business
 
-| Step                                            | Skill                                                                                          |
-| ----------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| Ownership model, prerequisite, docs traversal   | [farthershore-overview](../farthershore-overview/SKILL.md)                                     |
-| Slug to first checked commit                    | this skill                                                                                     |
-| Authoring `business/`                           | [farthershore-business-sdk](../farthershore-business-sdk/SKILL.md)                             |
-| Plans, pricing, included usage, limits, meters  | [farthershore-plans-and-metering](../farthershore-plans-and-metering/SKILL.md)                 |
-| `create api`, deploy, origins, runtime tokens   | [farthershore-backends-and-runtime](../farthershore-backends-and-runtime/SKILL.md)             |
-| Customer-facing surfaces                        | [farthershore-building-uis](../farthershore-building-uis/SKILL.md)                             |
-| Previews, applies, production release           | [farthershore-environments-and-releasing](../farthershore-environments-and-releasing/SKILL.md) |
-| Personas and RBAC proofs                        | [farthershore-customer-operations](../farthershore-customer-operations/SKILL.md)               |
-| Denials, failed applies, missing usage          | [farthershore-observability-and-troubleshooting](../farthershore-observability-and-troubleshooting/SKILL.md) |
+| Step                                                | Skill                                                                                                        |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Ownership model, prerequisite, docs traversal       | [farthershore-overview](../farthershore-overview/SKILL.md)                                                   |
+| Slug to first checked commit                        | this skill                                                                                                   |
+| Authoring `business/`                               | [farthershore-business-sdk](../farthershore-business-sdk/SKILL.md)                                           |
+| Plans, pricing, included usage, limits, meters      | [farthershore-plans-and-metering](../farthershore-plans-and-metering/SKILL.md)                               |
+| `backend scaffold`, deploy, origins, runtime tokens | [farthershore-backends-and-runtime](../farthershore-backends-and-runtime/SKILL.md)                           |
+| Customer-facing surfaces                            | [farthershore-building-uis](../farthershore-building-uis/SKILL.md)                                           |
+| Previews, applies, production release               | [farthershore-environments-and-releasing](../farthershore-environments-and-releasing/SKILL.md)               |
+| Personas and RBAC proofs                            | [farthershore-customer-operations](../farthershore-customer-operations/SKILL.md)                             |
+| Denials, failed applies, missing usage              | [farthershore-observability-and-troubleshooting](../farthershore-observability-and-troubleshooting/SKILL.md) |

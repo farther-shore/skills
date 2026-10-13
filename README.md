@@ -18,19 +18,19 @@ created.
 
 ## Skills
 
-| Skill                                                                                                              | Load when…                                                                                                               |
-| ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
-| [`farthershore-agent-operations`](skills/farthershore-agent-operations/SKILL.md)                                   | discovering CLI/MCP capabilities, permissions, or unavailable-operation handoffs                                         |
-| [`farthershore-governance`](skills/farthershore-governance/SKILL.md)                                               | governing Operator actions, automation, proposals, and outward effects                                                   |
-| [`farthershore-overview`](skills/farthershore-overview/SKILL.md)                                                   | starting any FartherShore task                                                                                           |
-| [`farthershore-quickstart`](skills/farthershore-quickstart/SKILL.md)                                               | creating a business from nothing                                                                                         |
-| [`farthershore-business-sdk`](skills/farthershore-business-sdk/SKILL.md)                                           | authoring the `business/` program                                                                                        |
-| [`farthershore-plans-and-metering`](skills/farthershore-plans-and-metering/SKILL.md)                               | designing plans, pricing, limits, or meters                                                                              |
-| [`farthershore-building-uis`](skills/farthershore-building-uis/SKILL.md)                                           | building customer-facing application surfaces                                                                            |
-| [`farthershore-environments-and-releasing`](skills/farthershore-environments-and-releasing/SKILL.md)               | testing changes or releasing them                                                                                        |
+| Skill                                                                                                              | Load when…                                                                                                                                                                    |
+| ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`farthershore-agent-operations`](skills/farthershore-agent-operations/SKILL.md)                                   | discovering CLI capabilities, permissions, or unavailable-operation handoffs                                                                                                  |
+| [`farthershore-governance`](skills/farthershore-governance/SKILL.md)                                               | governing Operator actions, automation, proposals, and outward effects                                                                                                        |
+| [`farthershore-overview`](skills/farthershore-overview/SKILL.md)                                                   | starting any FartherShore task                                                                                                                                                |
+| [`farthershore-quickstart`](skills/farthershore-quickstart/SKILL.md)                                               | creating a business from nothing                                                                                                                                              |
+| [`farthershore-business-sdk`](skills/farthershore-business-sdk/SKILL.md)                                           | authoring the `business/` program                                                                                                                                             |
+| [`farthershore-plans-and-metering`](skills/farthershore-plans-and-metering/SKILL.md)                               | designing plans, pricing, limits, or meters                                                                                                                                   |
+| [`farthershore-building-uis`](skills/farthershore-building-uis/SKILL.md)                                           | building customer-facing application surfaces                                                                                                                                 |
+| [`farthershore-environments-and-releasing`](skills/farthershore-environments-and-releasing/SKILL.md)               | testing changes or releasing them                                                                                                                                             |
 | [`farthershore-backends-and-runtime`](skills/farthershore-backends-and-runtime/SKILL.md)                           | scaffolding and deploying an application backend, provisioning hosting with OpenTofu, verifying requests, storing user data, reporting usage, or operating origins and tokens |
-| [`farthershore-customer-operations`](skills/farthershore-customer-operations/SKILL.md)                             | operating customer access, subscriptions, roles, proposals, promo codes, and preview personas                            |
-| [`farthershore-observability-and-troubleshooting`](skills/farthershore-observability-and-troubleshooting/SKILL.md) | diagnosing denials, releases, usage, backends, or platform faults                                                        |
+| [`farthershore-customer-operations`](skills/farthershore-customer-operations/SKILL.md)                             | operating customer access, subscriptions, roles, proposals, promo codes, and preview personas                                                                                 |
+| [`farthershore-observability-and-troubleshooting`](skills/farthershore-observability-and-troubleshooting/SKILL.md) | diagnosing denials, releases, usage, backends, or platform faults                                                                                                             |
 
 ## Live documentation
 
@@ -46,7 +46,7 @@ job. The skills carry the critical invariants and safe operating sequence; the
 website carries the full current reference.
 
 The docs are grouped into Platform, Business SDK, Backend SDK, Frontend SDK,
-Commerce, Gateway, Operations, Agents, and CLI & MCP collections. Their full
+Commerce, Gateway, Operations, Agents, and CLI collections. Their full
 corpora and capability catalog retain package versions and source evidence.
 Check these against installed pins; the skill version is not an SDK version.
 

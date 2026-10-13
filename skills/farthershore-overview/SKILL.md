@@ -181,11 +181,11 @@ signature. Pass `--format json` when machine-readable output is useful. Obtain
 confirmation before destructive actions, money-impacting changes, or production
 releases.
 
-Discover ownership, permissions, CLI availability and MCP availability with
-`farthershore operations list --format json`. MCP exposes a subset; missing
-tools never authorize private API workarounds. The docs' collection tabs
+Discover ownership, permissions and CLI availability with
+`farthershore operations list --format json`. A missing operation never
+authorizes a private API workaround. The docs' collection tabs
 separate Platform, the three SDKs, Commerce, Gateway, Operations, Agents and
-CLI & MCP. Where published, `capabilities.json`, `/llms-full.txt` and
+CLI. Where published, `capabilities.json`, `/llms-full.txt` and
 `/llms/<collection>.txt` provide versioned discovery and complete source text.
 Match documentation package versions to the installed tooling before copying
 syntax; do not combine incompatible skill releases.
@@ -194,7 +194,7 @@ syntax; do not combine incompatible skill releases.
 
 | Task                                                                         | Skill                                                                                                        |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| Discover CLI/MCP operations or resolve a missing tool                        | [farthershore-agent-operations](../farthershore-agent-operations/SKILL.md)                                   |
+| Discover CLI operations or resolve a missing operation                       | [farthershore-agent-operations](../farthershore-agent-operations/SKILL.md)                                   |
 | Govern Operator actions, automation or proposals                             | [farthershore-governance](../farthershore-governance/SKILL.md)                                               |
 | Create a business                                                            | [farthershore-quickstart](../farthershore-quickstart/SKILL.md)                                               |
 | Author routes, features, or other structure                                  | [farthershore-business-sdk](../farthershore-business-sdk/SKILL.md)                                           |
