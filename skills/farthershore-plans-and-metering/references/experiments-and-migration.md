@@ -24,7 +24,7 @@ changes.
 
 ## Migration boundary
 
-The existing `farthershore consumer migrate-latest` command is not a promise
+The existing `consumer migrate-latest` command is not a promise
 of generalized commercial rebinding. The post-launch operation that refreshes
 recurring and non-current usage-pricing pins is deferred. Do not invent a
 plan-version batch migration command or claim release activation migrates
