@@ -1,6 +1,6 @@
 ---
 name: farthershore-agent-operations
-description: Use when connecting an agent through FartherShore CLI or MCP, discovering supported operations, or resolving an unavailable tool or ownership boundary.
+description: Use when connecting an agent to FartherShore through the CLI (including `farthershore api` and `farthershore code`), discovering supported operations, or resolving an unavailable operation or ownership boundary.
 ---
 
 # Discover the supported operation
@@ -29,7 +29,7 @@ https://docs.farthershore.com/llms.txt and follow its page links; do not silentl
 switch to stage or assume guidance was retrieved.
 
 Read https://docs.farthershore.com/agents/overview and
-https://docs.farthershore.com/agents/operation-classes. Use the CLI & MCP
+https://docs.farthershore.com/agents/operation-classes. Use the CLI
 collection for complete commands, schemas, permission classes and handoffs.
 Where available, `capabilities.json` identifies source/package versions and
 links each reference entry to its authored behavior guide. Match those versions
@@ -48,15 +48,18 @@ catalog entries distinguish platform commands, repository authoring, Git
 triggers and other-principal handoffs. Read the operation's permission,
 side-effect, availability reason and exact command help.
 
-MCP is a subset of the CLI, not a second authority. Launch `farthershore-mcp`
-over stdio with the saved credential configuration. Discover actual tool names
-and input schemas; do not transform command names into guessed tool names. If
-MCP lacks an operation, check whether the supported CLI has it. If neither
-supports the desired outcome, report the boundary instead of calling an
-undocumented endpoint.
+The CLI is the agent surface; there is no local MCP server. Beyond the named
+commands, an agent can script operations with code mode: `farthershore code
+search <text>` and `farthershore code describe <op>` find an operation and its
+inputs, and `farthershore code run` runs a script against the typed `fs`
+client. Code mode is read-only unless you pass `--allow-writes`; destructive
+and one-time-secret operations also need `--yes`. `farthershore api <path>`
+sends one authenticated request to a documented platform path, like `gh api`.
+If no command, code-mode operation or documented path supports the desired
+outcome, report the boundary instead of calling an undocumented endpoint.
 
 Use [farthershore-overview](../farthershore-overview/SKILL.md) for device login
-and organization context. Never place credentials in launch arguments. Tools
+and organization context. Never place credentials in launch arguments. Operations
 that return one-time secrets require protected storage, even when ordinary
 responses use JSON.
 

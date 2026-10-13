@@ -17,7 +17,7 @@ service on a public HTTPS URL, a way to set `FS_RUNTIME_TOKEN` there, and a way
 to read that service's logs. Missing any, STOP and ask the human.
 
 **Quick first-time path** — one service, direct transport: scaffold with
-`farthershore create api --node`, deploy with the host's own CLI (`railway up`,
+`farthershore backend scaffold --node`, deploy with the host's own CLI (`railway up`,
 `render deploys create`, `flyctl deploy`, `gcloud run deploy`), give it a public
 HTTPS domain, register the origin, then mint the token.
 
@@ -31,8 +31,8 @@ before writing it.
 ## Scaffold the service; never hand-write verification
 
 ```bash
-farthershore create api --help   # the current language list
-farthershore create api --node
+farthershore backend scaffold --help   # the current language list
+farthershore backend scaffold --node
 ```
 
 Run it from the managed repository root (the directory containing `business/`).
@@ -133,7 +133,7 @@ https://docs.farthershore.com/frontend/variables documents `FS_PUBLIC_*`
 (public) versus other names (secret); delivery policy is separate.
 
 Preserve signed raw request bytes and verify before JSON parsing or application
-logic. Use the middleware order produced by `farthershore create api --node`. Never trust inbound
+logic. Use the middleware order produced by `farthershore backend scaffold --node`. Never trust inbound
 `x-fs-*` headers or caller-supplied tenant IDs. After verification, use
 `ctx.principal.org.id` plus the narrowed subject from `requireMember(ctx)`
 or `requireService(ctx)`; use verified `ctx.signedContext` when a business,
