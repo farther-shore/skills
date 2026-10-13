@@ -96,7 +96,7 @@ until current state and audit evidence prove it did not complete.
 Move one customer to the active head of its current plan lineage:
 
 ```bash
-farthershore consumer migrate-latest <business> <subscriberId> --format json
+farthershore consumer migrate-latest <business> <subscriberId> --yes --format json
 ```
 
 It does not choose an unrelated plan.
@@ -177,8 +177,8 @@ farthershore persona list <business> --env <environment> --format json
 farthershore persona bootstrap <business> --env <environment> --plan <plan> \
   --subscriber-id <subscriberId> --account-role member --role <roleKey> --format json
 
-farthershore persona rotate <business> <personaId> --env <environment> --format json
-farthershore persona delete <business> <personaId> --env <environment> --format json
+farthershore persona rotate <business> <personaId> --env <environment> --yes --format json
+farthershore persona delete <business> <personaId> --env <environment> --yes --format json
 ```
 
 Bootstrap/rotation return a secret once. Do not log or commit it. Verify with

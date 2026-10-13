@@ -193,7 +193,7 @@ eligible prior publish workflow:
 ```bash
 farthershore business rollback <business> <workflowExecutionId> \
   --reason "restore the reviewed serving snapshot" \
-  --format json
+  --yes --format json
 ```
 
 This uses the snapshot captured by that publish workflow. It does not move a
@@ -212,7 +212,7 @@ wrong:
 farthershore frontend status <business> --format json
 farthershore frontend rollback <business> \
   --release-id <reviewed-known-good-release-id> \
-  --format json
+  --yes --format json
 farthershore frontend status <business> --format json
 ```
 
@@ -230,7 +230,7 @@ reactivate that new release through the same target-safe pointer operation:
 ```bash
 farthershore frontend rollback <business> \
   --release-id <new-reviewed-succeeded-release-id> \
-  --format json
+  --yes --format json
 farthershore frontend status <business> --format json
 ```
 
