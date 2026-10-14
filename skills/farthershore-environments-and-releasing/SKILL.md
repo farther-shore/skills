@@ -89,10 +89,11 @@ before minting, or the mint races the recompile and fails with
 accepted or edge state. Read the environment's Apply Timeline entry instead; it
 is the authoritative per-environment view.
 
-If branch-prefix creation is disabled, create the environment explicitly first:
+If branch-prefix creation is disabled, create the environment explicitly first.
+The environment's name comes from its branch (`env/test` creates `test`):
 
 ```bash
-farthershore env create <business> --name test --branch env/test --format json
+farthershore env create <business> --branch env/test --format json
 ```
 
 Inspect `branchCreated`, and push the exact branch if Core could not create it.
