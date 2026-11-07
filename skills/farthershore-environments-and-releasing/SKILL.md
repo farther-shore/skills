@@ -1,255 +1,126 @@
 ---
 name: farthershore-environments-and-releasing
-description: Use when previewing, releasing, verifying, or recovering a Business contract or hosted frontend across FartherShore environments.
+description: Use when validating managed repository changes, exercising preview personas, launching a first paid product, publishing or recovering exact artifacts.
 ---
 
-# Preview, release, and recover
+# Take the reviewed product to an observed outcome
 
-Git selects the artifact. Farther Shore environments and release pointers
-operate that artifact. Never assemble production state through ad hoc contract
-writes.
+Read AGENTS.md and installed tool/package pins. Resolve business/organization,
+principal, DRAFT versus ACTIVE state, managed repository, full commit SHA,
+preview policy/environment and product shape. Builder-repo release rules differ
+from the platform monorepo. Git selects artifacts; supported operations publish
+and observe them. Preserve the user's scope and authorization for exact effects.
 
-## Read current docs first
+## Retrieve the current journey
 
-**Required before acting:** fetch the live machine-readable index and read the
-task's pages. Prefer CLI traversal when supported; `docs ls` fetches that index,
-so no separate `curl` is needed:
+Search the task and read the complete guide including prerequisites, failure
+and recovery. Match source/package versions and inspect described methods,
+types, permissions, preview/retry metadata or current CLI leaf help. Hosted MCP
+search → describe → run/run_writes does not imply deployed availability;
+describe already includes types. If search fails, use canonical
+https://docs.farthershore.com/cookbook/preview-environment,
+https://docs.farthershore.com/cookbook/release-production,
+https://docs.farthershore.com/operate/apply-timeline and
+https://docs.farthershore.com/get-started/quickstart, with index/corpora fallback
+at https://docs.farthershore.com/llms.txt. Do not execute from excerpts, stale or
+truncated guides; stop dependent launch/payment/credential changes if full
+current prerequisites remain unavailable. Never silently switch environments.
 
-```bash
-farthershore docs --help
-farthershore docs ls --format json
-farthershore docs tree operations --format json
-farthershore docs read operate/environments --format json
-```
+## Managed repository and preview loop
 
-Collections are root folders; expand section folders with `docs ls <path>`.
-Use returned paths rather than guessing. Read the [overview's traversal guide](../farthershore-overview/SKILL.md#traverse-docs-as-a-filesystem)
-for heading reads, search, and provenance. Docs need no login. If the CLI lacks
-`docs` or its artifacts are unavailable, fetch
-https://docs.farthershore.com/llms.txt and follow its page links; do not silently
-switch to stage or assume guidance was retrieved.
+1. Typecheck with the repository's actual checker, run `farthershore build`, then
+   authenticated `farthershore validate` against the intended target. Inspect
+   checked/skipped server/docs results; generated local validate aliases can be
+   only a build. Validation is a dry-run, not activation or a promise of zero
+   diagnostic writes. Invalid authored docs can block apply; absent docs are
+   allowed, and warnings/notes differ from errors.
+2. Review semantic/economic/subscriber and route-retirement impact, then push the
+   coherent candidate. Inspect exact full-SHA check runs **and commit statuses**,
+   Business SDK/Docs sticky feedback and impact report. Fix diagnostics and
+   push corrections; mutable comments or old green checks are insufficient.
+   Build, frontend, validate and apply are different verdicts; read descriptions
+   and timeline for deferred/failed/superseded publication.
+3. Inspect branch-prefix, pull-request or disabled preview policy before selecting
+   or creating an environment. Existing admitted environment branches rebuild on
+   compatible pushes; do not change policy merely to test. Wait for that
+   environment's own contract and serving state before personas. Preview plans,
+   grants/pricing and customer state are its own; origins may inherit production
+   by slug. Bind isolated deployments/storage before writes requiring isolation.
+4. Compatible pushes preserve personas, subscriptions, API keys and live usage.
+   Reuse valid state after checking the new apply; incompatible changes can fail
+   while prior state serves. Explicit destructive reset is a separate action.
+   Select an existing persona or create the intended plan-bound owner, then
+   member/product-role variants in that owned workspace. Keep builder, account
+   and product-role authority distinct; never join an unrelated customer.
+5. Use supported hosted persona login or a terminal-owned `frontend dev --live`
+   / `frontend preview --live` session with current discovered flags. MCP does
+   not run local servers, tunnels, browser processes or private lease operations.
+   Keep bootstrap/rotation output, keys, handoffs, cookies and leases out of logs,
+   app code and storage. CLI readiness/opened output is not observed sign-in.
+   Check identity/org, sign-in/plan/core task, owner/member and product-role
+   allowed/denied requests, org switching and usage/billing. Mock layout checks
+   are narrower. Check provider-mode support; do not assume production personas.
+6. Finish browser observations, close/logout, stop the local process and verify
+   lease cleanup. Remove only owned temporary personas/environment when asked;
+   check teardown and track external backend data separately. Localhost cookies
+   can collide across ports, so switch personas sequentially or use separate
+   profiles and recheck identity.
 
-Then use the exact pages for the task:
+## First go-live and first payment
 
-- https://docs.farthershore.com/operate/environments
-- https://docs.farthershore.com/operate/releases
-- https://docs.farthershore.com/operate/apply
-- https://docs.farthershore.com/operate/apply-timeline
-- https://docs.farthershore.com/cookbook/preview-environment
-- https://docs.farthershore.com/cookbook/release-production
-- https://docs.farthershore.com/operate/observability-and-troubleshooting
+Confirm valid plan/rate limits, accepted contract and all declared backend targets
+(default selected when several exist). An explicitly zero-backend hosted product
+needs no artificial origin/token; an API/hybrid product must complete
+[backend verification](../farthershore-backends-and-runtime/SKILL.md).
+A separate hosted frontend needs its own artifact and browser evidence.
 
-Follow the managed repository's `AGENTS.md` when it is stricter.
+Resolve payment prerequisites with the responsible human: connected account,
+charges enabled, active card-payments capability and active Tax setup are
+production gates even for free-only publication. A connection ID is insufficient;
+platform-side payment configuration faults need an operator, not repeated
+customer onboarding. Do not invent tax/legal choices or automate human consent.
+Documentation syntax, legal documents/versions, browser consent and server-side
+legal authorization are separate facts; missing Terms/Privacy is not an invented
+universal publish blocker.
 
-## Preview the frontend locally before a release
+First DRAFT `business publish` may be previewed where supported, then initiated
+once within approval. It creates a release and may return PENDING while business
+is still DRAFT. Observe asynchronous acceptance/publication rather than declare
+it live. For code-managed ACTIVE businesses, repeat publish (including dry-run)
+is guarded; use a reviewed published non-draft/non-prerelease GitHub Release for
+an economic or unknown change, pinned to the exact immutable commit. Bare tags,
+merges and green builds are not activation. Provably non-economic default-branch
+changes may auto-publish; DRAFT default pushes only stage initial definition.
+Never repoint release tags.
 
-A frontend change does not need a release to be exercised as a customer:
-`farthershore frontend dev --live --business <business> --env <environment>
---persona <personaId-or-name> --format json` (CLI 0.33.4+) runs the checkout's
-Vite dev server behind a CLI-owned localhost proxy, signed in as that test
-persona against the real environment (plans, RBAC, gateway, backends), with hot
-reload. `frontend preview` serves the production bundle the same way. See
-[farthershore-customer-operations](../farthershore-customer-operations/SKILL.md#sign-a-persona-into-a-browser-cli-0334)
-for personas and the sign-in contract; a hosted release is still required for
-anything a customer will reach.
+Review concrete SHA/version, terms/customer impact, production action and
+recovery within authorization. Verify expected tag/full SHA, successful publish
+phase, active contract/live state, conditional frontend artifact and actual
+backend response separately. Then verify sign-in, intended organization and
+self-serve plan, checkout outcome, durable subscription/access and purchased
+capability. Metered/prepaid paths additionally need usage/funding evidence.
+Use preview/test-provider billing first; persona issuance alone is not checkout
+or provider fulfillment. Never initiate a real purchase solely to complete a
+checklist. Real charges require explicit authorization covering the purchase.
 
-## Preview in an environment
-
-With the default `branch-prefix` policy, the first push of an `env/<name>`
-branch creates that isolated environment. Each environment has its own accepted
-contract, frontend release, customers, variables, and optional concrete backend
-overrides. The branch is the sole source for plans, pricing, routes,
-permissions, meters, limits, policies, and frontend declarations. None of that
-contract state is inherited from production. If the environment has not yet
-accepted its branch contract, contract-backed operations must fail closed; do
-not interpret a production-shaped response as a valid bootstrap state.
-
-```bash
-git switch -c env/test
-farthershore build --format json
-git push -u origin env/test
-farthershore env list <business> --format json
-farthershore apply-timeline list <business> --env test --format json
-```
-
-A direct push reports `farthershore/build` then `farthershore/apply` on that
-commit; `farthershore/validate` fires only on pull requests, so do not wait for
-it after a branch push.
-
-**Every push to an environment branch reflashes that environment.** It is a
-wipe-and-recompile, not a patch: test personas, subscriber API keys, and
-customer identity rows for that environment are destroyed. Re-mint the persona
-after each push and never carry a credential across one — the key that worked
-before the push is gone, not merely stale. Wait for the apply to report applied
-before minting, or the mint races the recompile and fails with
-`TEST_PERSONA_ENVIRONMENT_NOT_READY`.
-
-`business show <business> --env <name>` returns the BUSINESS-level accepted spec
-— the contract compiled from the default branch — not that environment's own
-accepted or edge state. Read the environment's Apply Timeline entry instead; it
-is the authoritative per-environment view.
-
-If branch-prefix creation is disabled, create the environment explicitly first.
-The environment's name comes from its branch (`env/test` creates `test`):
-
-```bash
-farthershore env create <business> --branch env/test --format json
-```
-
-Inspect `branchCreated`, and push the exact branch if Core could not create it.
-Concrete backend origins are the one fallback: when the preview contract
-declares a backend slug and has no environment override for it, the gateway
-resolves that slug to the production binding. An explicit environment binding
-overrides only that slug's target and credentials. This never imports a
-production plan or any other contract declaration. Pass the explicit
-environment to every status and test command to avoid comparing preview with
-production.
-
-## Release production
-
-Production uses the immutable commit selected by a published GitHub Release.
-Draft and prerelease releases do not publish. A non-economic default-branch
-change may auto-apply when policy allows; an economic or indeterminate change
-stays behind the reviewed production Release.
-
-Before any production handoff, require the current commit, GitHub checks,
-semantic diff, version, and subscriber impact to be reviewed. Production
-release is confirm-gated.
-
-Going live also requires that EVERY backend declared in `business/` has a
-concrete production binding. Publishing without one fails with
-`BACKEND_TARGET_REQUIRED`; several backends with none marked default fail with
-`DEFAULT_BACKEND_REQUIRED`. Check and remedy before the handoff:
-
-```bash
-farthershore backend list <business> --format json
-farthershore backend bind <business> --env production \
-  --origin-url <production-https-url> --format json
-```
-
-`backend list` is business-wide and takes no `--env`; read the environment off
-each returned row. See
-[farthershore-backends-and-runtime](../farthershore-backends-and-runtime/SKILL.md).
-
-`business publish` is only the one-time transition for a new **DRAFT** business.
-Preview that first activation, then run it only after approval:
-
-```bash
-farthershore business publish <business> --dry-run --format json
-farthershore business publish <business> --format json
-```
-
-Once a managed-repository business is **ACTIVE**, the contract is managed by
-Git and every repeat `business publish`, including `--dry-run`, returns
-`409 MANAGED_BY_CODE`. Build, push the default branch, inspect the exact commit's
-Apply Timeline semantic diff, and choose the next version according to
-`AGENTS.md` and the repository's published tags:
-
-```bash
-git switch main
-git pull --ff-only origin main
-farthershore build --format json
-approved_sha="$(git rev-parse HEAD)"
-git push origin main
-farthershore apply-timeline inspect <business> "$approved_sha" \
-  --env production --format json
-gh release list --limit 10
-```
-
-Then cut a published GitHub Release on the exact approved repository commit:
-
-```bash
-git tag -a <version> "$approved_sha" -m "Release <version>"
-git push origin <version>
-gh release create <version> --verify-tag --title <version> --generate-notes
-```
-
-Do not repoint an existing release tag. The published GitHub Release event is
-the production handoff.
-
-There is no `frontend deploy` command. A Git push or published Release starts
-the build; the CLI observes it.
-
-## Verify the exact artifact
-
-```bash
-farthershore apply-timeline inspect <business> <tag-or-sha> \
-  --env production --format json
-farthershore business status <business> --format json
-farthershore frontend status <business> --wait --timeout 600 --format json
-```
-
-Require the expected release tag and full commit SHA, successful publish phase,
-`live: true`, and—when frontend source changed—the expected frontend build and
-active release. Business apply and frontend build are separate facts.
+Report release serving, checkout created, preview payment simulated, authorized
+real payment observed, subscription active, usage/balance correct and
+settlement/payout observed as separate milestones. A browser checkout return,
+zero-price activation or pending refill proves no collected payment/funds.
 
 ## Recover the right layer
 
-### Repository contract
+After uncertain publish/checkout/rollback, reconcile IDs and current state before
+repeat. Pending acceptance/in-flight work means observe existing execution.
+Keep sanitized target, full SHA/tag, apply/build/workflow/request identifiers and
+structured errors. Do not repair via SQL, private APIs or verification bypass.
 
-The durable recovery is forward: correct or revert `business/`, validate in
-preview, merge, and publish a new Release. For urgent compensation of an
-eligible prior publish workflow:
-
-```bash
-farthershore business rollback <business> <workflowExecutionId> \
-  --reason "restore the reviewed serving snapshot" \
-  --yes --format json
-```
-
-This uses the snapshot captured by that publish workflow. It does not move a
-Git tag or change repository source. An `enqueued` response is not convergence;
-record the new workflow ID and read status back. If the response is lost, read
-`business status` and `apply-timeline list` before repeating; a second rollback
-while one is running returns `ROLLBACK_IN_FLIGHT`.
-
-### Hosted frontend only
-
-Use this only when the Business contract is correct and the hosted artifact is
-wrong:
-
-```bash
-# Omitting --env intentionally targets production.
-farthershore frontend status <business> --format json
-farthershore frontend rollback <business> \
-  --release-id <reviewed-known-good-release-id> \
-  --yes --format json
-farthershore frontend status <business> --format json
-```
-
-Choose the release ID from this target's recent **SUCCEEDED** releases. Prove it
-is known-good from the producing build/commit and prior behavior; age alone is
-not evidence. Omitting `--env` targets production. Production rollback flips
-and pins only the frontend pointer; it does not change plans, billing, routes,
-backend, or repository source. Verify the exact active release ID and pin state.
-
-The pin also prevents a later successful production build from auto-activating.
-After a forward-fix Release builds, inspect status. If the new reviewed
-`SUCCEEDED` release is present but the old pin is still active, explicitly
-reactivate that new release through the same target-safe pointer operation:
-
-```bash
-farthershore frontend rollback <business> \
-  --release-id <new-reviewed-succeeded-release-id> \
-  --yes --format json
-farthershore frontend status <business> --format json
-```
-
-Despite the verb name, this operation reactivates any succeeded release in that
-same target's build history and leaves the chosen release pinned. Verify the new
-active release ID and pin state; never assume the GitHub Release cleared a pin.
-
-For preview, include the same `--env <environmentId>` on status and rollback.
-Preview rollback changes the active release but never pins it; the next
-successful preview build autoactivates. Use it as temporary containment, stop or
-fix the bad source, and verify the active release again after every build.
-
-## Stop conditions
-
-- Merging to `main`, production publishing, and production rollback require
-  explicit confirmation.
-- Never retry a release/rollback after a lost response until read-back proves it
-  did not complete.
-- If publication fails after accepted input, preserve apply/build/workflow IDs
-  and use
-  [farthershore-observability-and-troubleshooting](../farthershore-observability-and-troubleshooting/SKILL.md).
+Contract recovery uses reviewed forward/revert source plus a new release; an
+eligible business rollback is a workflow snapshot, not a Git revert. Frontend
+rollback changes only a same-target succeeded artifact: production can pin the
+pointer and prevent later autoactivation, while preview rollback is unpinned
+and temporary. Verify active artifact and pin after recovery and after the
+forward fix; do not assume a new release cleared the pin. Neither rollback
+undoes payments, settled usage or customer commercial pins. Accepted/enqueued
+work is not convergence. Escalate platform-owned publication/provider failure
+with evidence when the supported surface cannot repair it.

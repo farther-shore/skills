@@ -1,196 +1,103 @@
 ---
 name: farthershore-backends-and-runtime
-description: Use when connecting a backend, verifying gateway requests, storing subscriber data, reporting usage, managing runtime tokens, or diagnosing origin_unavailable.
+description: Use when connecting or operating a backend, hosting, runtime credentials, verified customer data, usage delivery, variables or webhooks.
 ---
 
-# Verified backend work
+# Connect the workload in dependency order
 
-Target the installed `@farthershore/backend` version; this guidance describes
-0.21.x. Logical backends and route bindings are repository-owned. Concrete
-origins, runtime credentials and host secrets are operational state.
+Read AGENTS.md and installed backend SDK/CLI pins. Resolve business, environment,
+logical backend slug, concrete row, direct/tunnel transport and effective origin.
+Logical backends/route bindings belong in `business/`; origins/tokens are
+operational, process secrets and deployments belong to the external host.
+Explicitly backend-free hosted products need no backend, runtime token or host.
 
-## Deployment is a prerequisite
+## Retrieve the connection or repair guide
 
-FartherShore fronts an HTTP service that the builder runs; it never hosts it.
-Confirm before anything else that there is somewhere to run a long-lived HTTP
-service on a public HTTPS URL, a way to set `FS_RUNTIME_TOKEN` there, and a way
-to read that service's logs. Missing any, STOP and ask the human.
+Search for the actual task and read the complete guide, prerequisites, failure
+and recovery sections. Compare version/source evidence with installed pins.
+Describe intended operations, types, permissions, preview and retry metadata;
+plain CLI uses current leaf help. If search is unavailable, use canonical
+https://docs.farthershore.com/backend/overview,
+https://docs.farthershore.com/backend/runtime-tokens or
+https://docs.farthershore.com/backend/metering and index/corpora at
+https://docs.farthershore.com/llms.txt. A search excerpt, stale/truncated guide or
+missing capability does not justify guessing. Stop dependent credential or
+production changes if authoritative retrieval fails; never switch environment
+or use a private endpoint. MCP describe supplies types; discover its actual
+installed capabilities before use.
 
-**Quick first-time path** — one service, direct transport: scaffold with
-`farthershore backend scaffold --node`, deploy with the host's own CLI (`railway up`,
-`render deploys create`, `flyctl deploy`, `gcloud run deploy`), give it a public
-HTTPS domain, register the origin, then mint the token.
+## First connection
 
-**Long-horizon path** — once a preview and a production environment must stay in
-step, describe the hosting declaratively instead: one `tofu` root, a remote state
-backend with locking, one workspace per environment, a separate deployment and a
-separate `FS_RUNTIME_TOKEN` per environment. Read
-[references/infrastructure-opentofu.md](references/infrastructure-opentofu.md)
-before writing it.
+1. For an upstream, establish deploy access, secure host-secret delivery and
+   application logs. Integrate an existing server or start with
+   `farthershore backend scaffold --node` from the managed repo root. Adapt the
+   example route, meter, dimensions and entitlement to the actual contract;
+   inspect the retrieved template/ref/pins. Overwriting an existing API folder
+   is a separate deliberate action, not a routine scaffold flag.
+2. Declare the logical backend and route refs; allocate the direct host/domain
+   before starting a token-dependent process. Read scoped rows first, create an
+   absent concrete row or bind an existing one, then mint a correctly scoped
+   credential. A first production apply may require bindings before acceptance;
+   do not wait for that apply to create its own required targets. Every declared
+   production backend needs a target, with a default when several exist.
+3. Capture the credential once into the host secret store as `FS_RUNTIME_TOKEN`,
+   configure other process secrets, then deploy/start the SDK-integrated service.
+   Hosted MCP always redacts one-time secrets, including approved writes: its
+   redacted result cannot configure a host. Use supported secure CLI capture or
+   human delivery. Do not mint repeatedly after a lost/redacted response.
+4. For tunnels, retrieve the distinct eligibility, provisioning, embedded/sidecar
+   and token-operation requirements; do not mechanically reuse direct ordering.
+   For repeatable multi-environment hosting, retrieve the infrastructure guide;
+   review the plan and protect remote locked state because it can contain secrets.
 
-## Scaffold the service; never hand-write verification
+## Scope, identity and measurement
 
-```bash
-farthershore backend scaffold --help   # the current language list
-farthershore backend scaffold --node
-```
+Preview origins can inherit a production binding by stable slug; this never
+imports production plans, grants, pricing or customer state. A concrete preview
+override changes that target. Isolation requires deliberately separate deployment
+and storage where customer writes matter. Before an explicitly bound preview
+credential, establish a concrete row in that scope and verify bootstrap/effective
+target agree; do not silently broaden token scope to repair a mismatch. Discover
+per-command environment defaults: list scope and mutation scope can differ.
 
-Run it from the managed repository root (the directory containing `business/`).
-It writes the service into `api/` and appends build-output entries to the root
-`.gitignore`; `--path <dir>` retargets the root and `--force` overwrites an
-existing `api/`. The directory is not load-bearing — move or rename it freely,
-since the platform only ever sees the deployed origin URL.
+Preserve SDK raw-byte capture and fail-closed verification **before JSON parsing**
+or application logic, with open health outside protected middleware. Never trust
+unsigned identity headers or a supplied tenant ID. Use verified
+`ctx.principal.org.id`, `requireMember`/`requireService` and permission checks
+appropriate to the actual subject. Signed traffic alone is not customer identity
+or record authorization. Scope every storage query; unique constraints/atomic
+upsert prevent concurrent first-write races but do not replace tenant predicates.
 
-The Node template listens on `PORT`, defaulting to **8080**, serves an unsigned
-`/healthz` BEFORE verification, and calls `fs.ready` / `fs.start()` to bootstrap
-against `FS_RUNTIME_TOKEN`. Start the HTTP listener before bootstrap so
-`/healthz` answers while bootstrap is still retrying; a top-level `await
-fs.start()` that rejects on a bad token crashes the process and the host marks
-the deployment failed. Log the bootstrap failure and retry rather than exiting.
-Never reimplement the raw-body capture or the `fs.middleware()` chain: the
-gateway signature covers the original request bytes, so any JSON parsing ahead
-of verification breaks every request.
+Use `ctx.report` with the original verified served identity and contract keys.
+Do not report gateway-counted fixed costs again. One served request uses one
+reporting channel and one post-stream callback: batch late meters with compatible
+dimensions/quote; do not mix in-band and later post-stream settlement. Adapter
+response-sink capability, not timing alone, chooses delivery. Deferred work must
+belong to that request; saved context is not an independent cron credential.
+Quotes require a declared backend-quoted contract. Inspect delivery results:
+`ok: false`, queued work or a successful application response is not observed
+usage. Reconcile uncertain delivery before repeating billing-affecting work.
 
-## Read current docs first
+## Verify, rotate or diagnose
 
-**Required before acting:** fetch the live machine-readable index and read the
-task's pages. Prefer CLI traversal when supported; `docs ls` fetches that index,
-so no separate `curl` is needed:
+Verify separately: bootstrap/health; real signed protected success; unsigned
+origin rejection; wrong-principal/permission/cross-tenant denial; observed usage.
+A resolved ready promise or healthy row proves none of the complete journey.
+Correlate host deployment, effective row, exact contract/apply, request and usage
+identities. For origin_unavailable or upstream failures, inspect logs and actual
+binding before changing routing. For webhooks/variables retrieve current ownership,
+delivery and secret visibility rules rather than treating them as host process
+configuration; webhook tests cause external delivery.
 
-```bash
-farthershore docs --help
-farthershore docs ls --format json
-farthershore docs tree backend-sdk --format json
-farthershore docs read backend/metering --format json
-```
+Token rotation is a hard cutover: predecessor revocation and distributed successor
+propagation can be separated in time. Obtain authorization covering disruption.
+For planned overlap, separately mint the same kind, operations, allowlists and
+business/environment/backend scope, securely deploy every replica, verify traffic
+and reporting, then revoke the predecessor. Do not rely on creation defaults.
+After a lost create/rotate result, reconcile metadata and lineage first; the old
+secret is not readable. Choose a deliberate recovery and secure delivery path.
+Never print tokens in argv, chat or logs, and never wrap writes in blind retries.
 
-Collections are root folders; expand section folders with `docs ls <path>`.
-Use returned paths rather than guessing. Read the [overview's traversal guide](../farthershore-overview/SKILL.md#traverse-docs-as-a-filesystem)
-for heading reads, search, and provenance. Docs need no login. If the CLI lacks
-`docs` or its artifacts are unavailable, fetch
-https://docs.farthershore.com/llms.txt and follow its page links; do not silently
-switch to stage or assume guidance was retrieved.
-
-Read https://docs.farthershore.com/backend/overview, then the task's guide:
-https://docs.farthershore.com/backend/metering,
-https://docs.farthershore.com/backend/user-data,
-https://docs.farthershore.com/backend/runtime-tokens, or
-https://docs.farthershore.com/backend/transport-modes.
-
-## Environment and verification boundaries
-
-Match the logical slug in `fs.backend("api", ...)` to the environment's backend
-binding. Commands asking for backend ID need the resolved row's UUID. A preview
-with no concrete override resolves the same stable slug to its production
-binding; an explicit preview binding overrides only that slug's origin and
-credentials. Plans, pricing, routes, permissions, meters, limits, and policies
-never participate in this fallback and always come from the selected
-environment's Business SDK branch. Inspect `farthershore backend --help` and
-explicitly select the environment. If neither an override nor a usable
-production binding exists, routing fails closed with `origin_unavailable` even
-when authentication and grants succeed.
-
-## Register the origin, then mint the token
-
-Order matters: a runtime token scopes to backend rows, so the row must exist
-first.
-
-```bash
-farthershore backend create <business> --env <environment> \
-  --name api --slug api --transport direct \
-  --origin-url <https-url> --default --format json
-farthershore backend tokens create <business> --env <environment> --format json
-```
-
-Pass `--backend <backend-id>` on the mint when the environment has more than one
-backend, so the token resolves to the intended row rather than depending on the
-backend set staying singular.
-
-If either write fails with `OUTCOME_UNKNOWN`, do not repeat it blindly: read
-`backend list` (or `backend tokens list`) first. A token whose one-time value
-was lost is rotated with `backend tokens rotate`, not minted again.
-
-`backend list` and `backend tokens list` accept no `--env`: both are
-business-wide reads. Filter on each returned row's environment instead of
-expecting a flag.
-
-`--transport tunnel` requires the Scale plan. The `fs.backend()` declaration
-accepts `transport: { mode: "tunnel" }` on any plan and the manifest applies, but
-the operate surface refuses to create the tunnel backend on a lower plan. Use
-`direct` unless the workspace is on Scale.
-
-A production publish fails with `BACKEND_TARGET_REQUIRED` unless EVERY backend
-declared in `business/` has a concrete production origin, and with
-`DEFAULT_BACKEND_REQUIRED` when several backends exist and none is the default.
-Remedy a missing target with `farthershore backend bind <business> --env
-production --origin-url <https-url> --format json`, or `backend create` when the
-row itself is absent.
-
-Store `FS_RUNTIME_TOKEN`, database URLs, and application secrets in the backend
-host's secret manager. Platform variables do not configure an external
-backend's process. For hosted UI/edge variables,
-https://docs.farthershore.com/frontend/variables documents `FS_PUBLIC_*`
-(public) versus other names (secret); delivery policy is separate.
-
-Preserve signed raw request bytes and verify before JSON parsing or application
-logic. Use the middleware order produced by `farthershore backend scaffold --node`. Never trust inbound
-`x-fs-*` headers or caller-supplied tenant IDs. After verification, use
-`ctx.principal.org.id` plus the narrowed subject from `requireMember(ctx)`
-or `requireService(ctx)`; use verified `ctx.signedContext` when a business,
-subscriber or subscription boundary is needed. A signed non-contextual request
-does not automatically have a customer principal.
-
-Enforce record ownership in every database query. A unique constraint and
-atomic upsert make first-request synchronization race-safe; neither replaces
-tenant authorization. Test cross-tenant access and concurrent first requests.
-
-## Measurement, not locally computed bills
-
-There is one reporting verb: `ctx.report({ meter, values, dims?, quote? })`.
-Use meter/measure/dimension keys from the served contract. The gateway counts
-fixed request costs; do not report those again.
-
-The Express adapter can attach in-band measurements before its response is
-sent. By default, Fetch `verifyRequest` has no response sink and uses post-stream
-delivery; an explicitly supplied `responseSink` changes that. Do not assume
-timing alone selects in-band for every adapter.
-
-A request must use one transport. After any in-band reports, a later
-post-stream report is not a second settlement channel. For post-stream work,
-batch all meters into one array call: a served request has one callback.
-All entries must share one dimensions tuple and one quote; incompatible values
-are rejected rather than rated independently.
-Preserve the same verified served identity; do not synthesize a subscription,
-release, or request identity. Deferred work must belong to that originating
-served request and obey its single-use lifecycle. A saved context is not a
-reusable reporting credential for independent cron or recurring jobs.
-
-Validate a report before sending; inspect its result for delivery failure.
-Do not claim a returned `ok: false` recorded usage or blindly replay an
-uncertain billing operation. Only a declared backend-quoted price accepts
-`quote`; otherwise report measurements, not money. Monetary admission and
-post-stream bounds belong in the Business SDK contract.
-
-## Runtime-token changes
-
-For planned overlap: inspect and preserve the predecessor's stored kind,
-operations, meter and route allowlists, and business/environment/backend scope
-when creating its replacement. Do not rely on creation defaults. Deploy it
-to every replica, verify signed traffic and measurement delivery, then revoke
-the predecessor. `backend tokens rotate` revokes the predecessor as part of
-rotation; it is a hard cutover, not a grace period. Database revocation and
-distributed edge propagation are distinct; verify the actual traffic outcome.
-
-Token issuance returns a one-time secret. Capture it into the secret manager,
-not logs or chat. A token's business/environment/backend restrictions must
-match the workload. Obtain approval before revoking an in-use credential.
-
-## Verify the customer-visible outcome
-
-Read backend readiness and intended route/environment, send a signed request,
-and correlate request identity with application evidence and usage. A created
-backend row is not proof of reachability; a successful response is not proof
-of measurement delivery or final billing. When the origin is down, the gateway
-may surface the upstream's own failure rather than a typed `origin_unavailable`,
-so read the deployment's logs before concluding the binding is wrong. For failures use
-[farthershore-observability-and-troubleshooting](../farthershore-observability-and-troubleshooting/SKILL.md).
+Use [environments-and-releasing](../farthershore-environments-and-releasing/SKILL.md)
+for publication evidence. Report each verified fact and gap separately; a
+reachable backend is not final billing or production-release proof.

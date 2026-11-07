@@ -1,236 +1,98 @@
 ---
 name: farthershore-customer-operations
-description: Use when inspecting or changing customer access, subscriptions, roles, proposals, promo codes, test personas, builder organization membership, invitations, or related audit evidence.
+description: Use when inspecting or changing live customer or builder membership, access, credentials, subscriptions, agreements, proposals, automation, agents or notifications.
 ---
 
-# Operate customer state
+# Apply the exact authorized effect once
 
-Customer records, subscriptions, credentials, role assignments, proposals,
-promo codes, and preview personas are platform-owned operating state. Plan
-definitions, grants, limits, and RBAC vocabulary remain repository-owned.
+Resolve organization, immutable business ID, environment, caller and exact
+subject before mutation. Builder organization membership, subscriber account
+roles, product roles and runtime identities are distinct authority boundaries.
+Customer state, credentials, assignments, promos and agreements are operational;
+public plans/grants/pricing/vocabulary remain `business/` changes.
 
-## Read current docs first
+## Retrieve the owning operation guide
 
-**Required before acting:** fetch the live machine-readable index and read the
-task's pages. Prefer CLI traversal when supported; `docs ls` fetches that index,
-so no separate `curl` is needed:
+Search the task, read its full guide with prerequisites/failure recovery and
+match installed CLI/package/source versions. Describe methods/types, permission,
+side-effect, preview and retry metadata; plain CLI uses current leaf help.
+If search is unavailable, read canonical
+https://docs.farthershore.com/operate/customer-operations,
+https://docs.farthershore.com/agents/platform-agent,
+https://docs.farthershore.com/agents/automation or
+https://docs.farthershore.com/operate/notifications; index/corpora fallback is
+https://docs.farthershore.com/llms.txt. Excerpts/stale/truncated instructions do
+not establish prerequisites. Stop dependent authority, money or destructive
+changes if current guidance is unavailable. Discover actual installed MCP/CLI
+capabilities; no private API workaround or silent environment switch.
 
-```bash
-farthershore docs --help
-farthershore docs ls --format json
-farthershore docs tree operations --format json
-farthershore docs read operate/customer-operations --format json
-```
+## Inspect, preview, apply and read back
 
-Collections are root folders; expand section folders with `docs ls <path>`.
-Use returned paths rather than guessing. Read the [overview's traversal guide](../farthershore-overview/SKILL.md#traverse-docs-as-a-filesystem)
-for heading reads, search, and provenance. Docs need no login. If the CLI lacks
-`docs` or its artifacts are unavailable, fetch
-https://docs.farthershore.com/llms.txt and follow its page links; do not silently
-switch to stage or assume guidance was retrieved.
+Read current subject state and relevant policy/catalog, including pagination.
+Resolve returned immutable IDs rather than substituting an email, subscription
+ID or owner organization for a subscriber. A capped list's absence is not proof
+of deletion. Diagnose the first failing access/payment boundary before repair;
+repository defects return to [business-sdk](../farthershore-business-sdk/SKILL.md).
 
-Use the pages for the task:
+Review complete replacement sets, audience, privilege/economic impact and timing
+within the user's authorization. Role assignment can replace the whole set;
+empty can clear it, and stale keys grant nothing. Do not add authority to make a
+request succeed. Preview only when supported; proposal simulation, approval,
+application and downstream convergence are separate states. Apply the intended
+effect once, retain receipt/audit/request IDs, then obtain a fresh narrow read
+and actual downstream proof. A write response is point-in-time state.
 
-- https://docs.farthershore.com/operate/customer-operations
-- https://docs.farthershore.com/operate/limits
-- https://docs.farthershore.com/monetize/plan-changes
-- https://docs.farthershore.com/reference/commercial-releases
-- https://docs.farthershore.com/cookbook/share-with-a-member
-- https://docs.farthershore.com/cookbook/diagnose-denied-request
+For `OUTCOME_UNKNOWN`, follow `retry.reconcile` before repeating. Inspect
+`retry.kind`, enforcement and response semantics; no automatic retry means no
+write loop. Repeat only when current evidence shows the effect absent and still
+wanted; ambiguous outcomes need direction. Webhook tests and messages have real
+external effects. Secret issuance/rotation returns once; use secure delivery,
+not argv/chat/logs. Hosted MCP redacts one-time secrets even when approved: use
+a supported secure CLI/human handoff when the workload needs the actual value.
 
-Run the relevant command group's `--help` before a write and use
-`--format json`. Read the narrow state back after every mutation. Accepted writes
-and downstream convergence are different outcomes.
+Containment and removal differ. Customer block revokes keys and currently has
+no CLI unblock; removal has no restore command. Confirm exact destructive scope
+and preserve audit evidence before proceeding. A suspended control-plane row
+is insufficient containment: verify the old credential denied at the gateway
+after propagation. Do not promise reversible pauses or successful edge revocation
+from a database/status write alone.
 
-## Operate builder organization membership
+For commercial exceptions, preview exact subject/terms and read resulting pins.
+Lineage migrate-latest is not generalized commercial rebinding; do not invent
+batch migration or claim publication migrated every customer. Current catalogs,
+recurring pins and agreements differ. Promo edits can replace provider coupon
+state: review complete economic spec and target plans, not only changed fields.
+See https://docs.farthershore.com/reference/commercial-releases.
 
-Organization membership is live platform state. Resolve the organization and
-read its current members before inviting, changing a role, or removing anyone:
+## Govern actors and customer-facing effects
 
-```bash
-farthershore organization list --format json
-farthershore organization members <organizationId> --format json
-farthershore organization invite <organizationId> <email> --role member --format json
-farthershore organization member-role <organizationId> <memberUserId> --role admin --format json
-farthershore organization member-remove <organizationId> <memberUserId> --yes --format json
-```
+The local coding agent, platform Operator, deterministic automation and customer
+approver do not inherit each other's authority. Operator enablement is not
+customer messaging permission. Public contract changes are a coding handoff.
+Automation uses a closed trigger/condition/action grammar; retrieve current
+schemas. Start new rules explicitly disabled for review because creation can
+default enabled. Inspect stored scope and effects before enabling.
 
-Run `farthershore organization --help` before a mutation, obtain confirmation
-for role elevation or removal, and read the member list back. Do not confuse
-builder-organization membership with customer members or repo-defined RBAC.
+Automation-created RBAC ChangeSets are proposer-only: human approval and
+application remain separate. Do not call a preview, approval, queued execution
+or Bulletin acknowledgment applied. Read final proposal/run and customer state.
+An internal notification is not delivered email; audience, consent/opt-outs and
+permitted transactional/product-update classes still govern outward delivery.
+Never use marketing classes or bypass consent. Preserve authorized scope.
 
-## Resolve the exact customer
+Disabling a rule/Operator prevents future work as documented, not already-started
+messages, proposals or economic effects. Inspect in-flight state before claiming
+stopped/undone. Acknowledge/resolve Bulletin work only after its evidence and
+handoff outcome are reviewed. Authorization held by another principal is a
+handoff, not permission to emulate it.
 
-```bash
-farthershore consumer list <business> --format json
-farthershore consumer list <business> --env <environment> --format json
-```
+## Prove the result
 
-Use the returned customer `id` as `<subscriberId>`. Do not substitute an email,
-external member ID, owner organization, or subscription ID. The list is capped;
-absence alone is not always proof of removal.
-
-## Contain, remove, or move access
-
-Block is containment and revokes active API keys. There is currently no CLI unblock command, so do not describe it as a reversible pause:
-
-```bash
-farthershore consumer block <business> <subscriberId> --yes --format json
-```
-
-A blocked response and `SUSPENDED` read-back prove control-plane state, not edge
-convergence. Verify the compromised credential is denied at the gateway before
-declaring containment complete. Propagation can fail after the state change;
-retain the request/audit evidence and escalate incomplete containment.
-
-Remove is destructive and has no restore command:
-
-```bash
-farthershore consumer remove <business> <subscriberId> --yes --format json
-```
-
-Before remove, re-resolve the exact business/customer, preserve required audit
-evidence, and obtain explicit approval. Never retry remove after a lost response
-until current state and audit evidence prove it did not complete.
-
-Move one customer to the active head of its current plan lineage:
-
-```bash
-farthershore consumer migrate-latest <business> <subscriberId> --yes --format json
-```
-
-It does not choose an unrelated plan.
-
-## Commercial migration boundary
-
-Do not use the lineage command as a generalized commercial rebind. Moving
-recurring and non-current usage-pricing pins to the latest commercial terms is
-deferred; publication itself does not perform that operation. Inspect the
-operation catalog and subject pins, and report an unavailable migration as a
-platform handoff. Do not invent a batch command or use private API writes.
-
-Changes to a live `pricing.current()` catalog can affect existing subscribers
-forward at activation without moving the recurring-price pin. Read
-[change safety](../farthershore-plans-and-metering/references/experiments-and-migration.md)
-before promising who will pay which terms.
-
-## Replace customer-member roles
-
-```bash
-farthershore business rbac <business> --format json
-farthershore consumer rbac assign <business> <subscriberId> <userExternalId> \
-  --roles admin,analyst --format json
-```
-
-Assignment replaces the complete role set; `--roles ""` clears it. Role keys
-must exist in the customer's accepted organization role set. Compare the returned
-membership exactly; stale keys grant nothing.
-
-## Govern changes with proposals
-
-An agent may create, simulate, and inspect a ChangeSet. Approval/application are
-separate customer-organization decisions:
-
-```bash
-farthershore proposal create <business> <subscriberId> \
-  --intent "describe the requested change" \
-  --operations '<json-array>' --format json
-farthershore proposal preview <business> <subscriberId> <changeSetId> --format json
-farthershore proposal get <business> <subscriberId> <changeSetId> --format json
-farthershore proposal list <business> <subscriberId> --format json
-```
-
-Preview stores a simulation but applies nothing. Report risk, simulation,
-approvals, and status; never describe proposed or approved state as applied.
-
-## Operate promo codes
-
-```bash
-farthershore promo-code list <business> --format json
-farthershore promo-code create <business> \
-  --code LAUNCH25 --kind percent_off --percent 25 \
-  --duration-months 3 --plan <planId> --format json
-farthershore promo-code archive <business> <promoCodeId> --format json
-farthershore promo-code reactivate <business> <promoCodeId> --format json
-```
-
-Kinds are `percent_off`, `amount_off`, and `free_months`; run `--help` for their
-mutually exclusive value flags. Omitting `--plan` targets all launch plans. A
-spec update rotates provider-side coupon state, so review the complete economic
-spec rather than assuming a partial edit.
-
-## Exercise preview personas
-
-Personas are for environments configured for test-persona customer auth. They
-are temporary users in a real subscriber-owned workspace, so they exercise the
-same account membership, product roles, token minting, and gateway
-authorization as human customers.
-
-```bash
-# The first persona creates the temporary subscriber workspace and owns it.
-farthershore persona bootstrap <business> --env <environment> \
-  --plan <plan> --format json
-farthershore persona list <business> --env <environment> --format json
-
-# Another temporary user in the SAME workspace: account role member, product
-# roles from the subscriber's own RBAC roles (omit --role for the default).
-farthershore persona bootstrap <business> --env <environment> --plan <plan> \
-  --subscriber-id <subscriberId> --account-role member --role <roleKey> --format json
-
-farthershore persona rotate <business> <personaId> --env <environment> --yes --format json
-farthershore persona delete <business> <personaId> --env <environment> --yes --format json
-```
-
-Bootstrap/rotation return a secret once. Do not log or commit it. Verify with
-`persona list` and an actual request when end-to-end behavior matters. After an
-`OUTCOME_UNKNOWN` bootstrap, read `persona list` before bootstrapping again;
-rotate a persona whose secret was lost rather than creating another.
-Deleting a persona (or the environment) revokes its sessions and any local
-preview lease it held.
-
-### Sign a persona into a browser (CLI 0.33.4+)
-
-Browsers never receive a persona key or bearer. Both sign-in paths hand a
-single-use, host-bound handoff to a platform-owned page which exchanges it for
-a server-owned HttpOnly session cookie; the frontend bundle sees no secret.
-
-```bash
-# Hosted portal (the deployed frontend on the environment's portal host):
-farthershore persona login <business> <personaId> --env <environment> --format json
-
-# Local live launch of a frontend checkout, signed in, hot reload:
-farthershore frontend dev --live --business <business> --env <environment> \
-  --persona <personaId-or-name> [--port 5173] --format json
-```
-
-The local launch issues a short-lived local-preview lease that lives only in
-the CLI process: the CLI renews it automatically, revokes it on Ctrl-C
-(SIGINT/SIGTERM/SIGHUP), and prints lifecycle notices on stderr. Its JSON
-envelope (`localUrl`, `signInUrl`, `vitePort`) appears only once the preview
-is signed in; if the browser could not be opened, open `signInUrl` yourself.
-Never invoke the `persona.local_preview.issue|renew|revoke` operations
-directly. Two previews for different personas in one browser profile share the
-`localhost` cookie and will sign each other out — run one at a time.
-
-### Prove allowed and denied, not just signed in
-
-An **account role** (`owner` / `member`) governs workspace administration; a
-**product role** is what the subscriber composes under Team RBAC over the route
-permission catalog. Enabling RBAC creates no product roles and selects no
-default. To prove a permission change actually holds: sign in the owner
-persona and the member persona separately, mint a gateway token from each
-session, and send the constrained request — the member must receive the typed
-`permission_denied` (HTTP 403) from the gateway while the owner's request is
-forwarded to the backend. A UI that hides the button proves nothing; the
-gateway answer does.
-
-## Audit and completion
-
-```bash
-farthershore audit-log business-list <organizationId> <businessId> --format json
-```
-
-Audit establishes actor, action, decision, request, and time; pair it with the
-current customer read-back. If the root cause is a repository-owned plan,
-permission, grant, or limit, fix `business/` and release it—do not compensate
-with unrelated customer writes.
+Use [environments-and-releasing](../farthershore-environments-and-releasing/SKILL.md)
+for preview personas and secure hosted/local sign-in. Reuse compatible personas;
+account owner success is insufficient product-role proof. Verify nonowner
+allowed/denied actions, exact customer/member/organization scope and actual
+gateway/backend effect after propagation. Audit records establish requested
+actor/decision, not current state or completion. Report accepted state,
+asynchronous convergence and observable outcome separately; escalate an
+unsupported platform/provider repair with sanitized evidence.

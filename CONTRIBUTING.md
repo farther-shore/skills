@@ -1,27 +1,34 @@
-# Contributing a skill
+# Contributing
 
-Treat this repository as one versioned bundle. A change to any skill must stay
-consistent with the ownership model in [README.md](README.md) and with every
-cross-linked skill.
+Treat this repository as one versioned bundle. Preserve the ownership model in
+[README.md](README.md), direct invocation and critical decision-point guards.
 
-## Checklist
-
-- Put each skill at `skills/<kebab-case-name>/SKILL.md`.
-- Use frontmatter with only `name` and a one-line `description` beginning with
-  `Use when`; the name must match the folder.
-- Keep repository-owned structure in `business/`: routes, features, plans,
-  pricing, meters, limits, policies, and surfaces.
-- Use the CLI only for operations without a code representation.
-- Verify command signatures against current source or `--help`; do not invent
-  flags or response fields.
-- Put necessary long-form material in a linked `references/` file.
-- In every `SKILL.md`, tell the agent to fetch
-  `https://docs.farthershore.com/llms.txt` and list exact current
-  `https://docs.farthershore.com/<path>` pages for the job.
-- Update the skills table in [README.md](README.md).
-- Run `node scripts/validate-skills.mjs`.
-- Confirm install guidance uses the complete tagged bundle:
+- Keep the declared names/retirement destinations in `bundle.json`; skill folder,
+  frontmatter name and discovered name must agree exactly.
+- Use only name and a one-line trigger description beginning `Use when` in YAML.
+- Preserve prerequisites/order, principal/environment scope, secure secret
+  delivery, reconcile-before-repeat and observed-outcome evidence.
+- Search → full guide → describe inputs/outputs/permissions/safety → execute →
+  verify must work through installed capabilities. Include canonical retrieval
+  fallback; all-retrieval failure must stop dependent sensitive work.
+- Keep exact SDK/CLI syntax, catalogs and host recipes in canonical current docs;
+  verify example signatures against source/help. Never invent a minimum version.
+- Resolve every public docs slug/redirect/anchor against an explicit candidate
+  docs tree with `node scripts/validate-doc-links.mjs --docs-root <docs-directory>`.
+  Commit regenerated link evidence when links change, identifying the docs SHA.
+- Run `node --test scripts/*.test.mjs` and `node scripts/validate-skills.mjs`.
+  Discovery parity checks exact names; preserve strict plugin validation.
+- Run independent baseline/candidate task evaluations for substantial rewrites.
+  Test backend-free/first binding/secrets/rotation/tenant/report failure; first
+  launch/Stripe/docs/pending checkout; preview reuse; custom UI scope/denials;
+  governance/uncertain writes and retrieval outages/version mismatch. Record what
+  agents actually did and close observed gaps before distribution.
+- Keep installation complete and tag-pinned:
   `npx skills add https://github.com/farther-shore/skills/tree/<tag> --skill '*' -g -y`.
+  Install successfully before explicit retired entries move to recoverable
+  backups. Preserve custom entries and failure rollback; do not edit global installs.
 
-Install and update guidance must always point to the whole, tag-pinned bundle;
-never recommend installing one skill independently.
+A rewritten source bundle is not a published skill release. Coordinate compatible
+docs/search, installer/onboarding retirement, real release archive integrity and
+owner-approved pin changes. No tag, release or pin bump follows implicitly from
+a contribution.

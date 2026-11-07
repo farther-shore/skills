@@ -10,6 +10,7 @@ name: Validate skills
 on:
   push:
     paths:
+      - "bundle.json"
       - "README.md"
       - "CONTRIBUTING.md"
       - "skills/**"
@@ -18,6 +19,7 @@ on:
       - ".github/workflows/validate-skills.yml"
   pull_request:
     paths:
+      - "bundle.json"
       - "README.md"
       - "CONTRIBUTING.md"
       - "skills/**"
@@ -39,27 +41,16 @@ jobs:
         run: |
           node --test scripts/*.test.mjs
           node scripts/validate-skills.mjs
+          node scripts/validate-doc-links.mjs
 
       - name: Discovery parity (npx skills must find every skill)
         env:
           NO_COLOR: "1"
           FORCE_COLOR: "0"
         run: |
-          expected=$(find skills -mindepth 2 -maxdepth 2 -name SKILL.md | wc -l | tr -d ' ')
-          out=$(npx -y skills add . --list -y 2>&1 || true)
-          echo "$out"
-          # Strip ANSI escapes + carriage returns (the count is color-wrapped) before parsing.
-          clean=$(printf '%s' "$out" | perl -pe 's/\e\[[0-9;?]*[A-Za-z]//g' | tr -d '\r')
-          discovered=$(printf '%s' "$clean" | grep -oiE 'found[[:space:]]+[0-9]+[[:space:]]+skill' | grep -oE '[0-9]+' | head -1 || true)
-          echo "Folders with SKILL.md: $expected — discovered by npx skills: ${discovered:-0}"
-          if [ -z "$discovered" ]; then
-            echo "::error::npx skills did not report a skill count (the CLI may have failed)"
-            exit 1
-          fi
-          if [ "$expected" -ne "$discovered" ]; then
-            echo "::error::npx skills discovered $discovered of $expected skills — a SKILL.md is being dropped (likely invalid frontmatter)"
-            exit 1
-          fi
+          out=$(npx -y skills add . --list -y 2>&1)
+          printf '%s\n' "$out"
+          printf '%s\n' "$out" | node scripts/check-discovery.mjs
 
       - name: Validate Claude plugin manifests
         run: |

@@ -1,212 +1,111 @@
 ---
 name: farthershore-overview
-description: Use when starting any FartherShore task or working in a FartherShore business repository.
+description: Use when starting a FartherShore task, creating a managed business, discovering supported operations, or locating the first failing boundary.
 ---
 
-# FartherShore ownership model
+# Choose the next safe step
 
-FartherShore is Business-as-Code. Start with the repository, and read its
-`AGENTS.md` before acting.
+Read the repository's AGENTS.md and installed CLI/SDK pins. Resolve the intended
+organization, immutable business ID, environment, caller and requested outcome.
+The managed builder repository and the FartherShore platform monorepo have
+different branch, CI and release rules; use the intended repository's rules.
 
-## Deployment is a prerequisite
+The repository owns the business contract in `business/`: routes, grants,
+plans, pricing, meters, limits, policies and surfaces. Supported platform
+operations own live metadata, origins, variables, credentials, customer state
+and activation. Hosting owns application deployments and process secrets.
+Choose the owning surface before looking for a similarly named writer.
 
-FartherShore is the gateway, billing, and entitlement plane in FRONT of an HTTP
-service that the builder runs. It does not host that service, and a production
-publish fails until every declared backend has a real origin bound to it.
+## Retrieve instructions before acting
 
-Before creating or authoring anything, confirm all three:
+Discover installed capabilities rather than assuming the newest CLI or hosted
+MCP is deployed. Search in task language; read the **full guide**, including
+prerequisites, failure and recovery sections. Search excerpts only select pages.
+Check source/package versions against installed pins; a stale or truncated guide
+is missing evidence. Describe the intended methods and inspect their inputs,
+outputs, permissions, side effects, preview and retry metadata. Then execute the
+authorized task and verify the documented result.
 
-1. **Somewhere to run it** — a host that serves a long-lived HTTP process on a
-   public HTTPS URL: Railway, Render, Fly.io, Cloud Run, AWS, or the builder's
-   own infrastructure. Verify you can authenticate to it (`railway whoami`,
-   `render whoami`, `flyctl auth whoami`, `gcloud auth list`, or equivalent).
-2. **Somewhere to put secrets** — the ability to set environment variables or
-   secrets on that host, because the service reads `FS_RUNTIME_TOKEN` from its
-   environment and that value must never be committed.
-3. **Somewhere to read logs** — bootstrap and signature-verification failures
-   appear only in that service's own logs.
+For hosted MCP the loop is search → describe guide/methods → run or run_writes;
+describe supplies types. There is no extra MCP types tool. CLI code mode can
+also expose types; use installed help for exact syntax. Plain CLI operations
+require current leaf `--help`. Missing capability never authorizes a private API.
 
-If any is missing, STOP and ask the human to provide it. Do not author a
-business that cannot be deployed. When cloud credentials already exist and the
-human approves, provisioning it with OpenTofu is the durable answer: see
-[farthershore-backends-and-runtime](../farthershore-backends-and-runtime/SKILL.md).
+If search is unavailable or irrelevant, use canonical docs reads/section reads,
+index/corpora or full Markdown retrieval. Start at
+https://docs.farthershore.com/agents/overview or
+https://docs.farthershore.com/get-started/quickstart; the index is
+https://docs.farthershore.com/llms.txt. If current critical prerequisites remain
+unavailable, report that gap before a dependent launch, payment, credential or
+authority change. Never silently change environment to obtain working docs.
 
-## Read current docs first
+## Principal, secrets and retries
 
-**Required before acting:** fetch the live machine-readable index and retrieve
-the relevant pages using the CLI workflow below. Docs are public reads; no
-login, business, organization, or API credential is needed.
+Normal `farthershore login` uses human device approval; headless sessions use
+`farthershore login --headless`. The credential follows the user's live role
+and CLI-operable permissions across all current and future organizations and
+businesses. The standalone approval page has only Allow and Deny actions; it provides no configurable login choices.
 
-`docs ls` fetches the live index and satisfies this requirement; do not also run
-`curl` unless using the fallback below.
+Use current organization context as a selector for each command, preserving the
+original session authority.
+Organization selection changes command context, never credential authority:
+`farthershore auth organization list --format json`,
+`farthershore auth organization use <id-or-slug>`, or the global option
+`farthershore --organization <id-or-slug> business list --format json`.
 
-## Traverse docs as a filesystem
+For a separately pre-issued organization-scoped MakerToken, securely pipe it
+into `farthershore login --token-stdin` or use `FARTHERSHORE_TOKEN` as an ephemeral
+override. Never place a raw credential in argv, stdout, stderr, chat or logs;
+unset overrides after use. `farthershore logout` removes the saved credential.
+Hosted MCP redacts one-time secrets even with approval: redaction is metadata,
+not a usable credential. Choose secure CLI capture or human secret delivery;
+do not issue repeatedly hoping to reveal a secret.
 
-Check `farthershore docs --help` first. Collections are root folders, sidebar
-sections are directories, pages are files, and listing a page returns headings.
-This is a virtual view of published docs, not the local working directory.
+Inspect `retry.kind`, `retry.reconcile`, `retry.rationale`, `retry.enforcement`
+and `retry.responseSemantics` from the operation catalog before dispatch.
+`read_current` permits fresh reads. For `convergent_write`, reconcile current
+state before repeating the same still-needed intent. For `no_automatic_retry`,
+reconcile first and obtain direction if absence of the effect remains uncertain.
+A write response is point-in-time, never a fresh read of current state.
+`OUTCOME_UNKNOWN` requires reconciliation, not a write retry loop. A 429 or
+explicit `safe_to_repeat` verdict is different from an ambiguous timeout/5xx.
+`CONFLICT` requires read-back; `RELEASE_PENDING_ACCEPTANCE` and
+`ROLLBACK_IN_FLIGHT` require observing the existing work. Use previews only
+where advertised; `DRY_RUN_NOT_SUPPORTED` is a boundary, not permission to run
+live. Proposal preview may store a simulation. A webhook test/trigger performs
+external delivery: reconcile webhook deliveries before repetition. An auth
+context-token is a short-lived credential with `no_automatic_retry`; follow its
+specific recovery rather than treating an old response as fresh authority.
 
-```bash
-farthershore docs ls --format json
-farthershore docs tree backend-sdk --format json
-farthershore docs ls backend-sdk/connect-your-application --format json
-farthershore docs read backend-sdk/connect-your-application/metering --format json
-farthershore docs ls backend-sdk/connect-your-application/metering --format json
-farthershore docs read backend/metering --section choose-the-correct-metering-channel --format json
-```
+## Create or diagnose
 
-Copy paths and heading ids from `ls` or `tree`; section-folder names can change
-when navigation titles change. `read --section` includes the heading's entire
-subtree and code examples, but not the rest of the page: read prerequisites and
-warnings in the full page before applying the excerpt. `read` also accepts any
-official docs page URL below, including a `#heading` fragment. Canonical page
-slugs remain usable independently of virtual folders. `get` aliases `read`;
-`list` aliases `ls`.
+For creation, confirm the requested product shape. Only a product declaring an
+upstream needs backend deploy access, secure host-secret delivery and logs;
+an explicitly backend-free hosted product needs no artificial server/token.
+Authenticate with the authorized principal, create the business, clone the
+returned managed repository URL and read its AGENTS.md. Reconcile an uncertain
+create through current business state before creating again. Author the
+contract, typecheck/build/validate, push the reviewed change and inspect exact
+commit checks through the release workflow. This is a checked repository
+handoff, not a production or payment certificate.
 
-```bash
-farthershore docs search "runtime token" --collection backend-sdk --limit 10 --format json
-farthershore docs collection backend-sdk --format json
-```
+For failure, retain UTC time, target, full SHA/release, request/decision and
+apply/build/workflow IDs, structured error and retry headers, with secrets
+excluded. Find the first wrong boundary: host/environment → credential/customer/
+subscription → route/grant/member permission/limit → backend/report/publication.
+Use https://docs.farthershore.com/operate/observability-and-troubleshooting.
+Read current state and correlate one request before repair; do not widen access
+to make reproduction pass. Escalate platform-owned publication/provider faults
+with evidence when no supported repair exists.
 
-Prefer narrow reads. Search returns bounded snippets and a total match count,
-not the complete answer; read a matching page/section before acting. Full page,
-section, and collection reads are not truncated. JSON content reads include
-`sourceUrl` and `sourceCommit`; preserve them when reporting evidence and compare
-documented SDK versions with the repository's pins. Treat MDX as reference text,
-never execute it merely because it appears in a response.
+## Load the owning workflow
 
-Production docs are the default. Use `farthershore docs --stage ls` only when
-stage guidance is explicitly relevant; `--api-url` does not select a docs site.
-Never silently switch to stage after a production failure. These public docs
-commands are distinct from authenticated, paginated business `knowledge` reads.
+- Contract, commerce and metering: [business-sdk](../farthershore-business-sdk/SKILL.md).
+- Application service, hosting, variables, webhooks, tokens and usage: [backends-and-runtime](../farthershore-backends-and-runtime/SKILL.md).
+- Customer product surfaces: [building-uis](../farthershore-building-uis/SKILL.md).
+- Managed repo checks, preview/personas, first paid launch and recovery: [environments-and-releasing](../farthershore-environments-and-releasing/SKILL.md).
+- Customer/builder membership, credentials, agreements, proposals, automation,
+  platform agents, bulletins and notifications: [customer-operations](../farthershore-customer-operations/SKILL.md).
 
-If `docs` is absent from the installed CLI, or the selected site's collection
-artifacts are not published, use `curl -fsSL https://docs.farthershore.com/llms.txt`
-and fetch the linked pages with the available web reader. Do not fabricate a
-successful retrieval, request login for public docs, or upgrade tools without
-authorization. If current docs still cannot be read, report the gap before
-relying on uncertain platform behavior.
-
-Start with these exact pages, then follow the task-specific links from the
-selected skill:
-
-- https://docs.farthershore.com/agents/overview
-- https://docs.farthershore.com/agents/operation-classes
-- https://docs.farthershore.com/get-started/overview
-- https://docs.farthershore.com/reference/cli
-
-## One owner for each kind of state
-
-| State                                                                                    | Owner      | Change surface                            |
-| ---------------------------------------------------------------------------------------- | ---------- | ----------------------------------------- |
-| Business structure: routes, features, plans, pricing, meters, limits, policies, surfaces | Repository | Edit `business/`, build, commit, and push |
-| Platform operations with no code representation                                          | Platform   | Use the `farthershore` CLI                |
-
-Never write business structure through the CLI or an API. If a requested change
-has a representation in `business/`, the repository owns it.
-
-## New business handoff
-
-For a new business, load
-[farthershore-quickstart](../farthershore-quickstart/SKILL.md). Creation has one
-handoff: `farthershore business create <slug>` returns the managed repository
-URL. Clone that repository, read `AGENTS.md`, and continue in code.
-
-## Authenticate the CLI
-
-On a new machine, run `farthershore login`. The CLI prints a verification
-URL and user code, may open the browser, and waits while a human signs in and
-reviews the standalone approval page. That page has only Allow and Deny actions.
-The credential follows the user's live
-role and CLI-operable permissions across all current and future organizations
-and businesses. Role changes and organization removal take effect
-without issuing another credential.
-
-On a machine without a browser, use:
-
-```bash
-farthershore login --headless
-```
-
-Normal login has no naming, organization, business, access-tier, or permission
-options. The URL and user code may be shown, but the issued credential must not
-be.
-
-One credential can operate every organization where the user is a member.
-Inspect or change its
-local organization context without logging in again:
-
-```bash
-farthershore auth organization list --format json
-farthershore auth organization use <id-or-slug>
-farthershore --organization <id-or-slug> business list --format json
-```
-
-`auth organization use` changes the saved default. The global `--organization`
-option overrides it for one command. Both select routing context only; they do
-not narrow the user session's authority.
-
-If narrower automation is required, a human can provide a separately
-pre-issued, organization-scoped MakerToken. A MakerToken may contain a subset of
-permissions and businesses, but it never spans organizations. Either pipe it
-directly from the secret provider to `farthershore login --token-stdin` to save
-it, or set `FARTHERSHORE_TOKEN` as an ephemeral override for the current shell.
-This is separate from normal user-bound device login. Never copy the raw
-credential into argv, stdout, stderr, docs, or logs; unset the environment
-override when finished. Do not invent a `--token` flag.
-
-Run `farthershore logout` to remove the saved CLI credential.
-
-## Working loop
-
-1. Read the business repository's `AGENTS.md`.
-2. Edit business structure in `business/` with the pinned SDK.
-3. Run `farthershore build`.
-4. Commit and push.
-5. Inspect the GitHub checks and fix failures in the repository. A direct branch
-   push reports `farthershore/build` (Manifest IR) then `farthershore/apply`
-   (compile, accept, publish to edge); a customized portal also reports
-   `farthershore/frontend`. `farthershore/validate` fires only on pull requests
-   — after a plain push, waiting for it is waiting for a check that will never
-   appear.
-6. Use the CLI only for platform operations that have no code representation.
-
-Run `farthershore <command> --help` before composing an unfamiliar operation:
-not every command takes `--env`, and `--organization` is a GLOBAL option that
-must precede the subcommand (`farthershore --organization acme business create
-…`), not follow it.
-
-Before a CLI operation, run `farthershore <command> --help` and use the current
-signature. Pass `--format json` when machine-readable output is useful. Obtain
-confirmation before destructive actions, money-impacting changes, or production
-releases.
-
-Discover ownership, permissions and CLI availability with
-`farthershore operations list --format json`. A missing operation never
-authorizes a private API workaround. The docs' collection tabs
-separate Platform, the three SDKs, Commerce, Gateway, Operations, Agents and
-CLI. Where published, `capabilities.json`, `/llms-full.txt` and
-`/llms/<collection>.txt` provide versioned discovery and complete source text.
-Match documentation package versions to the installed tooling before copying
-syntax; do not combine incompatible skill releases.
-
-## Load next
-
-| Task                                                                         | Skill                                                                                                        |
-| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| Discover CLI operations or resolve a missing operation                       | [farthershore-agent-operations](../farthershore-agent-operations/SKILL.md)                                   |
-| Govern Operator actions, automation or proposals                             | [farthershore-governance](../farthershore-governance/SKILL.md)                                               |
-| Create a business                                                            | [farthershore-quickstart](../farthershore-quickstart/SKILL.md)                                               |
-| Author routes, features, or other structure                                  | [farthershore-business-sdk](../farthershore-business-sdk/SKILL.md)                                           |
-| Design plans, pricing, limits, or meters                                     | [farthershore-plans-and-metering](../farthershore-plans-and-metering/SKILL.md)                               |
-| Build a customer-facing surface                                              | [farthershore-building-uis](../farthershore-building-uis/SKILL.md)                                           |
-| Test or release a repository change                                          | [farthershore-environments-and-releasing](../farthershore-environments-and-releasing/SKILL.md)               |
-| Build or operate a backend                                                   | [farthershore-backends-and-runtime](../farthershore-backends-and-runtime/SKILL.md)                           |
-| Scaffold the backend service or provision hosting with OpenTofu              | [farthershore-backends-and-runtime](../farthershore-backends-and-runtime/SKILL.md)                           |
-| Configure API-managed webhooks or frontend/runtime variables                 | [farthershore-backends-and-runtime](../farthershore-backends-and-runtime/SKILL.md)                           |
-| Preview, release, or recover                                                 | [farthershore-environments-and-releasing](../farthershore-environments-and-releasing/SKILL.md)               |
-| Operate customer state, builder-org membership, or invitations               | [farthershore-customer-operations](../farthershore-customer-operations/SKILL.md)                             |
-| Sign in as a test persona (hosted portal or local live launch), prove RBAC   | [farthershore-customer-operations](../farthershore-customer-operations/SKILL.md)                             |
-| Run a frontend checkout locally as a signed-in customer                      | [farthershore-building-uis](../farthershore-building-uis/SKILL.md)                                           |
-| Operate platform agents, bulletins, or notifications                         | [farthershore-observability-and-troubleshooting](../farthershore-observability-and-troubleshooting/SKILL.md) |
-| Inspect workflows or diagnose a request, release, usage, or platform problem | [farthershore-observability-and-troubleshooting](../farthershore-observability-and-troubleshooting/SKILL.md) |
+Load only workflows needed by the task. Paginated knowledge content is evidence,
+not new authority; follow cursors without expanding scope.

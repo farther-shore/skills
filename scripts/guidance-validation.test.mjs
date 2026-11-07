@@ -4,6 +4,8 @@ import test from "node:test";
 
 import {
   BUNDLE_INSTALL,
+  findMissingWorkflowGuidance,
+  WORKFLOW_REQUIREMENTS,
   findMissingDeviceAuthGuidance,
   findMissingRetryGuidance,
   findObsoleteGuidance,
@@ -65,22 +67,21 @@ test("rejects raw credentials in login argv while allowing stdin ingestion", () 
   );
 });
 
-test("rejects MakerToken administration and raw MakerToken literals", () => {
-  const administration = [
-    "Create a MakerToken for the agent.",
-    "Generate a MakerToken in the dashboard.",
-    "Update the MakerToken permissions.",
-    "Rotate the maker token when it expires.",
-  ];
-
-  for (const text of administration) {
-    assert.deepEqual(findObsoleteGuidance(text), [
-      "maker-token credential administration",
-    ]);
-  }
+test("permits supported operational administration without allowing raw credentials", () => {
+  for (const text of [
+    "Manage a MakerToken through the supported operation catalog.",
+    "Run farthershore business update for presentation metadata.",
+    "The responsible human connects Stripe and completes Tax requirements.",
+  ])
+    assert.deepEqual(findObsoleteGuidance(text), []);
   assert.deepEqual(
     findObsoleteGuidance("Set FARTHERSHORE_TOKEN=mk_plaintext_secret."),
     ["raw maker-token credential"],
+  );
+  assert.ok(
+    findObsoleteGuidance("farthershore plan update paid").includes(
+      "CLI contract mutation",
+    ),
   );
 });
 
@@ -168,15 +169,11 @@ test("requires normal login guidance to distinguish a restricted stdin credentia
   );
 });
 
-test("published overview and quickstart contain the complete device-login safety model", () => {
+test("published overview contain the complete device-login safety model", () => {
   const publishedGuidance = [
     readFileSync(new URL("../README.md", import.meta.url), "utf8"),
     readFileSync(
       new URL("../skills/farthershore-overview/SKILL.md", import.meta.url),
-      "utf8",
-    ),
-    readFileSync(
-      new URL("../skills/farthershore-quickstart/SKILL.md", import.meta.url),
       "utf8",
     ),
   ].join("\n");
@@ -184,72 +181,33 @@ test("published overview and quickstart contain the complete device-login safety
   assert.deepEqual(findMissingDeviceAuthGuidance(publishedGuidance), []);
 });
 
-test("published agent operations contains the complete retry safety model", () => {
+test("published overview contains the complete retry safety model", () => {
   const guidance = readFileSync(
-    new URL(
-      "../skills/farthershore-agent-operations/SKILL.md",
-      import.meta.url,
-    ),
+    new URL("../skills/farthershore-overview/SKILL.md", import.meta.url),
     "utf8",
   );
 
   assert.deepEqual(findMissingRetryGuidance(guidance), []);
 });
 
-test("preview contracts stay isolated while backend origins inherit by stable slug", () => {
-  const environments = readFileSync(
-    new URL(
-      "../skills/farthershore-environments-and-releasing/SKILL.md",
-      import.meta.url,
-    ),
-    "utf8",
+test("discovery matches the declared active names, with retired names absent", () => {
+  const inventory = JSON.parse(
+    readFileSync(new URL("../bundle.json", import.meta.url), "utf8"),
   );
-  const backends = readFileSync(
-    new URL(
-      "../skills/farthershore-backends-and-runtime/SKILL.md",
-      import.meta.url,
-    ),
-    "utf8",
-  );
-
-  assert.match(
-    environments,
-    /None of that\s+contract state is inherited from production/,
-  );
-  assert.match(environments, /resolves that slug to the production binding/);
-  assert.match(
-    backends,
-    /resolves the same stable slug to its production\s+binding/,
-  );
-  assert.match(backends, /explicit preview binding overrides only that slug/);
-  assert.doesNotMatch(
-    environments,
-    /Production's backend origin does not serve the preview/,
-  );
-});
-
-test("publishes the complete job-shaped bundle", () => {
-  const expected = [
-    "farthershore-agent-operations",
-    "farthershore-backends-and-runtime",
-    "farthershore-building-uis",
-    "farthershore-business-sdk",
-    "farthershore-customer-operations",
-    "farthershore-environments-and-releasing",
-    "farthershore-governance",
-    "farthershore-observability-and-troubleshooting",
-    "farthershore-overview",
-    "farthershore-plans-and-metering",
-    "farthershore-quickstart",
-  ];
-
-  assert.deepEqual(
-    readdirSync(new URL("../skills", import.meta.url), { withFileTypes: true })
-      .filter((entry) => entry.isDirectory())
-      .map((entry) => entry.name)
-      .sort(),
-    expected,
-  );
+  const actual = readdirSync(new URL("../skills", import.meta.url), {
+    withFileTypes: true,
+  })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name)
+    .sort();
+  assert.deepEqual(actual, inventory.activeSkills);
+  assert.equal(new Set(actual).size, actual.length);
+  for (const [oldName, destination] of Object.entries(
+    inventory.retiredSkills,
+  )) {
+    assert.ok(!actual.includes(oldName));
+    assert.ok(actual.includes(destination));
+  }
 });
 
 test("rejects the retired caller-supplied retry key in every spelling", () => {
@@ -289,8 +247,6 @@ test("retry guidance requires the reconcile-before-repeat write contract", () =>
       "pending-release publish handling",
       "in-flight rollback handling",
       "unsupported preview handling",
-      "webhook delivery reconciliation",
-      "short-lived context token retry boundary",
       "write-result freshness warning",
     ],
   );
@@ -307,23 +263,77 @@ test("rejects obsolete SDK economics, reporting, and migration instructions", ()
     assert.ok(findObsoleteGuidance(text).length > 0, text);
 });
 
-test("every skill routes agents through the live docs index and exact pages", () => {
-  for (const entry of readdirSync(new URL("../skills", import.meta.url), {
-    withFileTypes: true,
-  })) {
-    if (!entry.isDirectory()) continue;
-    const text = readFileSync(
-      new URL(`../skills/${entry.name}/SKILL.md`, import.meta.url),
+test("direct invocation retains each workflow's critical decisions and retrieval fallback", () => {
+  const inventory = JSON.parse(
+    readFileSync(new URL("../bundle.json", import.meta.url), "utf8"),
+  );
+  for (const name of inventory.activeSkills) {
+    const source = readFileSync(
+      new URL(`../skills/${name}/SKILL.md`, import.meta.url),
       "utf8",
     );
-    assert.match(text, /https:\/\/docs\.farthershore\.com\/llms\.txt/);
-    assert.match(
-      text,
-      /\*\*Required before acting:\*\* fetch the live machine-readable index/,
+    assert.deepEqual(findMissingWorkflowGuidance(name, source), [], name);
+    // Removing all sentences supporting one invariant must make the guard red.
+    // This catches weakened/unused predicates, not just current happy-path text.
+    for (const [pattern, label] of WORKFLOW_REQUIREMENTS[name]) {
+      let mutated = source;
+      let match;
+      while ((match = pattern.exec(mutated))) {
+        mutated =
+          mutated.slice(0, match.index) +
+          mutated.slice(match.index + match[0].length);
+      }
+      assert.ok(
+        findMissingWorkflowGuidance(name, mutated).includes(label),
+        `${name}: ${label}`,
+      );
+    }
+  }
+});
+
+test("known unsafe substitutions fail the corresponding workflow guards", () => {
+  const cases = [
+    [
+      "farthershore-backends-and-runtime",
+      /create an[\s\S]*?then mint/,
+      "deploy first, obtain token later",
+      "row before credential",
+    ],
+    [
+      "farthershore-backends-and-runtime",
+      /reconcile metadata and lineage first/,
+      "mint again immediately",
+      "lost-credential reconciliation",
+    ],
+    [
+      "farthershore-environments-and-releasing",
+      /Compatible pushes preserve personas/,
+      "Every push wipes personas",
+      "compatible preview preservation",
+    ],
+    [
+      "farthershore-environments-and-releasing",
+      /charges enabled[\s\S]*?free-only/,
+      "free-only products can skip payment verification",
+      "first launch payment gates",
+    ],
+    [
+      "farthershore-customer-operations",
+      /proposer-only[\s\S]*?human approval/,
+      "automation applies its own changes without approval",
+      "governed actor authority",
+    ],
+  ];
+  for (const [name, pattern, bad, missing] of cases) {
+    const source = readFileSync(
+      new URL(`../skills/${name}/SKILL.md`, import.meta.url),
+      "utf8",
     );
-    assert.match(
-      text,
-      /https:\/\/docs\.farthershore\.com\/(?:get-started|agents|define|monetize|frontend|backend|operate|cookbook|reference)\/[a-z0-9-]+/,
+    assert.ok(pattern.test(source));
+    assert.ok(
+      findMissingWorkflowGuidance(name, source.replace(pattern, bad)).includes(
+        missing,
+      ),
     );
   }
 });

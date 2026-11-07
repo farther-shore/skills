@@ -5,12 +5,12 @@
     "name": "Farther Shore",
     "url": "https://github.com/farther-shore"
   },
-  "description": "Eleven task-focused skills for building, releasing, operating, governing, and troubleshooting businesses on FartherShore.",
+  "description": "Six workflows for contract design, verified backends, product UI, preview and first paid launch, customer operations and governance, backed by current searchable docs.",
   "plugins": [
     {
       "name": "farthershore",
       "source": "./",
-      "description": "Create, build, release, operate, and troubleshoot a FartherShore business with clear repository and platform ownership.",
+      "description": "Six workflows for contract design, verified backends, product UI, preview and first paid launch, customer operations and governance, backed by current searchable docs.",
       "repository": "https://github.com/farther-shore/skills",
       "keywords": ["farthershore", "business-as-code", "agent-skills"]
     }

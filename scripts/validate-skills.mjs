@@ -18,6 +18,7 @@ import { readdirSync, readFileSync, statSync, existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import {
   BUNDLE_INSTALL,
+  findMissingWorkflowGuidance,
   findMissingDeviceAuthGuidance,
   findMissingRetryGuidance,
   findObsoleteGuidance,
@@ -26,19 +27,21 @@ import {
 
 const root = process.cwd();
 const errors = [];
-const EXPECTED_SKILLS = [
-  "farthershore-agent-operations",
-  "farthershore-backends-and-runtime",
-  "farthershore-building-uis",
-  "farthershore-business-sdk",
-  "farthershore-customer-operations",
-  "farthershore-environments-and-releasing",
-  "farthershore-governance",
-  "farthershore-observability-and-troubleshooting",
-  "farthershore-overview",
-  "farthershore-plans-and-metering",
-  "farthershore-quickstart",
-];
+const inventory = JSON.parse(readFileSync(join(root, "bundle.json"), "utf8"));
+const EXPECTED_SKILLS = inventory.activeSkills;
+if (
+  EXPECTED_SKILLS.length !== new Set(EXPECTED_SKILLS).size ||
+  JSON.stringify(EXPECTED_SKILLS) !==
+    JSON.stringify([...EXPECTED_SKILLS].sort())
+)
+  errors.push("bundle.json: activeSkills must be unique and sorted");
+for (const [retired, destination] of Object.entries(inventory.retiredSkills)) {
+  if (
+    EXPECTED_SKILLS.includes(retired) ||
+    !EXPECTED_SKILLS.includes(destination)
+  )
+    errors.push(`bundle.json: invalid retirement ${retired} -> ${destination}`);
+}
 
 function frontmatter(text) {
   if (!text.startsWith("---")) return null;
@@ -140,15 +143,6 @@ for (const file of guidanceFiles) {
       );
     }
     if (
-      !text.includes(
-        "**Required before acting:** fetch the live machine-readable index",
-      )
-    ) {
-      errors.push(
-        `${file.slice(root.length + 1)}: missing required docs callout`,
-      );
-    }
-    if (
       !/https:\/\/docs\.farthershore\.com\/(?:get-started|agents|define|monetize|frontend|backend|operate|cookbook|reference)\/[a-z0-9-]+/.test(
         text,
       )
@@ -188,7 +182,6 @@ if (bundleInstallCount === 0)
 const deviceAuthGuidance = [
   join(root, "README.md"),
   join(skillsDir, "farthershore-overview", "SKILL.md"),
-  join(skillsDir, "farthershore-quickstart", "SKILL.md"),
 ]
   .map((file) => readFileSync(file, "utf8"))
   .join("\n");
@@ -196,203 +189,16 @@ for (const label of findMissingDeviceAuthGuidance(deviceAuthGuidance)) {
   errors.push(`active guidance: missing ${label}`);
 }
 
-const agentOperations = readFileSync(
-  join(skillsDir, "farthershore-agent-operations", "SKILL.md"),
-  "utf8",
-);
-for (const label of findMissingRetryGuidance(agentOperations)) {
-  errors.push(`farthershore-agent-operations: missing ${label}`);
-}
-
-const businessSdk = readFileSync(
-  join(skillsDir, "farthershore-business-sdk", "SKILL.md"),
-  "utf8",
-);
-const plansAndMetering = readFileSync(
-  join(skillsDir, "farthershore-plans-and-metering", "SKILL.md"),
-  "utf8",
-);
-const migrationReference = readFileSync(
-  join(
-    skillsDir,
-    "farthershore-plans-and-metering",
-    "references",
-    "experiments-and-migration.md",
-  ),
-  "utf8",
-);
-
-// Critical invariants live in the skills; exhaustive syntax lives in docs.
-for (const [name, source, required] of [
-  [
-    "business-sdk",
-    businessSdk,
-    [
-      "3.2.x",
-      "kind: fs.plan.kind.free",
-      "requests.fixed(1)",
-      "fs.business()",
-      "deterministic",
-    ],
-  ],
-  [
-    "plans-and-metering",
-    plansAndMetering,
-    ["usagePricing", "funding", "pricing.current()", "Nanos", "bill-preview"],
-  ],
-  [
-    "change safety",
-    migrationReference,
-    ["recurring", "deferred", "subject pins", "private APIs"],
-  ],
-]) {
-  for (const term of required)
-    if (!source.includes(term))
-      errors.push(`${name}: missing invariant '${term}'`);
-}
-const backendRuntime = readFileSync(
-  join(skillsDir, "farthershore-backends-and-runtime", "SKILL.md"),
-  "utf8",
-);
-for (const required of [
-  "@farthershore/backend",
-  "0.21.x",
-  "FS_RUNTIME_TOKEN",
-  "requireMember(ctx)",
-  "ctx.principal.org.id",
-  "unique constraint",
-  "atomic upsert",
-  "origin_unavailable",
-  "ctx.report",
-  "responseSink",
-  "single-use",
-  "hard cutover",
-  "propagation",
-]) {
-  if (!backendRuntime.includes(required))
-    errors.push(
-      `farthershore-backends-and-runtime: missing '${required}' guidance`,
-    );
-}
-
-const releases = readFileSync(
-  join(skillsDir, "farthershore-environments-and-releasing", "SKILL.md"),
-  "utf8",
-);
-for (const required of [
-  "reviewed-known-good-release-id",
-  "Omitting `--env` targets production",
-  "pins only",
-  "There is no `frontend deploy` command",
-  "every repeat `business publish`, including `--dry-run`, returns",
-  "git switch main",
-  "git pull --ff-only origin main",
-  "gh release create <version> --verify-tag",
-  "The pin also prevents a later successful production build from auto-activating",
-  "Despite the verb name, this operation reactivates any succeeded release",
-  "Preview rollback changes the active release but never pins it",
-]) {
-  if (!releases.includes(required)) {
-    errors.push(
-      `farthershore-environments-and-releasing: missing '${required}' guidance`,
-    );
-  }
-}
-
-const buildingUis = readFileSync(
-  join(skillsDir, "farthershore-building-uis", "SKILL.md"),
-  "utf8",
-);
-for (const required of [
-  "<ApiKeysPanel>",
-  "useApiKeys()",
-  "useResourceLimitUsage()",
-]) {
-  if (!buildingUis.includes(required)) {
-    errors.push(
-      `farthershore-building-uis: missing '${required}' current SDK surface`,
-    );
-  }
-}
-
 const overview = readFileSync(
   join(skillsDir, "farthershore-overview", "SKILL.md"),
   "utf8",
 );
-for (const required of [
-  "builder-org membership, or invitations",
-  "platform agents, bulletins, or notifications",
-  "Configure API-managed webhooks or frontend/runtime variables",
-  "Inspect workflows",
-]) {
-  if (!overview.includes(required)) {
-    errors.push(`farthershore-overview: missing '${required}' job routing`);
-  }
-}
-if (buildingUis.includes("<ApiKeys>") || buildingUis.includes("useLimits()")) {
-  errors.push(
-    "farthershore-building-uis: contains a nonexistent frontend SDK export",
-  );
-}
-
-const customerOperations = readFileSync(
-  join(skillsDir, "farthershore-customer-operations", "SKILL.md"),
-  "utf8",
-);
-for (const required of [
-  "consumer block",
-  "consumer remove",
-  "There is currently no CLI unblock command",
-  "generalized commercial rebind",
-  "edge",
-  "proposal preview",
-  "promo-code",
-  "audit-log business-list",
-]) {
-  if (!customerOperations.includes(required)) {
-    errors.push(
-      `farthershore-customer-operations: missing '${required}' guidance`,
-    );
-  }
-}
-
-const observability = readFileSync(
-  join(skillsDir, "farthershore-observability-and-troubleshooting", "SKILL.md"),
-  "utf8",
-);
-for (const required of [
-  "denial show",
-  "Subscription/payment",
-  "SUSPENDED",
-  "persona bootstrap",
-  "Retry-After",
-  "X-FS-Decision-Id",
-]) {
-  if (!observability.includes(required)) {
-    errors.push(
-      `farthershore-observability-and-troubleshooting: missing '${required}' guidance`,
-    );
-  }
-}
-for (const required of [
-  "farthershore agents runs-show <business> <runId> --format json",
-  "farthershore notifications preferences <business> --format json",
-]) {
-  if (!observability.includes(required)) {
-    errors.push(
-      `farthershore-observability-and-troubleshooting: missing '${required}' current CLI command`,
-    );
-  }
-}
-for (const retired of [
-  "farthershore agents runs show",
-  "farthershore notifications list",
-]) {
-  if (observability.includes(retired)) {
-    errors.push(
-      `farthershore-observability-and-troubleshooting: contains nonexistent '${retired}' command`,
-    );
-  }
+for (const label of findMissingRetryGuidance(overview))
+  errors.push(`overview: missing ${label}`);
+for (const name of EXPECTED_SKILLS) {
+  const source = readFileSync(join(skillsDir, name, "SKILL.md"), "utf8");
+  for (const label of findMissingWorkflowGuidance(name, source))
+    errors.push(`${name}: missing ${label}`);
 }
 
 // 3. marketplace.json

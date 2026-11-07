@@ -1,142 +1,89 @@
 # FartherShore Skills
 
-Agent Skills for creating and operating a business on FartherShore. The bundle
-is organized around eleven jobs an agent performs and teaches one ownership model:
+Six workflows for building and operating a FartherShore business. Skills retain
+critical decisions, dependency order, authority and evidence boundaries. Current
+versioned documentation owns syntax, catalogs, provider recipes and recovery
+detail. Load only workflows needed for the task; each works when invoked directly.
 
-- The repository owns business structure: routes, features, plans, pricing,
-  meters, limits, policies, and surfaces.
-- The FartherShore CLI operates platform state that has no code representation.
+| Skill                                                                                 | Use for                                                                        |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| [overview](skills/farthershore-overview/SKILL.md)                                     | Ownership, installed capability discovery, creation and diagnostic routing     |
+| [business-sdk](skills/farthershore-business-sdk/SKILL.md)                             | Contract design, commerce, metering and permission vocabulary                  |
+| [backends-and-runtime](skills/farthershore-backends-and-runtime/SKILL.md)             | Host/binding/token/start order, verified identity and observed usage           |
+| [building-uis](skills/farthershore-building-uis/SKILL.md)                             | Product-led managed/custom composition and customer journey proof              |
+| [environments-and-releasing](skills/farthershore-environments-and-releasing/SKILL.md) | Managed repo checks, preview/personas, first paid launch and recovery          |
+| [customer-operations](skills/farthershore-customer-operations/SKILL.md)               | Live customer/builder state, governed proposals, automation and communications |
 
-Load `farthershore-overview` first. For a new business, continue with
-`farthershore-quickstart`.
+The repository owns contractual structure in `business/`. Supported platform
+operations own live metadata, origins, credentials, customers and activation;
+external hosts own application deployment and process secrets. Hosting is a
+prerequisite only for products with an upstream. Explicitly backend-free hosted
+products are valid. Builder repositories and the platform monorepo have different
+branch/release rules.
 
-FartherShore is the gateway, billing, and entitlement plane in FRONT of an HTTP
-service the builder runs. Somewhere to deploy that service, a way to set
-`FS_RUNTIME_TOKEN` there, and a way to read its logs are prerequisites to using
-the platform at all — `farthershore-overview` gates on them before anything is
-created.
+## Documentation and tooling
 
-## Skills
+Resolve target, principal and installed pins → search in task language → read the
+full guide including prerequisites/recovery → describe methods/types, permissions
+and safety metadata → execute the authorized effect → verify its actual outcome.
+Search excerpts select guides; they do not replace them. Hosted MCP describe
+returns types; CLI code mode may expose a separate types command. Discover what
+is installed rather than assume the newest source is deployed.
 
-| Skill                                                                                                              | Load when…                                                                                                                                                                    |
-| ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`farthershore-agent-operations`](skills/farthershore-agent-operations/SKILL.md)                                   | discovering CLI capabilities, permissions, or unavailable-operation handoffs                                                                                                  |
-| [`farthershore-governance`](skills/farthershore-governance/SKILL.md)                                               | governing Operator actions, automation, proposals, and outward effects                                                                                                        |
-| [`farthershore-overview`](skills/farthershore-overview/SKILL.md)                                                   | starting any FartherShore task                                                                                                                                                |
-| [`farthershore-quickstart`](skills/farthershore-quickstart/SKILL.md)                                               | creating a business from nothing                                                                                                                                              |
-| [`farthershore-business-sdk`](skills/farthershore-business-sdk/SKILL.md)                                           | authoring the `business/` program                                                                                                                                             |
-| [`farthershore-plans-and-metering`](skills/farthershore-plans-and-metering/SKILL.md)                               | designing plans, pricing, limits, or meters                                                                                                                                   |
-| [`farthershore-building-uis`](skills/farthershore-building-uis/SKILL.md)                                           | building customer-facing application surfaces                                                                                                                                 |
-| [`farthershore-environments-and-releasing`](skills/farthershore-environments-and-releasing/SKILL.md)               | testing changes or releasing them                                                                                                                                             |
-| [`farthershore-backends-and-runtime`](skills/farthershore-backends-and-runtime/SKILL.md)                           | scaffolding and deploying an application backend, provisioning hosting with OpenTofu, verifying requests, storing user data, reporting usage, or operating origins and tokens |
-| [`farthershore-customer-operations`](skills/farthershore-customer-operations/SKILL.md)                             | operating customer access, subscriptions, roles, proposals, promo codes, and preview personas                                                                                 |
-| [`farthershore-observability-and-troubleshooting`](skills/farthershore-observability-and-troubleshooting/SKILL.md) | diagnosing denials, releases, usage, backends, or platform faults                                                                                                             |
+If search is unavailable, use canonical reads, section reads, index/corpora or
+full Markdown retrieval through https://docs.farthershore.com/llms.txt. If current
+critical instructions cannot be read, report the gap before dependent launches,
+payment, credential or authority changes. Do not guess or silently change target.
+Repository changes still use edits/builds/Git, even if a similarly named operation
+appears in search. No private API workaround.
 
-## Live documentation
+The candidate targets the search-aware source at platform commit
+`52fdd15a22b5f04b45f6a72636d908effddd6077`; source support is not deployed capability
+or live retrieval evidence. Match documentation source/package versions to actual
+CLI/SDK pins. There is no universal SDK version implied by the skill version.
 
-Every skill starts by fetching the current machine-readable documentation index.
-Prefer `farthershore docs ls --format json` when available; otherwise use:
+## Install or update
 
-```bash
-curl -fsSL https://docs.farthershore.com/llms.txt
-```
-
-It then identifies the exact `https://docs.farthershore.com/...` pages for that
-job. The skills carry the critical invariants and safe operating sequence; the
-website carries the full current reference.
-
-The docs are grouped into Platform, Business SDK, Backend SDK, Frontend SDK,
-Commerce, Gateway, Operations, Agents, and CLI collections. Their full
-corpora and capability catalog retain package versions and source evidence.
-Check these against installed pins; the skill version is not an SDK version.
-
-Version 3.2 guidance targets Business SDK 3.2.x, Backend SDK 0.21.x and Frontend
-SDK 0.28.x. This preproduction bundle may ship ahead of the corresponding docs
-and CLI release. Follow each skill's documentation fallback when traversal is
-unavailable, and report missing guidance rather than guessing. Repository edits
-alone do not publish a skill release.
-
-## Install or update the bundle
-
-Install every skill together at a release tag with the Vercel Skills CLI:
+Install the complete immutable tagged bundle:
 
 ```bash
 npx skills add https://github.com/farther-shore/skills/tree/<tag> --skill '*' -g -y
 ```
 
-Replace `<tag>` with the release required by the business repository. To
-update, rerun the same command with the newer tag. Do not mix skills from
-different tags; they form one versioned operating model.
+Use the release required by the business repository; do not mix bundle tags.
+Source commits do not publish a release or update existing clients. This rewrite
+does not create a tag or change the platform's pinned archive/hash.
 
-Older installations may retain renamed skills. After successful installation,
-inspect the agent's discovered skills for retired FartherShore names and move
-only those obsolete bundle entries to a recoverable backup outside its skills
-directory. Never delete unrelated skills or remove the old bundle before the
-new installation succeeds. The platform CLI's verified installer handles its
-recognized global roots; inspect other runtimes separately.
+After successful complete installation, move only recognized retired bundle
+entries to a recoverable backup outside discovered skill roots. Preserve unrelated
+and customized skills, prior working installation on failure, and rollback
+protections. Never remove old entries before candidate installation succeeds.
+Verify the installed CLI supports this retirement mapping before rollout; older
+installers may know a different name set. No minimum version is invented here.
 
-The command installs the bundle globally for the agent runtimes detected by
-the Skills CLI. Skills are progressively disclosed: the agent sees frontmatter
-first and loads a body only when its trigger matches.
+| Retired name                                   | Retained destination             |
+| ---------------------------------------------- | -------------------------------- |
+| farthershore-agent-operations                  | farthershore-overview            |
+| farthershore-quickstart                        | farthershore-overview            |
+| farthershore-observability-and-troubleshooting | farthershore-overview            |
+| farthershore-plans-and-metering                | farthershore-business-sdk        |
+| farthershore-governance                        | farthershore-customer-operations |
 
-## Creation handoff
+There are no active alias/shim skills. `bundle.json` is the declared active and
+retired inventory; discovery must match names exactly. The paragraph accounting
+in `scripts/paragraph-disposition.json` records every original body/reference
+paragraph at source commit aa1a563, including stale and duplicate removal.
 
-The only setup sequence taught by this bundle is:
-
-```text
-farthershore login → human allows the CLI to act as them
-→ farthershore business create <slug>
-→ clone the returned managed repository URL
-→ read AGENTS.md
-→ author business/ from scratch
-→ farthershore build
-→ push
-→ inspect the GitHub checks
-→ operate through the CLI
-```
-
-Device login may open a browser. On a headless machine, run
-`farthershore login --headless` and give the verification URL and user code
-to the human approver. The credential follows the user's live role and
-CLI-operable permissions across all current and future organizations and
-businesses. The standalone approval page has only Allow and Deny
-actions; normal login has no naming, organization, business, tier, or permission
-options.
-
-List or change the saved organization without logging in again:
+## Verify a contribution
 
 ```bash
-farthershore auth organization list --format json
-farthershore auth organization use <id-or-slug>
-farthershore --organization <id-or-slug> business list --format json
-```
-
-The global `--organization` option changes only command context; it does not
-narrow the normal user session. For a separately pre-issued,
-organization-scoped MakerToken, either pipe it directly from the secret provider
-into `farthershore login --token-stdin` to save it, or set
-`FARTHERSHORE_TOKEN` as an ephemeral override for the current shell. A
-MakerToken can be restricted to selected permissions and businesses inside its
-one organization. Never put the raw credential in argv, stdout, stderr, docs,
-or logs, and unset the environment override when the restricted operation is
-finished.
-
-Run `farthershore logout` to remove the saved CLI credential.
-
-Do not write contract state through the CLI or API. Change the repository and
-push it.
-
-## Authoring and validation
-
-Each skill is `skills/<name>/SKILL.md` with YAML frontmatter containing only
-`name` and `description`. Names are kebab-case and match their folder;
-descriptions are one-line, trigger-oriented sentences beginning with `Use
-when`.
-
-Run the repository validator before opening a pull request:
-
-```bash
+node --test scripts/*.test.mjs
 node scripts/validate-skills.mjs
+node scripts/validate-doc-links.mjs --docs-root /path/to/candidate/packages/platform-docs/docs
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the checklist.
+See [CONTRIBUTING.md](CONTRIBUTING.md). Local fixtures, source-link checks and
+behavioral evaluations do not certify live search ranking, deployments, payments
+or end-to-end platform behavior. Compatible docs/search publication, verified
+complete-bundle installation/retirement and an approved immutable release/pin
+update remain distribution prerequisites.

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "activeSkills": [
+    "farthershore-backends-and-runtime",
+    "farthershore-building-uis",
+    "farthershore-business-sdk",
+    "farthershore-customer-operations",
+    "farthershore-environments-and-releasing",
+    "farthershore-overview"
+  ],
+  "retiredSkills": {
+    "farthershore-agent-operations": "farthershore-overview",
+    "farthershore-quickstart": "farthershore-overview",
+    "farthershore-observability-and-troubleshooting": "farthershore-overview",
+    "farthershore-plans-and-metering": "farthershore-business-sdk",
+    "farthershore-governance": "farthershore-customer-operations"
+  }
+}

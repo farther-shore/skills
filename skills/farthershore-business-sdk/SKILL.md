@@ -1,106 +1,90 @@
 ---
 name: farthershore-business-sdk
-description: Use when writing or editing a business/ program with @farthershore/business, including routes, grants, meters, resources, providers, and policies.
+description: Use when authoring a business/ contract or designing plans, pricing, funding, metering, permissions or commercial changes.
 ---
 
-# Author the business contract
+# Define and verify the contract
 
-Use the repository's pinned `@farthershore/business` version. This guidance
-targets **3.2.x**; an older pin does not gain newer capabilities by reading newer
-docs. Read the repository's `AGENTS.md` and dependency lockfile first.
+Read AGENTS.md, installed `@farthershore/business` pin, accepted contract and
+intended business/environment. Repository authoring owns public contractual
+structure; live customer terms/assignments are separate operational state.
 
-## Read current docs first
+## Retrieve the relevant contract guide
 
-**Required before acting:** fetch the live machine-readable index and read the
-task's pages. Prefer CLI traversal when supported; `docs ls` fetches that index,
-so no separate `curl` is needed:
+Search for the task, read the full matching guide with prerequisites/recovery,
+and compare its version with installed declarations before copying syntax.
+Describe related operations/types and permissions before operational effects;
+use current leaf help for plain CLI. Search excerpts are not instructions.
+If installed search is unavailable, read canonical
+https://docs.farthershore.com/define/business-class,
+https://docs.farthershore.com/define/plans or
+https://docs.farthershore.com/reference/business-sdk; use
+https://docs.farthershore.com/llms.txt for index/corpora fallback. Stop dependent
+economic/authority changes if current guidance cannot be retrieved; do not guess
+or switch environments. Hosted MCP describe includes types; CLI code mode has
+its own installed capabilities.
 
-```bash
-farthershore docs --help
-farthershore docs ls --format json
-farthershore docs tree business-sdk --format json
-farthershore docs read define/business-class --format json
-```
+## Design independent controls
 
-Collections are root folders; expand section folders with `docs ls <path>`.
-Use returned paths rather than guessing. Read the [overview's traversal guide](../farthershore-overview/SKILL.md#traverse-docs-as-a-filesystem)
-for heading reads, search, and provenance. Docs need no login. If the CLI lacks
-`docs` or its artifacts are unavailable, fetch
-https://docs.farthershore.com/llms.txt and follow its page links; do not silently
-switch to stage or assume guidance was retrieved.
+Resolve what customers may do, what is measured, how it is priced, what funds
+usage, structural limits and exhaustion behavior separately. Every plan needs
+an explicit supported kind and complete request-rate rule. A resource cap is
+inventory, not per-seat pricing. A price/limit/meter declaration does not attach
+measurement: bind fixed route costs and actual backend reports explicitly.
+Bound monetary admission before forwarding work; estimates are not final usage.
 
-Start with https://docs.farthershore.com/define/business-class and
-https://docs.farthershore.com/reference/business-sdk. Use the Business SDK
-collection for routes, meters, resources, authentication, and complete export
-signatures. If the live docs target a different version, inspect the installed
-declarations and matching release documentation before writing code.
+Use deterministic functional declarations and immutable branded refs from one
+SDK copy, never fabricated references. Discover all modules under `business/`
+and provide one default-exported `fs.business()` result; import declaration
+dependencies before sealing so direct and folder execution agree. Avoid clocks,
+randomness, environment reads and network/filesystem discovery in declarations.
 
-## A minimal bounded product
+Choose typed money/rate/funding constructors from installed signatures. Money
+wire fields ending in Nanos are decimal strings, not floating-point arithmetic.
+Unit allowances and money funding are different; retrieve their display rules.
+Action-inferred counts need matching release/delete behavior or an intended
+concurrent cap becomes lifetime accumulation. Keep origins, presentation metadata,
+variables, credentials and activation out of the contractual program.
 
-```ts
-import * as fs from "@farthershore/business";
+## Review customer and permission impact
 
-const requests = fs.requests();
-const status = fs.route("/v1/status", {
-  get: { costs: [requests.fixed(1)] },
-});
-fs.plan("free", {
-  kind: fs.plan.kind.free,
-  grants: [status],
-  limits: [requests.perMinute(60)],
-});
-export default fs.business();
-```
+Recurring-price pins, `pricing.current()` activation, fixed-version catalogs and
+customer-specific agreements have different forward effects. Existing customers
+can follow current usage pricing without moving a recurring pin. Publication
+does not retroactively rerate work or prove all subscriber pins migrated.
+Retrieve https://docs.farthershore.com/monetize/plan-changes and
+https://docs.farthershore.com/reference/commercial-releases before live economic
+changes. General commercial rebinding is not promised by a lineage migration;
+if the supported catalog cannot express it, hand off rather than use private
+APIs. Review exact terms, affected customers, timing and recovery within the
+user's authorization before activation. Customer money displays use server bill
+preview and preserve opaque disclosure.
 
-Every plan declares `kind: fs.plan.kind.*`. For paid products, load
-[farthershore-plans-and-metering](../farthershore-plans-and-metering/SKILL.md).
-Keep measurement, pricing catalogs, funding, grants, and structural limits
-separate. Do not transplant older plan or meter shapes.
+For RBAC, both business and subscriber-organization enablement gates matter.
+Account roles, product-role assignments, plan grants, member/service identity
+and backend tenant ownership are independent. Runtime write does not imply read
+or extra verbs; owners/wildcard keys are insufficient least-privilege proof.
+Empty ordinary key restrictions are not deny-all; SERVICE snapshots and live
+member roles have different semantics. Read
+https://docs.farthershore.com/define/team-rbac before implementation.
 
-## Rules that change how you implement
+Permission vocabulary is business-wide: even preview group/verb removals can
+strip grants across environments; recreation does not restore them. Review
+roles, keys and UI gates before a vocabulary migration. Do not disable RBAC to
+repair a denial. Verify existing credentials after propagation, including a
+nonowner allowed/denied matrix and plan-denied/cross-tenant cases.
 
-- The compiler discovers all source modules under `business/`, not one required
-  filename. Exactly one module default-exports `fs.business()`. The normal folder
-  loader finalizes after importing all discovered modules; direct SDK execution
-  seals immediately. Explicitly import declaration dependencies before the call
-  so the program works in either context. Use sibling modules for growth.
-- Declarations return immutable branded refs. Pass those refs, not strings or
-  hand-built reference objects. Use one installed SDK copy.
-- Declaring a meter does not attach it. Bind route `costs` for gateway-known
-  fixed units and `reports` for actual backend measurements. Verify the built
-  route bindings. Pricing or limiting a meter is not itself a measurement.
-- Monetary admission uses a named `fs.meterRoutes` declaration on an exact
-  route, with bounded estimates and optional `postStream` settings. Structural
-  group/path overlays are a different overload. Read
-  https://docs.farthershore.com/reference/monetary-admission before choosing.
-- Counted resources use `resource.max(n)` inside plan `limits`; they are not
-  per-seat pricing. Read https://docs.farthershore.com/define/resources.
-- Keep declarations deterministic: no clocks, random values, environment reads,
-  filesystem discovery, or network requests. The build compares two runs.
-- Business presentation metadata, concrete backend origins, variables, and
-  release activation are platform operations, not declarations. Confirm their
-  current CLI surface with `--help`.
+## Check the candidate and hand off
 
-## Verify and hand off
+Run the repository's actual TypeScript checker separately from
+`farthershore build`; execution alone is not typechecking. Inspect generated IR
+for grants, route measurement bindings, estimates and economic behavior. Run
+`farthershore validate` against the intended target and inspect checked/skipped
+server/docs results; a generated local validate alias may only build.
 
-Run the repository's TypeScript typecheck separately from
-`farthershore build --format json`; build executes TypeScript but does not
-type-check it. Inspect failures and the generated IR. Every plan needs a complete
-rate-limit rule, including paid plans; a resource cap alone does not suffice.
-Constructor success is not proof of a valid build. Push only the reviewed
-repository change, then inspect validation/apply checks in the intended
-environment. Existing subscriptions can retain commercial pins; a successful
-compile does not prove a customer received the new terms.
-
-## Product roles and permissions
-
-For RBAC work, read [the implementation checklist](references/rbac-implementation.md)
-and fetch https://docs.farthershore.com/define/team-rbac plus
-https://docs.farthershore.com/cookbook/add-team-rbac through the docs reader.
-The checklist covers essential safety distinctions even when an older published
-page is less explicit. If versioned docs contradict it, inspect the actual
-version and report the discrepancy before a mutation.
-
-For authorization or unsupported operations, use
-https://docs.farthershore.com/agents/operation-classes; do not bypass an ownership
-boundary with a private API.
+Use [backends-and-runtime](../farthershore-backends-and-runtime/SKILL.md) for
+actual measurement delivery and [environments-and-releasing](../farthershore-environments-and-releasing/SKILL.md)
+for exact-head feedback, preview, approval and publication. Verify customer pins
+and real allowed/denied requests after convergence. Report source/build proof
+separately from serving, usage and customer-economic proof. Reconcile uncertain
+writes before any repeat; keep secrets out of outputs.
