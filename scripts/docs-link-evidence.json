@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "source": "farther-shore/fs-turbo",
-  "sourceCommit": "b41052d05dbb2d82f65fd5594e185cbdb1a3393b",
+  "sourceCommit": "24b219826e6301f06f5b80dd03583288deb00dcf",
   "boundary": "Candidate authored MDX presence/heading resolution only; no live HTTP/search or deployment certificate.",
   "pages": [
     {
