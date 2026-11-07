@@ -26,6 +26,12 @@ not establish prerequisites. Stop dependent authority, money or destructive
 changes if current guidance is unavailable. Discover actual installed MCP/CLI
 capabilities; no private API workaround or silent environment switch.
 
+Business deletion, organization deletion, organization ownership transfer and
+Stripe disconnect are human-only. Hand them to the responsible human through
+the currently documented human-only flow; machine CLI credentials, CLI code mode and hosted
+MCP cannot perform them. Chat approval or MCP confirmation does not change this
+boundary. Do not try raw calls or another agent credential to bypass it.
+
 ## Inspect, preview, apply and read back
 
 Read current subject state and relevant policy/catalog, including pagination.

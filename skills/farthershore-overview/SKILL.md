@@ -77,6 +77,12 @@ external delivery: reconcile webhook deliveries before repetition. An auth
 context-token is a short-lived credential with `no_automatic_retry`; follow its
 specific recovery rather than treating an old response as fresh authority.
 
+Business deletion, organization deletion, organization ownership transfer and
+Stripe disconnect are human-only. Hand them to the responsible human through
+the currently documented human-only flow; machine CLI credentials, CLI code mode and hosted
+MCP cannot perform them. Chat approval or MCP confirmation does not change this
+boundary. Do not try raw calls or another agent credential to bypass it.
+
 ## Create or diagnose
 
 For creation, confirm the requested product shape. Only a product declaring an
