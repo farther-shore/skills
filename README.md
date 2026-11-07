@@ -63,11 +63,11 @@ installers may know a different name set. No minimum version is invented here.
 
 | Retired name                                   | Retained destination             |
 | ---------------------------------------------- | -------------------------------- |
-| farthershore-agent-operations                  | farthershore-overview            |
-| farthershore-quickstart                        | farthershore-overview            |
-| farthershore-observability-and-troubleshooting | farthershore-overview            |
-| farthershore-plans-and-metering                | farthershore-business-sdk        |
-| farthershore-governance                        | farthershore-customer-operations |
+| [farthershore-agent-operations](skills/farthershore-overview/SKILL.md) | [farthershore-overview](skills/farthershore-overview/SKILL.md) |
+| [farthershore-quickstart](skills/farthershore-overview/SKILL.md) | [farthershore-overview](skills/farthershore-overview/SKILL.md) |
+| [farthershore-observability-and-troubleshooting](skills/farthershore-overview/SKILL.md) | [farthershore-overview](skills/farthershore-overview/SKILL.md) |
+| [farthershore-plans-and-metering](skills/farthershore-business-sdk/SKILL.md) | [farthershore-business-sdk](skills/farthershore-business-sdk/SKILL.md) |
+| [farthershore-governance](skills/farthershore-customer-operations/SKILL.md) | [farthershore-customer-operations](skills/farthershore-customer-operations/SKILL.md) |
 
 There are no active alias/shim skills. `bundle.json` is the declared active and
 retired inventory; discovery must match names exactly. The paragraph accounting
