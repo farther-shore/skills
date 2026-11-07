@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "source": "farther-shore/fs-turbo",
-  "sourceCommit": "24b219826e6301f06f5b80dd03583288deb00dcf",
+  "sourceCommit": "a01e0b876f4090d5088918b1b202faaded0ceac4",
   "boundary": "Candidate authored MDX presence/heading resolution only; no live HTTP/search or deployment certificate.",
   "pages": [
     {
@@ -20,19 +20,19 @@
       "link": "agents/platform-agent",
       "slug": "agents/platform-agent",
       "anchor": null,
-      "sha256": "4eb1a7e944e304d9c52ddfe85a23924c6f7c2775ea360cb93d4f87a559c43221"
+      "sha256": "8b61c8a89eba9dd74fc7597e1d6c8094e5d95f500ab845481b7ece0db9983690"
     },
     {
       "link": "backend/metering",
       "slug": "backend/metering",
       "anchor": null,
-      "sha256": "81b56b9614d26471701d647ad2c10ac49bdc7e715d58c4bea26f3fe94bd292c9"
+      "sha256": "599a9ef351a48e5efc7f63c305e5310c99fdd21351c7c88944f6d56279d604e1"
     },
     {
       "link": "backend/overview",
       "slug": "backend/overview",
       "anchor": null,
-      "sha256": "255bcf8926bfaca557685338b07f2faf6abf00125d3043baa850f4a05e073faf"
+      "sha256": "de3bc92092963c54cc5fbd0e9878d93267c71f7549988f8c5eaad5e465fd08e8"
     },
     {
       "link": "backend/runtime-tokens",
@@ -103,25 +103,25 @@
       "link": "monetize/plan-changes",
       "slug": "monetize/plan-changes",
       "anchor": null,
-      "sha256": "6f669c41966adc5c5d2db95baadd76fe624d07a7d1f68e4d87cc61ee2169a78a"
+      "sha256": "a7c4566f841d82e7be821fabb6109e3b7029101e1a2638f8c73a5771add333f1"
     },
     {
       "link": "operate/apply-timeline",
       "slug": "operate/apply-timeline",
       "anchor": null,
-      "sha256": "7071f64a6ec240896317a79d81b0f74cf55b419d2314418e1633c2714034a72c"
+      "sha256": "0b5c98ebe5202f27f0fded5f22b1dc3067c4d4adc23c269b4a57183b58ddc5d1"
     },
     {
       "link": "operate/customer-operations",
       "slug": "operate/customer-operations",
       "anchor": null,
-      "sha256": "ffa52d7da1d819417acdabb3fab7b702db92b4f136e8188c2715498982316461"
+      "sha256": "b7ecf0120c6489bfcb8e56687406154bfd8b651e32d323516537a6414da2991a"
     },
     {
       "link": "operate/notifications",
       "slug": "operate/notifications",
       "anchor": null,
-      "sha256": "12871911ab862275e7a1e7526cf0ee312e7e663da34ffe2912109e042f494ad9"
+      "sha256": "adbf57707fa8290d5fd502d0c683509b5da20a62bb2609e906c2b91648d7761f"
     },
     {
       "link": "operate/observability-and-troubleshooting",
