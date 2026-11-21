@@ -7,9 +7,9 @@ description: Use when connecting or operating a backend, hosting, runtime creden
 
 Read AGENTS.md and installed backend SDK/CLI pins. Resolve business, environment,
 logical backend slug, concrete row, direct/tunnel transport and effective origin.
-Logical backends/route bindings belong in `business/`; origins/tokens are
+Logical backends/route bindings belong in `business/`; origins/keys are
 operational, process secrets and deployments belong to the external host.
-Explicitly backend-free hosted products need no backend, runtime token or host.
+Explicitly backend-free hosted products need no backend, secret key or host.
 
 ## Retrieve the connection or repair guide
 
@@ -18,7 +18,7 @@ and recovery sections. Compare version/source evidence with installed pins.
 Describe intended operations, types, permissions, preview and retry metadata;
 plain CLI uses current leaf help. If search is unavailable, use canonical
 https://docs.farthershore.com/backend/overview,
-https://docs.farthershore.com/backend/runtime-tokens or
+https://docs.farthershore.com/backend/secret-keys or
 https://docs.farthershore.com/backend/metering and index/corpora at
 https://docs.farthershore.com/llms.txt. A search excerpt, stale/truncated guide or
 missing capability does not justify guessing. Stop dependent credential or
@@ -35,18 +35,24 @@ installed capabilities before use.
    inspect the retrieved template/ref/pins. Overwriting an existing API folder
    is a separate deliberate action, not a routine scaffold flag.
 2. Declare the logical backend and route refs; allocate the direct host/domain
-   before starting a token-dependent process. Read scoped rows first, create an
-   absent concrete row or bind an existing one, then mint a correctly scoped
-   credential. A first production apply may require bindings before acceptance;
-   do not wait for that apply to create its own required targets. Every declared
-   production backend needs a target, with a default when several exist.
-3. Capture the credential once into the host secret store as `FS_RUNTIME_TOKEN`,
-   configure other process secrets, then deploy/start the SDK-integrated service.
+   before starting a key-dependent process. Read the bound deployments first,
+   then bind the shared URL with an explicit `--for all` (a linked directory or
+   `FARTHERSHORE_ENV` otherwise narrows the bind to one environment). A first
+   production apply may require bindings before acceptance; do not wait for
+   that apply to create its own required targets. Every declared production
+   backend needs a target, with a default when several exist.
+3. Use the business's default secret key, shown once at business creation (or
+   on the first bind of an older business); it serves every environment. For a
+   dedicated environment key, create an absent environment row bound to its own
+   URL (or bind the existing one), then mint the key; a key with no such row is
+   refused. Capture the key once into the host secret store as
+   `FS_SECRET_KEY`, configure other process secrets, then deploy/start the
+   SDK-integrated service.
    Hosted MCP always redacts one-time secrets, including approved writes: its
    redacted result cannot configure a host. Use supported secure CLI capture or
    human delivery. Do not mint repeatedly after a lost/redacted response.
 4. For tunnels, retrieve the distinct eligibility, provisioning, embedded/sidecar
-   and token-operation requirements; do not mechanically reuse direct ordering.
+   and key-operation requirements; do not mechanically reuse direct ordering.
    For repeatable multi-environment hosting, retrieve the infrastructure guide;
    review the plan and protect remote locked state because it can contain secrets.
 
@@ -62,8 +68,8 @@ NAMES in the host's own infrastructure as code (Railway IaC, `fly.toml`, a
 changes; secret values never enter it. Keep at least one instance running:
 a sleeping or free tier turns into a cold start on a paying customer's call.
 
-Before a preview writes anything, search for the current per-environment
-database guidance and choose: one process selecting a per-environment database,
+Before a preview writes anything, retrieve `backend/environment-databases`
+and choose: one process selecting a per-environment database,
 or a deployment per preview bound with `--env`. A preview without its own
 binding is served by the shared deployment and its database. The platform never creates, copies or
 deletes databases or branches and never tears previews down: own branch
@@ -72,12 +78,13 @@ teardown of the environment, host resources and branch.
 
 ## Scope, identity and measurement
 
-Preview origins can inherit a production binding by stable slug; this never
-imports production plans, grants, pricing or customer state. A concrete preview
-override changes that target. Isolation requires deliberately separate deployment
+A preview without its own binding is served by the shared `all` deployment;
+this never imports production plans, grants, pricing or customer state, and
+nothing falls back to a production-only binding. A preview override bound with
+`--env` changes that target. Isolation requires deliberately separate deployment
 and storage where customer writes matter. Before an explicitly bound preview
 credential, establish a concrete row in that scope and verify bootstrap/effective
-target agree; do not silently broaden token scope to repair a mismatch. Discover
+target agree; do not silently broaden key scope to repair a mismatch. Discover
 per-command environment defaults: list scope and mutation scope can differ.
 
 Preserve SDK raw-byte capture and fail-closed verification **before JSON parsing**
@@ -109,14 +116,15 @@ binding before changing routing. For webhooks/variables retrieve current ownersh
 delivery and secret visibility rules rather than treating them as host process
 configuration; webhook tests cause external delivery.
 
-Token rotation is a hard cutover: predecessor revocation and distributed successor
-propagation can be separated in time. Obtain authorization covering disruption.
+Secret-key rotation is a hard cutover: predecessor revocation and distributed
+successor propagation can be separated in time. Obtain authorization covering disruption.
 For planned overlap, separately mint the same kind, operations, allowlists and
 business/environment/backend scope, securely deploy every replica, verify traffic
 and reporting, then revoke the predecessor. Do not rely on creation defaults.
 After a lost create/rotate result, reconcile metadata and lineage first; the old
 secret is not readable. Choose a deliberate recovery and secure delivery path.
-Never print tokens in argv, chat or logs, and never wrap writes in blind retries.
+Never print secret keys in argv, chat or logs, and never wrap writes in blind
+retries.
 
 Use [environments-and-releasing](../farthershore-environments-and-releasing/SKILL.md)
 for publication evidence. Report each verified fact and gap separately; a
