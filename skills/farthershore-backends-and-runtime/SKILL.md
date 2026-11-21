@@ -50,6 +50,26 @@ installed capabilities before use.
    For repeatable multi-environment hosting, retrieve the infrastructure guide;
    review the plan and protect remote locked state because it can contain secrets.
 
+## Host, infrastructure as code and previews
+
+Use the host the human chose. With permission, install its CLI and offer its
+official MCP server; the human adds it and signs in, never pasting a provider
+token into chat. Search for that host's deploy guide (for example
+`backend/deploy-railway` or `backend/deploy-render`; with none, use
+`backend/infrastructure-opentofu`) and declare service, database and secret
+NAMES in the host's own infrastructure as code (Railway IaC, `fly.toml`, a
+`render.yaml` Blueprint, OpenTofu) instead of console clicks or one-off CLI
+changes; secret values never enter it. Keep at least one instance running:
+a sleeping or free tier turns into a cold start on a paying customer's call.
+
+Before a preview writes anything, search for the current per-environment
+database guidance and choose: one process selecting a per-environment database,
+or a deployment per preview bound with `--env`. A preview without its own
+binding is served by the shared deployment and its database. The platform never creates, copies or
+deletes databases or branches and never tears previews down: own branch
+creation, per-branch credentials (Neon branches inherit parent roles) and
+teardown of the environment, host resources and branch.
+
 ## Scope, identity and measurement
 
 Preview origins can inherit a production binding by stable slug; this never
