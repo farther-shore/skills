@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "source": "farther-shore/fs-turbo",
-  "sourceCommit": "9f4ac45c8f56c69c8e6ab4de02e07b8b5efa7d9b",
+  "sourceCommit": "2b3de6a9dc05efd3e6d83e86786dc1b749242fac",
   "boundary": "Candidate authored MDX presence/heading resolution only; no live HTTP/search or deployment certificate.",
   "pages": [
     {
@@ -14,7 +14,7 @@
       "link": "agents/overview",
       "slug": "agents/overview",
       "anchor": null,
-      "sha256": "15cfa7cbe70d67d0745b1ba6f0c5f9ccd0e998692d90d9cf24be3abce427c409"
+      "sha256": "970051cb561ccfcf554bb6a599ea33a72dec577bb003ac14f7aa1ed39d1374be"
     },
     {
       "link": "agents/platform-agent",
@@ -26,55 +26,55 @@
       "link": "backend/metering",
       "slug": "backend/metering",
       "anchor": null,
-      "sha256": "599a9ef351a48e5efc7f63c305e5310c99fdd21351c7c88944f6d56279d604e1"
+      "sha256": "9597e8641f56da7f6ccdeb944f1333814d74746b507b183aeb43603af1b5cf15"
     },
     {
       "link": "backend/overview",
       "slug": "backend/overview",
       "anchor": null,
-      "sha256": "de3bc92092963c54cc5fbd0e9878d93267c71f7549988f8c5eaad5e465fd08e8"
+      "sha256": "a5505532e99d61a6acce555d5f17277588406a16e41587df8d782e1c68f0fe52"
     },
     {
-      "link": "backend/runtime-tokens",
-      "slug": "backend/runtime-tokens",
+      "link": "backend/secret-keys",
+      "slug": "backend/secret-keys",
       "anchor": null,
-      "sha256": "159cba039f9358758a6d539c9987f86a3d8c5ab148427172a351471b741433b2"
+      "sha256": "a9def0201641aabcaa5c7572a77c89146100c680565aeac4051f6fa80bc4979d"
     },
     {
       "link": "cookbook/preview-environment",
       "slug": "cookbook/preview-environment",
       "anchor": null,
-      "sha256": "21fd35fc75b80e3ae679cf84ffea0fe018abb5255401074a145830ef450c486f"
+      "sha256": "8675352850afc67d7ca331c386aec644313b8d87c9e176ab452a6d4a480b1468"
     },
     {
       "link": "cookbook/release-production",
       "slug": "cookbook/release-production",
       "anchor": null,
-      "sha256": "371fc6c23bc68e7d329e724c996e0a25b3dec7fdf43485a1ddd96a4a968660d3"
+      "sha256": "7d1d85e2ab0854b7c6003818953313f55664777199cb1eca0fc5e1b400b3e0b6"
     },
     {
       "link": "define/business-class",
       "slug": "define/business-class",
       "anchor": null,
-      "sha256": "0d4027291af8477a2838c68ed2fa5700821a6001fdc5b134dc41ed333663b305"
+      "sha256": "dd3c30dc0a491bb5f4d31ef78432c1197927809ef89ceaa4671501e36fec9065"
     },
     {
       "link": "define/plans",
       "slug": "define/plans",
       "anchor": null,
-      "sha256": "a3f6e08e893016df5fa85274138976e80f1d93c20e761e0e705fefdb58a2a628"
+      "sha256": "739a1acbfa5e927774fe69a54100eaed7725f6ac8d2e9224f0cf2d1011d4a427"
     },
     {
       "link": "define/team-rbac",
       "slug": "define/team-rbac",
       "anchor": null,
-      "sha256": "d90bbcbca462875e488de1ee0aaa689acdd9ff2a316780825cc26d5ab786d2f8"
+      "sha256": "3451bb5166201c3c35db0513e5694f6f7346583fac1d898111ca92041ebfbca2"
     },
     {
       "link": "frontend/components",
       "slug": "frontend/components",
       "anchor": null,
-      "sha256": "7bd54e4e4bcd8c23e6a4f9eba5d1de1515ee638badc7de14d67b21eca48770fa"
+      "sha256": "f37ae36fb25cc8088bb58164948519c9b9d618fe031c492bfc27103c9d446c59"
     },
     {
       "link": "frontend/custom-components",
@@ -86,13 +86,13 @@
       "link": "frontend/overview",
       "slug": "frontend/overview",
       "anchor": null,
-      "sha256": "d90b1cd6bd5b522d0c33faf707344f33abb7ca26eb8d6debb9ff95fa75ec2685"
+      "sha256": "13cdeaa6ece2e9019b7b452ce8d4c6ffca4fcbd00605153299a14ac013088408"
     },
     {
       "link": "get-started/quickstart",
       "slug": "get-started/quickstart",
       "anchor": null,
-      "sha256": "bb428104b38148b3a9ffdeb39fd141182b89a0b08b9ef42d75d9ac176ca88df4"
+      "sha256": "5ee5ea9c9bf4e3250779c81683bf9c0b1c2682b211455274ddaaf6451d770b9d"
     },
     {
       "link": "llms.txt",
@@ -103,7 +103,7 @@
       "link": "monetize/plan-changes",
       "slug": "monetize/plan-changes",
       "anchor": null,
-      "sha256": "a7c4566f841d82e7be821fabb6109e3b7029101e1a2638f8c73a5771add333f1"
+      "sha256": "301ea6cd3f3aae6ec7564efc3d55d544711aa0c25515dee7115ecb1e05308416"
     },
     {
       "link": "operate/apply-timeline",
@@ -115,31 +115,31 @@
       "link": "operate/customer-operations",
       "slug": "operate/customer-operations",
       "anchor": null,
-      "sha256": "b7ecf0120c6489bfcb8e56687406154bfd8b651e32d323516537a6414da2991a"
+      "sha256": "7ad653fddefff8af682921774420424db1bed1322cde14b2b5c67dffbb651133"
     },
     {
       "link": "operate/notifications",
       "slug": "operate/notifications",
       "anchor": null,
-      "sha256": "adbf57707fa8290d5fd502d0c683509b5da20a62bb2609e906c2b91648d7761f"
+      "sha256": "3a2ce9d97eb7a0fb07be5338e9f37d489d92a126413cea8432fcc2f131a3af0c"
     },
     {
       "link": "operate/observability-and-troubleshooting",
       "slug": "operate/observability-and-troubleshooting",
       "anchor": null,
-      "sha256": "191bc3c885d4c66aca2a23b1b9f038d77503fadb31fc22428d793bc8ab1aad4f"
+      "sha256": "273e88f2ee338c40bbb3b300df92abd8c6febae7e6188a8a1152090979ab8dbf"
     },
     {
       "link": "reference/business-sdk",
       "slug": "reference/business-sdk",
       "anchor": null,
-      "sha256": "b08fb6f8ef58931eb6d2d76cd14fb6faced3c6fd23a03b972e979d5327b2bb95"
+      "sha256": "af03291db0f6b406d71b500eee4253c6336dac94d778317eb10857dd3265d2d2"
     },
     {
       "link": "reference/commercial-releases",
       "slug": "reference/commercial-releases",
       "anchor": null,
-      "sha256": "4b678ab31883cb414b31c31fd1a2662fc4b82e1131e0287705439637aeac3cc2"
+      "sha256": "98218fa40bcb3c7ad403ab460112a6733a99b891006562ecae72e59a47521b5e"
     }
   ]
 }
