@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "source": "farther-shore/fs-turbo",
-  "sourceCommit": "2b3de6a9dc05efd3e6d83e86786dc1b749242fac",
+  "sourceCommit": "11b37eb974329e2db74f1ec4ec11e092d58cf6d0",
   "boundary": "Candidate authored MDX presence/heading resolution only; no live HTTP/search or deployment certificate.",
   "pages": [
     {
@@ -14,13 +14,13 @@
       "link": "agents/overview",
       "slug": "agents/overview",
       "anchor": null,
-      "sha256": "970051cb561ccfcf554bb6a599ea33a72dec577bb003ac14f7aa1ed39d1374be"
+      "sha256": "44d88b8f12b6d3fd73f6ddbf1f56fe05a22f56e2d1834ae0155740826be75d98"
     },
     {
       "link": "agents/platform-agent",
       "slug": "agents/platform-agent",
       "anchor": null,
-      "sha256": "8b61c8a89eba9dd74fc7597e1d6c8094e5d95f500ab845481b7ece0db9983690"
+      "sha256": "cba6750606d75f9769f2477a1026a57228513ab352e71614027225603c195b01"
     },
     {
       "link": "backend/metering",
@@ -32,7 +32,7 @@
       "link": "backend/overview",
       "slug": "backend/overview",
       "anchor": null,
-      "sha256": "a5505532e99d61a6acce555d5f17277588406a16e41587df8d782e1c68f0fe52"
+      "sha256": "37324357c1f5a71ad5a421ce424aab51bd73bc991ca2d3aa367b5bbe11c8c28b"
     },
     {
       "link": "backend/secret-keys",
@@ -44,13 +44,13 @@
       "link": "cookbook/preview-environment",
       "slug": "cookbook/preview-environment",
       "anchor": null,
-      "sha256": "8675352850afc67d7ca331c386aec644313b8d87c9e176ab452a6d4a480b1468"
+      "sha256": "7c7811c9594a83f68839edeb7007afc18fde37d9d132051a61f6b4b137c84c5e"
     },
     {
       "link": "cookbook/release-production",
       "slug": "cookbook/release-production",
       "anchor": null,
-      "sha256": "7d1d85e2ab0854b7c6003818953313f55664777199cb1eca0fc5e1b400b3e0b6"
+      "sha256": "5ead86d5fa455235515245aebc2661ea6b919874984ead4d69d05bf9f8869557"
     },
     {
       "link": "define/business-class",
@@ -62,7 +62,7 @@
       "link": "define/plans",
       "slug": "define/plans",
       "anchor": null,
-      "sha256": "739a1acbfa5e927774fe69a54100eaed7725f6ac8d2e9224f0cf2d1011d4a427"
+      "sha256": "461c08162916d6c8e9ba355d8253f5433b28b283ae6560d55ca2fed68cfef721"
     },
     {
       "link": "define/team-rbac",
@@ -74,7 +74,7 @@
       "link": "frontend/components",
       "slug": "frontend/components",
       "anchor": null,
-      "sha256": "f37ae36fb25cc8088bb58164948519c9b9d618fe031c492bfc27103c9d446c59"
+      "sha256": "fbf4de642c0b245345cdf387393f20c204723bda99cd8a663fee724cb1fb2621"
     },
     {
       "link": "frontend/custom-components",
@@ -86,13 +86,13 @@
       "link": "frontend/overview",
       "slug": "frontend/overview",
       "anchor": null,
-      "sha256": "13cdeaa6ece2e9019b7b452ce8d4c6ffca4fcbd00605153299a14ac013088408"
+      "sha256": "98ae9dc70b93f372566d764cec075d4835cf07682aa95e3a1a7883f7dbe839de"
     },
     {
       "link": "get-started/quickstart",
       "slug": "get-started/quickstart",
       "anchor": null,
-      "sha256": "5ee5ea9c9bf4e3250779c81683bf9c0b1c2682b211455274ddaaf6451d770b9d"
+      "sha256": "7a2b158054e6846724342c8715aae10c48b7776116a4c3ae4076f6f311dde5aa"
     },
     {
       "link": "llms.txt",
@@ -103,37 +103,43 @@
       "link": "monetize/plan-changes",
       "slug": "monetize/plan-changes",
       "anchor": null,
-      "sha256": "301ea6cd3f3aae6ec7564efc3d55d544711aa0c25515dee7115ecb1e05308416"
+      "sha256": "5108578dc0d761a3405ea8fea67c1834bd43b0b20731945c09abc8d092ec7f1c"
     },
     {
       "link": "operate/apply-timeline",
       "slug": "operate/apply-timeline",
       "anchor": null,
-      "sha256": "0b5c98ebe5202f27f0fded5f22b1dc3067c4d4adc23c269b4a57183b58ddc5d1"
+      "sha256": "d66fd00396407631c87b6b37acb37bc870a7aa291205d95d4e033645d3ae3a18"
     },
     {
       "link": "operate/customer-operations",
       "slug": "operate/customer-operations",
       "anchor": null,
-      "sha256": "7ad653fddefff8af682921774420424db1bed1322cde14b2b5c67dffbb651133"
+      "sha256": "c33ccbe3234944ed94f35151b292197dff645a0362967a17cb2ef3f0effcf571"
+    },
+    {
+      "link": "operate/maker-tokens",
+      "slug": "operate/maker-tokens",
+      "anchor": null,
+      "sha256": "65316a7f35c7820bb826a8d3c19d10c72e6df98e8606b09898e66e254365c889"
     },
     {
       "link": "operate/notifications",
       "slug": "operate/notifications",
       "anchor": null,
-      "sha256": "3a2ce9d97eb7a0fb07be5338e9f37d489d92a126413cea8432fcc2f131a3af0c"
+      "sha256": "7c8cb132c0c541b7123012f21ab5096109f676bbaf7647bee0a7f992197cef76"
     },
     {
       "link": "operate/observability-and-troubleshooting",
       "slug": "operate/observability-and-troubleshooting",
       "anchor": null,
-      "sha256": "273e88f2ee338c40bbb3b300df92abd8c6febae7e6188a8a1152090979ab8dbf"
+      "sha256": "510bfb63a092b3f838492fa4bab69e5a1dd5284c7c14419f7c683d8e4be278d4"
     },
     {
       "link": "reference/business-sdk",
       "slug": "reference/business-sdk",
       "anchor": null,
-      "sha256": "af03291db0f6b406d71b500eee4253c6336dac94d778317eb10857dd3265d2d2"
+      "sha256": "550a8bfd4627cf95e54bc83db584cef8a03c7543fa9a0d1996b44b6e1be631f1"
     },
     {
       "link": "reference/commercial-releases",

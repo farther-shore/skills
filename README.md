@@ -26,9 +26,15 @@ branch/release rules.
 Resolve target, principal and installed pins → search in task language → read the
 full guide including prerequisites/recovery → describe methods/types, permissions
 and safety metadata → execute the authorized effect → verify its actual outcome.
-Search excerpts select guides; they do not replace them. Hosted MCP describe
-returns types; CLI code mode may expose a separate types command. Discover what
-is installed rather than assume the newest source is deployed.
+Search excerpts select guides; they do not replace them. The `farthershore` CLI
+is the only agent surface: `farthershore docs search`/`docs read` retrieve
+guides, `farthershore operations list` and leaf `--help` describe operations,
+and `farthershore outdated` reports stale repository packages or CLI. There is
+no platform-hosted agent server (MCP) and no `code` command. Sign-in is
+`farthershore login` (browser, or `--device`/`--headless`); unattended
+automation uses an organization access token through `--token-stdin` or
+`FARTHERSHORE_TOKEN`. Discover what is installed rather than assume the newest
+source is deployed.
 
 If search is unavailable, use canonical reads, section reads, index/corpora or
 full Markdown retrieval through https://docs.farthershore.com/llms.txt. If current
@@ -37,10 +43,11 @@ payment, credential or authority changes. Do not guess or silently change target
 Repository changes still use edits/builds/Git, even if a similarly named operation
 appears in search. No private API workaround.
 
-The candidate targets the search-aware source at platform commit
-`52fdd15a22b5f04b45f6a72636d908effddd6077`; source support is not deployed capability
-or live retrieval evidence. Match documentation source/package versions to actual
-CLI/SDK pins. There is no universal SDK version implied by the skill version.
+Release 5 targets the CLI-only, one-sign-in platform source (CLI 0.48.0, the
+oldest CLI the platform accepts); `scripts/docs-link-evidence.json` names the
+exact docs commit. Source support is not deployed capability or live retrieval
+evidence. Match documentation source/package versions to actual CLI/SDK pins.
+There is no universal SDK version implied by the skill version.
 
 ## Install or update
 
@@ -51,8 +58,8 @@ npx skills add https://github.com/farther-shore/skills/tree/<tag> --skill '*' -g
 ```
 
 Use the release required by the business repository; do not mix bundle tags.
-Source commits do not publish a release or update existing clients. This rewrite
-does not create a tag or change the platform's pinned archive/hash.
+Source commits do not publish a release or update existing clients; the
+platform pins one reviewed tag, commit and archive hash.
 
 After successful complete installation, move only recognized retired bundle
 entries to a recoverable backup outside discovered skill roots. Preserve unrelated

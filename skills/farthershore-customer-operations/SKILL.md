@@ -23,14 +23,15 @@ https://docs.farthershore.com/agents/automation or
 https://docs.farthershore.com/operate/notifications; index/corpora fallback is
 https://docs.farthershore.com/llms.txt. Excerpts/stale/truncated instructions do
 not establish prerequisites. Stop dependent authority, money or destructive
-changes if current guidance is unavailable. Discover actual installed MCP/CLI
+changes if current guidance is unavailable. Discover the actual installed CLI
 capabilities; no private API workaround or silent environment switch.
 
 Business deletion, organization deletion, organization ownership transfer and
-Stripe disconnect are human-only. Hand them to the responsible human through
-the currently documented human-only flow; machine CLI credentials, CLI code mode and hosted
-MCP cannot perform them. Chat approval or MCP confirmation does not change this
-boundary. Do not try raw calls or another agent credential to bypass it.
+Stripe disconnect are human-only. Hand them to the responsible human, who
+completes them in the dashboard with fresh sign-in; CLI sign-ins and access
+tokens cannot perform them. Chat approval does not change this boundary;
+`HUMAN_ONLY_ACTION` is a handoff. Do not try raw calls or another credential to
+bypass it.
 
 ## Inspect, preview, apply and read back
 
@@ -52,9 +53,17 @@ For `OUTCOME_UNKNOWN`, follow `retry.reconcile` before repeating. Inspect
 `retry.kind`, enforcement and response semantics; no automatic retry means no
 write loop. Repeat only when current evidence shows the effect absent and still
 wanted; ambiguous outcomes need direction. Webhook tests and messages have real
-external effects. Secret issuance/rotation returns once; use secure delivery,
-not argv/chat/logs. Hosted MCP redacts one-time secrets even when approved: use
-a supported secure CLI/human handoff when the workload needs the actual value.
+external effects. Secret issuance/rotation returns once in the terminal and
+cannot be read back; use secure delivery, not argv/chat/logs, and a supported
+secure CLI capture or human handoff when the workload needs the actual value.
+
+Builder automation credentials are organization-owned access tokens
+(`farthershore token list|create|update|rotate|revoke|permission-catalog`),
+administered only from a signed-in user session. A token holds exactly the
+permissions it lists, capped at its creator's; `token update` replaces them in
+place without changing the secret. Read the inventory with pagination after
+each action and verify the consumer's allowed and denied operations. See
+https://docs.farthershore.com/operate/maker-tokens.
 
 Containment and removal differ. Customer block revokes keys and currently has
 no CLI unblock; removal has no restore command. Confirm exact destructive scope

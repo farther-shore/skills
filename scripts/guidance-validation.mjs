@@ -35,7 +35,18 @@ const FORBIDDEN_GUIDANCE = [
     /\bfarthershore\s+config\s+(?:propose|draft|apply)\b|\/config\/(?:propose|draft|apply)\b|\bconfig (?:proposal|draft)\b/i,
     "obsolete bidirectional config workflow",
   ],
-  [/\bmk_[A-Za-z0-9_]+\b/i, "raw maker-token credential"],
+  [/\bmk_[A-Za-z0-9_]+\b/i, "raw access-token credential"],
+  [
+    /\b(?:hosted|platform|FartherShore|Farther Shore)\s+MCP\b|\bMCP\s+(?:describe|search|run|redacts?|tools?|confirmation)\b|\brun_writes\b|\bsearch_docs\b|\bread_docs_page\b/i,
+    "retired hosted MCP surface",
+  ],
+  [/\bfarthershore\s+code\b|\bcode mode\b/i, "retired CLI code mode"],
+  [/\bMakerTokens?\b|\bmaker tokens?\b/i, "retired maker-token name"],
+  [
+    /\/auth\/cli\/exchange\b|\bcredential exchange\b|\bCLI sessions?\b|\bpersonal (?:access )?tokens?\b/i,
+    "retired credential exchange or personal token",
+  ],
+  [/@farthershore\/client\b/, "retired @farthershore/client package"],
   [
     /\bfarthershore\s+(?:auth\s+login|login)\b[^\n`]*\s--token(?:=|\s|$)/i,
     "secret-bearing CLI authentication",
@@ -72,8 +83,10 @@ const FORBIDDEN_GUIDANCE = [
 ];
 
 const DEVICE_AUTH_REQUIREMENTS = [
-  [/\bfarthershore\s+login\b/i, "browser device login"],
+  [/\bfarthershore\s+login\b/i, "browser login"],
+  [/\bfarthershore\s+login\s+--device\b/i, "device-code login"],
   [/\bfarthershore\s+login\s+--headless\b/i, "headless device login"],
+  [/\bkeychain\b/i, "keychain-stored sign-in"],
   [/\bfarthershore\s+logout\b/i, "logout command"],
   [
     /\bcredential\b[\s\S]{0,100}(?:follows?|uses?)[\s\S]{0,100}live[\s\S]{0,100}(?:role|permissions?)/i,
@@ -83,10 +96,7 @@ const DEVICE_AUTH_REQUIREMENTS = [
     /\ball\s+current\s+and\s+future\s+organizations\s+and\s+businesses\b/i,
     "all-organization and all-business membership",
   ],
-  [
-    /\bstandalone approval page\b[\s\S]{0,140}(?:only|just)[\s\S]{0,60}(?:allow|approve)[\s\S]{0,60}(?:deny|decline)/i,
-    "zero-option approval",
-  ],
+  [/\bno\s+permission\s+or\s+scope\s+choices\b/i, "zero-option login"],
   [
     /\bfarthershore\s+auth\s+organization\s+list\b/i,
     "organization list command",
@@ -100,12 +110,12 @@ const DEVICE_AUTH_REQUIREMENTS = [
     "one-command organization override",
   ],
   [
-    /\borganization-scoped\b[\s\S]{0,100}\bmaker[- ]?token\b[\s\S]{0,180}\bfarthershore\s+login\s+--token-stdin\b/i,
-    "organization-scoped MakerToken stdin override",
+    /\borganization-scoped\b[\s\S]{0,100}\baccess token\b[\s\S]{0,320}\bfarthershore\s+login\s+--token-stdin\b/i,
+    "organization-scoped access token stdin override",
   ],
   [
     /\bFARTHERSHORE_TOKEN\b[\s\S]{0,120}\b(?:ephemeral|temporary|one-command)\b|\b(?:ephemeral|temporary|one-command)\b[\s\S]{0,120}\bFARTHERSHORE_TOKEN\b/i,
-    "ephemeral MakerToken environment override",
+    "ephemeral access token environment override",
   ],
   [
     /\b(?:never|do not)\b[\s\S]{0,160}(?:credential|secret|token)[\s\S]{0,160}(?:argv|command line)[\s\S]{0,160}(?:stdout|stderr|output)/i,
@@ -215,7 +225,7 @@ export const WORKFLOW_REQUIREMENTS = {
       "row before credential",
     ],
     [/configure[\s\S]{0,90}then deploy\/start/i, "secret before process start"],
-    [/redacts[\s\S]{0,160}cannot configure/i, "MCP secret handoff"],
+    [/redacted[\s\S]{0,80}cannot configure/i, "one-time secret handoff"],
     [/before JSON parsing/i, "raw verification order"],
     [/scope every storage query/i, "tenant predicates"],
     [
@@ -253,7 +263,7 @@ export const WORKFLOW_REQUIREMENTS = {
     [/compatible pushes preserve personas/i, "compatible preview preservation"],
     [/origins may inherit production/i, "backend data isolation"],
     [
-      /terminal-owned[\s\S]{0,140}MCP does[\s\S]{0,100}local servers/i,
+      /terminal-owned[\s\S]{0,140}without a terminal process[\s\S]{0,100}local servers/i,
       "local process boundary",
     ],
     [

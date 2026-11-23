@@ -21,8 +21,8 @@ https://docs.farthershore.com/define/plans or
 https://docs.farthershore.com/reference/business-sdk; use
 https://docs.farthershore.com/llms.txt for index/corpora fallback. Stop dependent
 economic/authority changes if current guidance cannot be retrieved; do not guess
-or switch environments. Hosted MCP describe includes types; CLI code mode has
-its own installed capabilities.
+or switch environments. The `farthershore` CLI is the only agent surface; use
+its installed `docs search`/`docs read`, `operations list` and leaf help.
 
 ## Design independent controls
 

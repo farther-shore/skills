@@ -61,7 +61,7 @@ test("rejects raw credentials in login argv while allowing stdin ingestion", () 
   );
   assert.deepEqual(
     findObsoleteGuidance(
-      "Pipe an organization-scoped MakerToken to `farthershore login --token-stdin`, or set `FARTHERSHORE_TOKEN` as an ephemeral override.",
+      "Pipe an organization-scoped access token to `farthershore login --token-stdin`, or set `FARTHERSHORE_TOKEN` as an ephemeral override.",
     ),
     [],
   );
@@ -69,19 +69,42 @@ test("rejects raw credentials in login argv while allowing stdin ingestion", () 
 
 test("permits supported operational administration without allowing raw credentials", () => {
   for (const text of [
-    "Manage a MakerToken through the supported operation catalog.",
+    "Manage an access token with farthershore token update.",
+    "Install the host's official MCP server for its own deployments.",
     "Run farthershore business update for presentation metadata.",
     "The responsible human connects Stripe and completes Tax requirements.",
   ])
     assert.deepEqual(findObsoleteGuidance(text), []);
   assert.deepEqual(
     findObsoleteGuidance("Set FARTHERSHORE_TOKEN=mk_plaintext_secret."),
-    ["raw maker-token credential"],
+    ["raw access-token credential"],
   );
   assert.ok(
     findObsoleteGuidance("farthershore plan update paid").includes(
       "CLI contract mutation",
     ),
+  );
+});
+
+test("rejects the retired hosted MCP, code mode, exchange and token names", () => {
+  for (const [text, label] of [
+    ["Use hosted MCP search, then run_writes.", "retired hosted MCP surface"],
+    ["Call search_docs and read_docs_page.", "retired hosted MCP surface"],
+    ["MCP describe supplies types.", "retired hosted MCP surface"],
+    ["Run farthershore code with a script.", "retired CLI code mode"],
+    ["CLI code mode exposes types.", "retired CLI code mode"],
+    ["Create a MakerToken for CI.", "retired maker-token name"],
+    ["Pipe the maker token to stdin.", "retired maker-token name"],
+    ["POST /auth/cli/exchange first.", "retired credential exchange or personal token"],
+    ["Create a personal access token.", "retired credential exchange or personal token"],
+    ["Import from @farthershore/client.", "retired @farthershore/client package"],
+  ])
+    assert.ok(findObsoleteGuidance(text).includes(label), text);
+  assert.deepEqual(
+    findObsoleteGuidance(
+      "Read https://docs.farthershore.com/operate/maker-tokens for access tokens.",
+    ),
+    [],
   );
 });
 
@@ -121,40 +144,44 @@ test("rejects login option flags and configurable approval guidance", () => {
 
 test("requires the complete user-bound multi-organization login model", () => {
   const complete = [
-    "Run `farthershore login`; the CLI opens the browser for device approval.",
-    "Without a browser, run `farthershore login --headless`.",
+    "Run `farthershore login`; the CLI opens the browser sign-in.",
+    "Without a browser, run `farthershore login --device` or `farthershore login --headless`.",
     "Run `farthershore logout` to remove the saved credential.",
-    "The credential follows the user's live role and CLI-operable permissions across all current and future organizations and businesses.",
-    "The standalone approval page has only Allow and Deny actions.",
+    "The CLI keeps the sign-in in the system keychain.",
+    "The credential follows the user's live role across all current and future organizations and businesses.",
+    "Normal login has no permission or scope choices.",
     "Run `farthershore auth organization list --format json` and `farthershore auth organization use <id-or-slug>` to change the saved organization.",
     "Use `farthershore --organization <id-or-slug> business list --format json` for a one-command override.",
-    "For a separately pre-issued organization-scoped restricted MakerToken, use `farthershore login --token-stdin` or the ephemeral `FARTHERSHORE_TOKEN` override.",
+    "For unattended automation, pipe an organization-scoped access token into `farthershore login --token-stdin` or use the ephemeral `FARTHERSHORE_TOKEN` override.",
     "Never place a raw credential in argv, stdout, or stderr.",
   ].join("\n");
 
   assert.deepEqual(findMissingDeviceAuthGuidance(complete), []);
   assert.deepEqual(findMissingDeviceAuthGuidance("Run `farthershore login`."), [
+    "device-code login",
     "headless device login",
+    "keychain-stored sign-in",
     "logout command",
     "live user authority",
     "all-organization and all-business membership",
-    "zero-option approval",
+    "zero-option login",
     "organization list command",
     "organization use command",
     "one-command organization override",
-    "organization-scoped MakerToken stdin override",
-    "ephemeral MakerToken environment override",
+    "organization-scoped access token stdin override",
+    "ephemeral access token environment override",
     "secret-safe credential handling",
   ]);
 });
 
 test("requires normal login guidance to distinguish a restricted stdin credential", () => {
   const guidanceWithoutRestrictedCredential = [
-    "Run `farthershore login`; the CLI opens the browser for device approval.",
-    "Without a browser, run `farthershore login --headless`.",
+    "Run `farthershore login`; the CLI opens the browser sign-in.",
+    "Without a browser, run `farthershore login --device` or `farthershore login --headless`.",
     "Run `farthershore logout` to remove the saved credential.",
-    "The credential follows the user's live role and CLI-operable permissions across all current and future organizations and businesses.",
-    "The standalone approval page has only Allow and Deny actions.",
+    "The CLI keeps the sign-in in the system keychain.",
+    "The credential follows the user's live role across all current and future organizations and businesses.",
+    "Normal login has no permission or scope choices.",
     "Run `farthershore auth organization list --format json` and `farthershore auth organization use <id-or-slug>` to change the saved organization.",
     "Use `farthershore --organization <id-or-slug> business list --format json` for a one-command override.",
     "Never place a raw credential in argv, stdout, or stderr.",
@@ -163,8 +190,8 @@ test("requires normal login guidance to distinguish a restricted stdin credentia
   assert.deepEqual(
     findMissingDeviceAuthGuidance(guidanceWithoutRestrictedCredential),
     [
-      "organization-scoped MakerToken stdin override",
-      "ephemeral MakerToken environment override",
+      "organization-scoped access token stdin override",
+      "ephemeral access token environment override",
     ],
   );
 });
