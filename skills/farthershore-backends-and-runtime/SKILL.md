@@ -23,8 +23,8 @@ https://docs.farthershore.com/backend/metering and index/corpora at
 https://docs.farthershore.com/llms.txt. A search excerpt, stale/truncated guide or
 missing capability does not justify guessing. Stop dependent credential or
 production changes if authoritative retrieval fails; never switch environment
-or use a private endpoint. MCP describe supplies types; discover its actual
-installed capabilities before use.
+or use a private endpoint. Discover the installed CLI's actual capabilities
+before use.
 
 ## First connection
 
@@ -48,9 +48,9 @@ installed capabilities before use.
    refused. Capture the key once into the host secret store as
    `FS_SECRET_KEY`, configure other process secrets, then deploy/start the
    SDK-integrated service.
-   Hosted MCP always redacts one-time secrets, including approved writes: its
-   redacted result cannot configure a host. Use supported secure CLI capture or
-   human delivery. Do not mint repeatedly after a lost/redacted response.
+   The CLI shows the key once and it cannot be read back; a redacted or lost
+   result cannot configure a host. Use supported secure CLI capture or human
+   delivery. Do not mint repeatedly after a lost/redacted response.
 4. For tunnels, retrieve the distinct eligibility, provisioning, embedded/sidecar
    and key-operation requirements; do not mechanically reuse direct ordering.
    For repeatable multi-environment hosting, retrieve the infrastructure guide;

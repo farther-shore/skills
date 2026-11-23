@@ -1,6 +1,6 @@
 ---
 name: farthershore-overview
-description: Use when starting a FartherShore task, creating a managed business, discovering supported operations, or locating the first failing boundary.
+description: Use when starting a FartherShore task, creating a managed business, discovering supported CLI operations, or locating the first failing boundary.
 ---
 
 # Choose the next safe step
@@ -18,18 +18,19 @@ Choose the owning surface before looking for a similarly named writer.
 
 ## Retrieve instructions before acting
 
-Discover installed capabilities rather than assuming the newest CLI or hosted
-MCP is deployed. Search in task language; read the **full guide**, including
-prerequisites, failure and recovery sections. Search excerpts only select pages.
-Check source/package versions against installed pins; a stale or truncated guide
-is missing evidence. Describe the intended methods and inspect their inputs,
-outputs, permissions, side effects, preview and retry metadata. Then execute the
-authorized task and verify the documented result.
-
-For hosted MCP the loop is search → describe guide/methods → run or run_writes;
-describe supplies types. There is no extra MCP types tool. CLI code mode can
-also expose types; use installed help for exact syntax. Plain CLI operations
-require current leaf `--help`. Missing capability never authorizes a private API.
+The `farthershore` CLI is the only agent surface: there is no platform-hosted
+agent server (MCP) and no `code` command. Run `farthershore --version` and
+discover installed capabilities rather than assuming the newest CLI is deployed;
+`farthershore outdated` reports whether the repository's packages and the CLI
+are behind, without changing files. Search in task language with
+`farthershore docs search "<task>" --format json`; read the **full guide** with
+`farthershore docs read <path>`, including prerequisites, failure and recovery
+sections. Search excerpts only select pages. Check source/package versions
+against installed pins; a stale or truncated guide is missing evidence. Describe
+the intended operations through `farthershore operations list --format json`
+and current leaf `--help`, and inspect their inputs, outputs, permissions,
+side effects, preview and retry metadata. Then execute the authorized task and
+verify the documented result. Missing capability never authorizes a private API.
 
 If search is unavailable or irrelevant, use canonical docs reads/section reads,
 index/corpora or full Markdown retrieval. Start at
@@ -41,10 +42,16 @@ authority change. Never silently change environment to obtain working docs.
 
 ## Principal, secrets and retries
 
-Normal `farthershore login` uses human device approval; headless sessions use
-`farthershore login --headless`. The credential follows the user's live role
-and CLI-operable permissions across all current and future organizations and
-businesses. The standalone approval page has only Allow and Deny actions; it provides no configurable login choices.
+There is one way to sign in. `farthershore login` opens the browser sign-in
+(PKCE) and receives the result on this machine; over SSH, in CI or without a
+reachable browser use `farthershore login --device` (or
+`farthershore login --headless`, which never opens a browser) and enter the
+printed code in a browser. A human approves the request; the agent cannot, and
+should approve only a code for a sign-in it started. Normal login has no
+permission or scope choices: the credential follows the user's live role
+across all current and future organizations and businesses. The CLI keeps the
+sign-in in the system keychain and renews it; reuse a valid intended session
+and verify `farthershore auth whoami --format json` after any login.
 
 Use current organization context as a selector for each command, preserving the
 original session authority.
@@ -53,13 +60,18 @@ Organization selection changes command context, never credential authority:
 `farthershore auth organization use <id-or-slug>`, or the global option
 `farthershore --organization <id-or-slug> business list --format json`.
 
-For a separately pre-issued organization-scoped MakerToken, securely pipe it
-into `farthershore login --token-stdin` or use `FARTHERSHORE_TOKEN` as an ephemeral
-override. Never place a raw credential in argv, stdout, stderr, chat or logs;
-unset overrides after use. `farthershore logout` removes the saved credential.
-Hosted MCP redacts one-time secrets even with approval: redaction is metadata,
-not a usable credential. Choose secure CLI capture or human secret delivery;
-do not issue repeatedly hoping to reveal a secret.
+Unattended automation (CI, headless agents, shared machines) uses an
+organization-scoped access token, never a person's own login. A human creates
+it in the dashboard or with `farthershore token create` from a signed-in user
+session; it holds exactly the listed permissions and business scope. Securely
+pipe it into `farthershore login --token-stdin` or set `FARTHERSHORE_TOKEN` as
+an ephemeral one-process override. Never place a raw credential in argv,
+stdout, stderr, chat or logs; unset overrides after use. `farthershore logout`
+signs out and removes the saved credential. A one-time secret is shown once in
+the terminal and cannot be read back: capture it directly into secure storage,
+because a lost or redacted response is not a usable credential. Choose secure
+CLI capture or human secret delivery; do not issue repeatedly hoping to reveal
+a secret.
 
 Inspect `retry.kind`, `retry.reconcile`, `retry.rationale`, `retry.enforcement`
 and `retry.responseSemantics` from the operation catalog before dispatch.
@@ -78,10 +90,11 @@ context-token is a short-lived credential with `no_automatic_retry`; follow its
 specific recovery rather than treating an old response as fresh authority.
 
 Business deletion, organization deletion, organization ownership transfer and
-Stripe disconnect are human-only. Hand them to the responsible human through
-the currently documented human-only flow; machine CLI credentials, CLI code mode and hosted
-MCP cannot perform them. Chat approval or MCP confirmation does not change this
-boundary. Do not try raw calls or another agent credential to bypass it.
+Stripe disconnect are human-only. Hand them to the responsible human, who
+completes them in the dashboard with fresh sign-in; CLI sign-ins and access
+tokens cannot perform them. Chat approval does not change this boundary;
+`HUMAN_ONLY_ACTION` is a handoff. Do not try raw calls or another credential to
+bypass it.
 
 ## Create or diagnose
 

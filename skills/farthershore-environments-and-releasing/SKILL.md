@@ -15,9 +15,9 @@ and observe them. Preserve the user's scope and authorization for exact effects.
 
 Search the task and read the complete guide including prerequisites, failure
 and recovery. Match source/package versions and inspect described methods,
-types, permissions, preview/retry metadata or current CLI leaf help. Hosted MCP
-search → describe → run/run_writes does not imply deployed availability;
-describe already includes types. If search fails, use canonical
+types, permissions, preview/retry metadata through `farthershore operations
+list` and current CLI leaf help; a documented command does not imply the
+installed CLI has it. If search fails, use canonical
 https://docs.farthershore.com/cookbook/preview-environment,
 https://docs.farthershore.com/cookbook/release-production,
 https://docs.farthershore.com/operate/apply-timeline and
@@ -53,8 +53,9 @@ current prerequisites remain unavailable. Never silently switch environments.
    member/product-role variants in that owned workspace. Keep builder, account
    and product-role authority distinct; never join an unrelated customer.
 5. Use supported hosted persona login or a terminal-owned `frontend dev --live`
-   / `frontend preview --live` session with current discovered flags. MCP does
-   not run local servers, tunnels, browser processes or private lease operations.
+   / `frontend preview --live` session with current discovered flags. An agent
+   without a terminal process does not run local servers, tunnels, browser
+   processes or private lease operations.
    Keep bootstrap/rotation output, keys, handoffs, cookies and leases out of logs,
    app code and storage. CLI readiness/opened output is not observed sign-in.
    Check identity/org, sign-in/plan/core task, owner/member and product-role

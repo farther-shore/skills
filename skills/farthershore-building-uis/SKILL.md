@@ -24,7 +24,7 @@ https://docs.farthershore.com/frontend/custom-components; use
 https://docs.farthershore.com/llms.txt for index/corpora fallback. Excerpts are
 selection aids; stale or truncated guidance is insufficient. Stop dependent
 payment/authority changes if complete current instructions are unavailable.
-Discover installed MCP/CLI capabilities; never invent methods or switch targets.
+Discover installed CLI capabilities; never invent methods or switch targets.
 
 ## Choose composition and preserve authority
 
@@ -71,8 +71,8 @@ Checkout return is pending until durable subscription/access or funds reconcile.
 Use [environments-and-releasing](../farthershore-environments-and-releasing/SKILL.md)
 for preview selection, persona creation/reuse and secure hosted/local sign-in.
 Mock mode proves layout only. A terminal-owned live preview process and browser
-are required for a local signed-in journey; hosted MCP is not a local server or
-browser manager. Verify rendered identity and organization after sign-in and
+are required for a local signed-in journey; the CLI launcher alone is not a
+browser session. Verify rendered identity and organization after sign-in and
 every switch; browser-opened output alone is not authentication proof.
 
 Exercise sign-in → organization/plan/access → primary object/action → visible

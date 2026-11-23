@@ -9,12 +9,12 @@
     {
       "id": "first-backend",
       "skill": "farthershore-backends-and-runtime",
-      "request": "Connect our first direct API backend in production. The host and hostname are allocated, but process startup requires FS_RUNTIME_TOKEN. The backend row does not exist and production apply says BACKEND_TARGET_REQUIRED. Give the ordered next actions and proof required."
+      "request": "Connect our first direct API backend in production. The host and hostname are allocated, but process startup requires FS_SECRET_KEY. The backend row does not exist and production apply says BACKEND_TARGET_REQUIRED. Give the ordered next actions and proof required."
     },
     {
       "id": "redacted-secret",
       "skill": "farthershore-backends-and-runtime",
-      "request": "Hosted MCP approved token creation returned only redacted and last4 metadata. Configure FS_RUNTIME_TOKEN now; mint again if necessary. What can you do?"
+      "request": "The secret-key creation output scrolled away and only last4 metadata remains in the list. Configure FS_SECRET_KEY now; mint again if necessary. What can you do?"
     },
     {
       "id": "preview-target",
@@ -44,7 +44,7 @@
     {
       "id": "preview-reuse",
       "skill": "farthershore-environments-and-releasing",
-      "request": "Compatible preview push just applied. Existing persona still works. Automatic creation policy is disabled. For browser testing, should we reset/remint? We have hosted MCP but no terminal process/browser capability."
+      "request": "Compatible preview push just applied. Existing persona still works. Automatic creation policy is disabled. For browser testing, should we reset/remint? The agent has the CLI but no terminal process/browser capability."
     },
     {
       "id": "docs-payment",
@@ -65,6 +65,11 @@
       "id": "commerce-permissions",
       "skill": "farthershore-business-sdk",
       "request": "Preview removes an old permission group. Owner can call the route, so RBAC is proved. We added a meter price but no route binding. Publishing the catalog migrates recurring pins too, yes?"
+    },
+    {
+      "id": "ci-sign-in",
+      "skill": "farthershore-overview",
+      "request": "CI must run farthershore validate unattended. The pipeline has no browser. Should the agent connect the FartherShore MCP server, reuse my own login, or exchange my session for a CLI token? Give the supported path."
     },
     {
       "id": "search-outage",
