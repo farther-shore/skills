@@ -96,6 +96,42 @@ tokens cannot perform them. Chat approval does not change this boundary;
 `HUMAN_ONLY_ACTION` is a handoff. Do not try raw calls or another credential to
 bypass it.
 
+## First run, in order
+
+The spine of a new product. Each step names its leaf command; read that
+command's `--help` and the owning workflow before running it, and stop at the
+first step whose result you cannot observe.
+
+1. Confirm the principal with `farthershore auth whoami --format json`, then
+   create the business with `farthershore business create <slug>`. Pass the
+   global `--secrets-file <path>` on every command that returns a one-time
+   secret (creation shows the business's default secret key once): it writes
+   the secret to a file you own instead of the terminal.
+2. Clone the returned managed repository URL, read its AGENTS.md and author the
+   contract in `business/`.
+3. `farthershore build`, then `farthershore validate`; add `--transition` to
+   see what moving from what is live would block or change.
+4. Push a branch and read the checks, commit statuses and impact report on
+   that exact commit.
+5. Try it before production: `farthershore env create <business> --branch
+   <branch>` binds a preview to a branch, and
+   `farthershore persona bootstrap <business> --env <env> --plan <planKey>`
+   creates a test customer whose keys work on the preview host only.
+6. A product with an upstream connects it now: `farthershore backend scaffold
+   --node`, deploy on the builder's own host, then `farthershore backend bind
+   <business> <backend> --for all --origin <https-url>`
+   ([backends-and-runtime](../farthershore-backends-and-runtime/SKILL.md)).
+7. First go-live is `farthershore business publish <business>`; every later
+   version is `farthershore business release <business>`. Preview each with
+   `--dry-run` first and observe the result with
+   `farthershore business status <business>`
+   ([environments-and-releasing](../farthershore-environments-and-releasing/SKILL.md)).
+
+Guides for a non-production platform environment are read with the docs
+command's `--stage` option, for example
+`farthershore docs read <path> --stage`; never mix one environment's guide
+with another environment's target.
+
 ## Create or diagnose
 
 For creation, confirm the requested product shape. Only a product declaring an

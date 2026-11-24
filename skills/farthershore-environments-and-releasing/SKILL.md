@@ -46,6 +46,9 @@ current prerequisites remain unavailable. Never silently switch environments.
    environment's own contract and serving state before personas. Preview plans,
    grants/pricing and customer state are its own; origins may inherit production
    by slug. Bind isolated deployments/storage before writes requiring isolation.
+   Pushing a branch to the environment's own branch is what rebuilds its
+   contract and its site; `farthershore frontend status <business> --env
+   <environment>` shows which commit the preview site serves.
 4. Compatible pushes preserve personas, subscriptions, API keys and live usage.
    Reuse valid state after checking the new apply; incompatible changes can fail
    while prior state serves. Explicit destructive reset is a separate action.
@@ -59,7 +62,9 @@ current prerequisites remain unavailable. Never silently switch environments.
    Keep bootstrap/rotation output, keys, handoffs, cookies and leases out of logs,
    app code and storage. CLI readiness/opened output is not observed sign-in.
    Check identity/org, sign-in/plan/core task, owner/member and product-role
-   allowed/denied requests, org switching and usage/billing. Mock layout checks
+   allowed/denied requests, org switching and usage/billing. Read subscriber
+   and usage counts per environment (`--env`): a preview's test persona can
+   appear in a count that does not name its environment. Mock layout checks
    are narrower. Check provider-mode support; do not assume production personas.
 6. Finish browser observations, close/logout, stop the local process and verify
    lease cleanup. Remove only owned temporary personas/environment when asked;
@@ -92,7 +97,9 @@ is guarded; use a reviewed published non-draft/non-prerelease GitHub Release for
 an economic or unknown change, pinned to the exact immutable commit. Bare tags,
 merges and green builds are not activation. Provably non-economic default-branch
 changes may auto-publish; DRAFT default pushes only stage initial definition.
-Never repoint release tags.
+Never repoint release tags. `farthershore business release <business> --dry-run`
+previews that release (commit, what changed, version, any refusal); without
+`--dry-run` it cuts it, and `--wait` follows it until it is live.
 
 Review concrete SHA/version, terms/customer impact, production action and
 recovery within authorization. Verify expected tag/full SHA, successful publish
