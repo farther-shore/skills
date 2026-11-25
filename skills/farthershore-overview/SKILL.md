@@ -102,6 +102,11 @@ The spine of a new product. Each step names its leaf command; read that
 command's `--help` and the owning workflow before running it, and stop at the
 first step whose result you cannot observe.
 
+0. Check the account's obligations with `farthershore legal status --format
+   json`. Creating a business needs the platform agreements accepted, and going
+   live also needs complete seller details; otherwise the request is refused
+   with `LEGAL_OBLIGATION_UNMET`, whose items name each fix. Only a person can
+   accept the agreements, in the dashboard: hand that step to them and wait.
 1. Confirm the principal with `farthershore auth whoami --format json`, then
    create the business with `farthershore business create <slug>`. Pass the
    global `--secrets-file <path>` on every command that returns a one-time
@@ -149,6 +154,13 @@ apply/build/workflow IDs, structured error and retry headers, with secrets
 excluded. Find the first wrong boundary: host/environment → credential/customer/
 subscription → route/grant/member permission/limit → backend/report/publication.
 Use https://docs.farthershore.com/operate/observability-and-troubleshooting.
+For a refused request, `farthershore denial show <business> <requestId>`
+explains the decision; read the `code` against
+https://docs.farthershore.com/reference/response-codes and walk
+https://docs.farthershore.com/cookbook/diagnose-denied-request. A
+`402 trial_allowance_exhausted` is not a fault: the customer's trial has used
+the plan's included usage, so priced routes refuse until the trial ends or the
+customer starts the plan.
 Read current state and correlate one request before repair; do not widen access
 to make reproduction pass. Escalate platform-owned publication/provider faults
 with evidence when no supported repair exists.

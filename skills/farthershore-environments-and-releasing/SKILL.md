@@ -41,7 +41,11 @@ current prerequisites remain unavailable. Never silently switch environments.
    Build, frontend, validate and apply are different verdicts; read descriptions
    and timeline for deferred/failed/superseded publication.
 3. Inspect branch-prefix, pull-request or disabled preview policy before selecting
-   or creating an environment. Existing admitted environment branches rebuild on
+   or creating an environment. A preview is created one of two ways: under the
+   branch-prefix policy, pushing a branch named with the prefix (`env/`
+   unless `farthershore business preview-env set --branch-prefix` changed it)
+   creates or rebuilds that preview; `farthershore env create <business>
+   --branch <branch>` binds one to a branch explicitly. Existing admitted environment branches rebuild on
    compatible pushes; do not change policy merely to test. Wait for that
    environment's own contract and serving state before personas. Preview plans,
    grants/pricing and customer state are its own; origins may inherit production
@@ -58,8 +62,8 @@ current prerequisites remain unavailable. Never silently switch environments.
 5. Use supported hosted persona login or a terminal-owned `frontend dev --live`
    / `frontend preview --live` session with current discovered flags. An agent
    without a terminal process does not run local servers, tunnels, browser
-   processes or private lease operations.
-   Keep bootstrap/rotation output, keys, handoffs, cookies and leases out of logs,
+   processes or private sign-in session operations.
+   Keep bootstrap/rotation output, keys, handoffs, cookies and sign-in sessions out of logs,
    app code and storage. CLI readiness/opened output is not observed sign-in.
    Check identity/org, sign-in/plan/core task, owner/member and product-role
    allowed/denied requests, org switching and usage/billing. Read subscriber
@@ -67,7 +71,7 @@ current prerequisites remain unavailable. Never silently switch environments.
    appear in a count that does not name its environment. Mock layout checks
    are narrower. Check provider-mode support; do not assume production personas.
 6. Finish browser observations, close/logout, stop the local process and verify
-   lease cleanup. Remove only owned temporary personas/environment when asked;
+   the sign-in session was cleaned up. Remove only owned temporary personas/environment when asked;
    check teardown and track external backend data separately. Localhost cookies
    can collide across ports, so switch personas sequentially or use separate
    profiles and recheck identity.
@@ -79,6 +83,15 @@ Confirm valid plan/rate limits, accepted contract and all declared backend targe
 needs no artificial origin/token; an API/hybrid product must complete
 [backend verification](../farthershore-backends-and-runtime/SKILL.md).
 A separate hosted frontend needs its own artifact and browser evidence.
+
+Read the launch preflight before asking anyone to act:
+`farthershore legal status`, `farthershore stripe status <business>`,
+`farthershore tax-settings show <business>` and
+`farthershore organization seller-details show <organizationId>`, then follow
+https://docs.farthershore.com/operate/first-launch. Connecting Stripe is done by
+a person in the dashboard; there is no CLI command for it
+(https://docs.farthershore.com/monetize/stripe,
+https://docs.farthershore.com/operate/tax-settings).
 
 Resolve payment prerequisites with the responsible human: connected account,
 charges enabled, active card-payments capability and active Tax setup are

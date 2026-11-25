@@ -24,6 +24,32 @@ economic/authority changes if current guidance cannot be retrieved; do not guess
 or switch environments. The `farthershore` CLI is the only agent surface; use
 its installed `docs search`/`docs read`, `operations list` and leaf help.
 
+## Choose the offer's shape
+
+Start from how customers will pay, then read the matching cookbook in full:
+
+| Customers…                                  | Shape                        | Read                                                      |
+| ------------------------------------------- | ---------------------------- | --------------------------------------------------------- |
+| try free, then upgrade                      | freemium                     | https://docs.farthershore.com/cookbook/freemium           |
+| pay monthly, plus usage above an allowance  | subscription plus overage    | https://docs.farthershore.com/cookbook/subscription-plus-overage |
+| buy credits up front and spend them         | prepaid credits              | https://docs.farthershore.com/cookbook/prepaid-credits    |
+| pay only for what they call                 | usage-based API              | https://docs.farthershore.com/cookbook/usage-based-api    |
+
+https://docs.farthershore.com/get-started/product-shapes compares them, and
+https://docs.farthershore.com/reference/funding-and-allowances separates what a
+plan includes (`included`), what customers buy (`credits`, `topUp`) and how each
+is spent. https://docs.farthershore.com/monetize/pricing-examples has complete
+programs.
+
+A trial needs one decision: what usage does it allow? By default a trial is
+capped at the plan's included usage. Priced calls count at list price, and once
+the included usage is spent, priced routes return `402 trial_allowance_exhausted`
+until the trial ends or the customer starts the plan. Declare
+`lifecycle: { trialDays, trialUsage: "unlimited" }` for free, uncapped usage
+during the trial; choose it only when giving that usage away is intended. A
+capped trial on a plan that includes nothing has nothing to cap, and the build
+warns. Read https://docs.farthershore.com/cookbook/add-trial.
+
 ## Design independent controls
 
 Resolve what customers may do, what is measured, how it is priced, what funds
@@ -77,7 +103,7 @@ nonowner allowed/denied matrix and plan-denied/cross-tenant cases.
 ## Check the candidate and hand off
 
 Run the repository's actual TypeScript checker separately from
-`farthershore build`; execution alone is not typechecking. Inspect generated IR
+`farthershore build`; execution alone is not typechecking. Inspect the build output
 for grants, route measurement bindings, estimates and economic behavior. Run
 `farthershore validate` against the intended target and inspect checked/skipped
 server/docs results; a generated local validate alias may only build.

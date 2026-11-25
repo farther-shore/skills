@@ -81,7 +81,7 @@ The order that works for a builder starting from nothing:
    `farthershore backend bind <business> <backend> --for all --origin <https-url>`.
 5. Deliver the business's default secret key by pipe into the host's secret
    store, never as a command argument or in chat. A non-production platform
-   environment also needs the control-plane URL variable the template README
+   environment also needs the platform URL variable the template README
    names; a production deployment does not.
 6. Deploy the container from the command line (or let the host build the
    repository), then read the service's logs for the bootstrap result.
