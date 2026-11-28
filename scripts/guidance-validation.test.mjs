@@ -69,9 +69,9 @@ test("rejects raw credentials in login argv while allowing stdin ingestion", () 
 
 test("permits supported operational administration without allowing raw credentials", () => {
   for (const text of [
-    "Manage an access token with farthershore token update.",
+    "Revoke an access token with farthershore access_tokens revoke.",
     "Install the host's official MCP server for its own deployments.",
-    "Run farthershore business update for presentation metadata.",
+    "Run farthershore businesses update for presentation metadata.",
     "The responsible human connects Stripe and completes Tax requirements.",
   ])
     assert.deepEqual(findObsoleteGuidance(text), []);
@@ -80,7 +80,7 @@ test("permits supported operational administration without allowing raw credenti
     ["raw access-token credential"],
   );
   assert.ok(
-    findObsoleteGuidance("farthershore plan update paid").includes(
+    findObsoleteGuidance("farthershore plans update paid").includes(
       "CLI contract mutation",
     ),
   );
@@ -241,7 +241,7 @@ test("rejects the retired caller-supplied retry key in every spelling", () => {
   // Built from parts so this repository never contains the retired word.
   const retired = "idem" + "potency";
   for (const text of [
-    `farthershore business create acme --${retired}-key <key> --format json`,
+    `farthershore businesses create acme --${retired}-key <key> --format json`,
     `Persist an ${retired} key before the first send.`,
     "Use `same_key_replay` for webhook test.",
     "Use `intrinsic_replay` with the transition identifier.",
@@ -285,7 +285,9 @@ test("rejects obsolete SDK economics, reporting, and migration instructions", ()
     "price_per_unit_micros: 2000",
     "included_units: 1000",
     'import { withUsage } from "@farthershore/backend"',
-    "farthershore plan migrate acme pro --to head",
+    "farthershore plans migrate acme pro --to head",
+    "farthershore business list",
+    "farthershore token create",
   ])
     assert.ok(findObsoleteGuidance(text).length > 0, text);
 });

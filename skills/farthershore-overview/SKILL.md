@@ -58,13 +58,12 @@ original session authority.
 Organization selection changes command context, never credential authority:
 `farthershore auth organization list --format json`,
 `farthershore auth organization use <id-or-slug>`, or the global option
-`farthershore --organization <id-or-slug> business list --format json`.
+`farthershore --organization <id-or-slug> businesses list --format json`.
 
 Unattended automation (CI, headless agents, shared machines) uses an
 organization-scoped access token, never a person's own login. A human creates
-it in the dashboard or with `farthershore token create` from a signed-in user
-session; it holds exactly the listed permissions and business scope. Securely
-pipe it into `farthershore login --token-stdin` or set `FARTHERSHORE_TOKEN` as
+it in the dashboard (Settings → Access tokens); it holds exactly the listed
+permissions and business scope. Securely pipe it into `farthershore login --token-stdin` or set `FARTHERSHORE_TOKEN` as
 an ephemeral one-process override. Never place a raw credential in argv,
 stdout, stderr, chat or logs; unset overrides after use. `farthershore logout`
 signs out and removes the saved credential. A one-time secret is shown once in
