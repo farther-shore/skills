@@ -58,15 +58,36 @@ before use.
 
 ## Host, infrastructure as code and previews
 
-Use the host the human chose. With permission, install its CLI and offer its
-official MCP server; the human adds it and signs in, never pasting a provider
-token into chat. Search for that host's deploy guide (for example
+Use the host the human chose. With permission, install its CLI; the human
+signs in to it, never pasting a provider token into chat. The host's own agent
+server, where it has one, is optional: it reads services and logs but may not
+plan or apply infrastructure, so the host CLI is what the work needs. Search for that host's deploy guide (for example
 `backend/deploy-railway` or `backend/deploy-render`; with none, use
 `backend/infrastructure-opentofu`) and declare service, database and secret
 NAMES in the host's own infrastructure as code (Railway IaC, `fly.toml`, a
 `render.yaml` Blueprint, OpenTofu) instead of console clicks or one-off CLI
 changes; secret values never enter it. Keep at least one instance running:
 a sleeping or free tier turns into a cold start on a paying customer's call.
+
+The order that works for a builder starting from nothing:
+
+1. Scaffold into `api/` and make its routes and reports match `business/`.
+2. Create the builder's OWN project with the host's CLI. A host CLI link is
+   per directory: read which project this directory is linked to before every
+   plan or apply, because an apply lands on whatever it names.
+3. Declare the service, its database and the secret NAMES in the host's
+   infrastructure file; plan, review the plan, apply.
+4. Allocate the service's public HTTPS URL, then bind it:
+   `farthershore backend bind <business> <backend> --for all --origin <https-url>`.
+5. Deliver the business's default secret key by pipe into the host's secret
+   store, never as a command argument or in chat. A non-production platform
+   environment also needs the platform URL variable the template README
+   names; a production deployment does not.
+6. Deploy the container from the command line (or let the host build the
+   repository), then read the service's logs for the bootstrap result.
+
+Host syntax stays in that host's guide; do not paste an infrastructure file
+from memory.
 
 Before a preview writes anything, retrieve `backend/environment-databases`
 and choose: one process selecting a per-environment database,
@@ -107,8 +128,17 @@ usage. Reconcile uncertain delivery before repeating billing-affecting work.
 
 ## Verify, rotate or diagnose
 
-Verify separately: bootstrap/health; real signed protected success; unsigned
-origin rejection; wrong-principal/permission/cross-tenant denial; observed usage.
+Verify separately, in this order: unsigned health answers; an unsigned call
+to a protected route is refused at the origin; a signed call through the
+gateway with a real subscriber credential succeeds; a wrong-principal,
+missing-permission or cross-tenant call is denied; usage is observed; webhook
+deliveries succeed (`farthershore webhook deliveries <business> <webhookId>`).
+Usage is recorded asynchronously: read `farthershore usage summary <business>
+--env <environment>` again after tens of seconds before calling it missing,
+and never count a successful response as observed usage. Test persona keys
+work on the preview host only, so a 401 on the production host is not a
+backend fault. A script's default HTTP client identity can be refused at the
+edge before the gateway sees it; send an ordinary user agent.
 A resolved ready promise or healthy row proves none of the complete journey.
 Correlate host deployment, effective row, exact contract/apply, request and usage
 identities. For origin_unavailable or upstream failures, inspect logs and actual

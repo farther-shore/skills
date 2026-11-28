@@ -44,8 +44,9 @@ Repository changes still use edits/builds/Git, even if a similarly named operati
 appears in search. No private API workaround.
 
 Release 5 targets the CLI-only, one-sign-in platform source (CLI 0.48.0, the
-oldest CLI the platform accepts); `scripts/docs-link-evidence.json` names the
-exact docs commit. Source support is not deployed capability or live retrieval
+oldest CLI the platform accepts). This bundle was checked against CLI 0.51.0,
+Business SDK 5.2.0 and frontend SDK 0.47.0; `scripts/docs-link-evidence.json`
+names the exact docs commit. Source support is not deployed capability or live retrieval
 evidence. Match documentation source/package versions to actual CLI/SDK pins.
 There is no universal SDK version implied by the skill version.
 
