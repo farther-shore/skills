@@ -84,7 +84,7 @@ Documentation syntax, legal documents/versions, browser consent and server-side
 legal authorization are separate facts; missing Terms/Privacy is not an invented
 universal publish blocker.
 
-First DRAFT `business publish` may be previewed where supported, then initiated
+First DRAFT `businesses publish` may be previewed where supported, then initiated
 once within approval. It creates a release and may return PENDING while business
 is still DRAFT. Observe asynchronous acceptance/publication rather than declare
 it live. For code-managed ACTIVE businesses, repeat publish (including dry-run)

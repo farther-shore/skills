@@ -57,11 +57,12 @@ external effects. Secret issuance/rotation returns once in the terminal and
 cannot be read back; use secure delivery, not argv/chat/logs, and a supported
 secure CLI capture or human handoff when the workload needs the actual value.
 
-Builder automation credentials are organization-owned access tokens
-(`farthershore token list|create|update|rotate|revoke|permission-catalog`),
-administered only from a signed-in user session. A token holds exactly the
-permissions it lists, capped at its creator's; `token update` replaces them in
-place without changing the secret. Read the inventory with pagination after
+Builder automation credentials are organization-owned access tokens. They are
+created, changed and rotated only in the dashboard (Settings → Access tokens);
+a signed-in CLI can list and revoke them and read the permission catalog
+(`farthershore access_tokens list|revoke|permissions`). A token holds exactly
+the permissions it lists, capped at its creator's; changing them in the
+dashboard keeps the secret. Read the inventory with pagination after
 each action and verify the consumer's allowed and denied operations. See
 https://docs.farthershore.com/operate/maker-tokens.
 

@@ -14,7 +14,11 @@ const FORBIDDEN_GUIDANCE = [
     "retired Business SDK authoring",
   ],
   [/\bwithUsage\b/, "retired backend reporting API"],
-  [/\bfarthershore\s+plan\s+migrate\b/, "retired cohort migration command"],
+  [/\bfarthershore\s+plans?\s+migrate\b/, "retired cohort migration command"],
+  [
+    /\bfarthershore\s+(?:business|backend|webhook|consumer|persona|plan|env|organization|proposal|limit|bulletin|token|promo-code|service-account|audit-log|tax-settings|commercial-release|resource-count|apply-timeline|workflow-control)(?![\w-])/,
+    "retired CLI command name",
+  ],
   [
     /@(?:Business|Plan|Feature|Meter)\b|\bdecorators?\b|experimentalDecorators/i,
     "obsolete decorator guidance",
@@ -56,11 +60,11 @@ const FORBIDDEN_GUIDANCE = [
     "obsolete nested authentication command",
   ],
   [
-    /farthershore\s+business\s+create\s+--/i,
+    /farthershore\s+business(?:es)?\s+create\s+--/i,
     "obsolete flag-based business creation",
   ],
   [
-    /farthershore\s+plan\s+(?:create|update|delete|promote|rollback)/i,
+    /farthershore\s+plans?\s+(?:create|update|delete|promote|rollback)/i,
     "CLI contract mutation",
   ],
   [

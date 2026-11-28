@@ -30,7 +30,7 @@ before use.
 
 1. For an upstream, establish deploy access, secure host-secret delivery and
    application logs. Integrate an existing server or start with
-   `farthershore backend scaffold --node` from the managed repo root. Adapt the
+   `farthershore backends scaffold --node` from the managed repo root. Adapt the
    example route, meter, dimensions and entitlement to the actual contract;
    inspect the retrieved template/ref/pins. Overwriting an existing API folder
    is a separate deliberate action, not a routine scaffold flag.
